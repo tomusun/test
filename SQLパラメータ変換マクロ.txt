@@ -1,0 +1,74 @@
+Private Const inSQL As String = "C3" 'インプット用 ExecutingStatement
+Private Const inParameter As String = "C4" 'インプット用 Parameter
+Private Const OutUmekomimaeSQL As String = "C7" 'アウトプット用 埋め込み前SQL
+
+Private Const OutParameter  As String = "C8" 'アウトプット用 Parameters
+Private Const OutUmekomiGoSQL  As String = "C9" '埋め込み後SQL
+
+Sub createSQL()
+ Dim splitBuffer As Variant
+ Dim umekomimae As String
+ Dim umekomigo As String
+ Dim parameter As String
+ Dim parameters As Variant
+ Dim i As Integer
+ Dim flg As Integer
+ Dim parameterIndex As Integer
+
+'コンソールのExecutingStatementから埋め込み前SQLを抽出 splitBuffer[0]は空
+splitBuffer = Split(Range(inSQL), " ExecutingStatement= ")
+
+umekomimae = Trim(splitBuffer(1))
+Range(OutUmekomimaeSQL) = umekomimae
+
+'初期化
+splitBuffer = Null
+
+'コンソールのparametersからparametersを抽出　splitBufferは例
+'splitBuffer(0)は"14:23:45 DEBUG"
+'splitBuffer(1)は"aaaa,1234]"
+splitBuffer = Split(Range(inParameter), " Parameter=[")
+
+parameter = Trim(Replace(splitBuffer(1), "]", ""))
+
+Range(OutParameter).Value = parameter
+
+'初期化
+splitBuffer = Null
+
+'埋め込み前SQLにパラメータを埋め込む
+splitBuffer = Split(umekomimae, " ")
+parameters = Split(parameter, ",")
+
+parameterIndex = 0
+
+For i = 0 To UBound(splitBuffer) '?をパラメータに置換 UBound関数で配列の大きさを調べる
+ If splitBuffer(i) Like "*[?]*" Then
+  If parameterIndex <= UBound(parameters) Then
+  splitBuffer(i) = Replace(splitBuffer(i), "?", "'" & parameters(parameterIndex) & "'")
+
+  parameterIndex = parameterIndex + 1
+  Else
+  MsgBox ("?とパラメタの数があっていない")
+  Exit Sub 'Exit Subは強制終了を意味
+  End If
+ End If
+
+'埋め込み後SQLを構築
+ If umekomigo = "" Then
+ umekomigo = splitBuffer(i)
+ Else
+ umekomigo = umekomigo + " " + splitBuffer(i)
+ End If
+Next i
+'末尾に"'"を足して埋め込み後SQLを出力
+Range(OutUmekomiGoSQL).Value = Trim(umekomigo) + ";"
+
+End Sub
+
+Private Sub CommndButton1_click()
+ Call createSQL
+End Sub 
+ 
+End Sub
+
