@@ -1,0 +1,563 @@
+Java Patternを使った正規表現
+・"e"で始まり"o"で終わるパターンは次のように表すことが出来ます。
+
+
+
+■"e.*o"
+このパターンは「"e"で始まり任意の文字が0回以上繰り返された後で"o"が出現する」というパターンとなります。パターンを定義したら今度は対象の文字列にパターンに一致する文字列があるかどうかを調べます
+
+・サンプルプログラム
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
+class JSample1_1{
+public static void main(String args[]){
+String str1 = "Hello";//Heloaでも結果は同じ
+String str2 = "Hey";
+
+String regex = "e.*o";//String regex = "lo";でも結果は同じ
+Pattern p = Pattern.compile(regex);
+
+Matcher m1 = p.matcher(str1);
+
+System.out.print(str1 + " は");
+if (m1.find()){
+System.out.println("マッチします");
+}else{
+System.out.println("マッチしません");
+}
+
+Matcher m2 = p.matcher(str2);
+
+System.out.print(str2 + " は");
+if (m2.find()){
+System.out.println("マッチします");
+}else{
+System.out.println("マッチしません");
+}
+}
+}
+実行結果
+
+
+
+Hello はマッチします
+Hey はマッチしません
+
+・正規表現を利用する上でまず行うことはパターンを作成することです。パターンとは
+
+
+
+何にマッチさせるのかを定義したものと考えて下さい。
+
+・"abc"という3つの文字がターゲット文字列の先頭から現れるかどうかを調べるパターンを表す文字列です
+
+
+
+String regex = "^abc";
+上記の場合は"abc"という3つの文字がターゲット文字列の先頭から現れるかどうかを調べるパターンを表す文字列です。例えば次のような文字列とマッチします。
+abc
+abcdef
+
+・java.util.regex.Patternクラス
+
+
+
+■パターンを表す文字列を定義したら、次にパターンオブジェクトを作成します。パターンオブジェクトは文字列として記述されたパターンをJavaがプログラムの中で使用できる形式に変換したものと考えて下さい。
+パターンはjava.util.regex.Patternクラスで定義されています。このクラスはコンストラクタは用意されておらず、次のstaticメソッドを使って作成します。
+■compile
+public static Pattern compile(String regex)
+指定された正規表現をパターンにコンパイルします。
+パラメータ:
+regex - コンパイルされる表現
+例外:
+PatternSyntaxException - 表現の構文が無効である場合
+■ 引数にはパターンを表す文字列を指定して下さい。
+例えば次のように記述します。
+String regex = "abc";
+Pattern p = Pattern.compile(regex);
+
+・パターンオブジェクトを作成する時にはオプションを指定することができます。
+
+
+
+■compile
+public static Pattern compile(String regex, int flags)
+指定されたフラグを使用して、指定された正規表現をパターンにコンパイルします。
+パラメータ:
+regex - コンパイルされる表現
+flags - マッチフラグ。CASE_INSENSITIVE、MULTILINE、DOTALL、UNICODE_CASE、CANON_EQ、
+UNIX_LINES、LITERAL、および COMMENTS を含めることのできるビットマスク
+■1番目の引数には条件を記述した文字列を指定して下さい。そして2番目の引数にオプションのフラグを設定します。例えば「CASE_INSENSITIVE」を指定すると大文字と小文字を区別しなくなります。このオプションの使い方は別のページで詳しく確認します。
+例
+class JSample1_1{
+public static void main(String args[]){
+String str1 = "Hello";//Heloaでも結果は同じ
+String str2 = "Hey";
+
+String regex = "e.*o";//String regex = "lo";でも結果は同じ
+Pattern p = Pattern.compile(regex,Pattern.CASE_INSENSITIVE);
+
+Matcher m1 = p.matcher(str1);
+
+System.out.print(str1 + " は");
+if (m1.find()){
+System.out.println("マッチします");
+}else{
+System.out.println("マッチしません");
+}
+
+Matcher m2 = p.matcher(str2);
+
+System.out.print(str2 + " は");
+if (m2.find()){
+System.out.println("マッチします");
+}else{
+System.out.println("マッチしません");
+}
+}
+}
+実行結果
+Hello はマッチします
+Hey はマッチしません
+
+・class JSample2_1{
+public static void main(String args[]){
+String str1 = "abcdef";
+String str2 = "defabc";
+
+String regex1 = "abc";
+Pattern p1 = Pattern.compile(regex1);
+
+String regex2 = "^abc";
+Pattern p2 = Pattern.compile(regex2);
+
+check(p1, str1);
+check(p1, str2);
+check(p2, str1);
+check(p2, str2);
+}
+
+private static void check(Pattern p, String target){
+Matcher m = p.matcher(target);
+
+System.out.print(target + " は " + p.pattern() + " に");
+
+if (m.find()){
+System.out.println("マッチします");
+}else{
+System.out.println("マッチしません");
+}
+}
+}
+実行結果
+
+
+
+abcdef は abc にマッチします
+defabc は abc にマッチします
+abcdef は ^abc にマッチします
+defabc は ^abc にマッチしません
+※Patternクラスで定義されているpatternメソッド
+このパターンのコンパイル元の正規表現を返します。
+メソッドを実行するとcompileメソッドの引数に指定した文字列を取得できます。
+
+・java.util.regex.Matcherクラス
+
+
+
+■パターンオブジェクトを作成したら、次はターゲットとなる文字列を対象にしてマッチするかどうかを調べます。この時に使用するのがマッチャです。マッチャはパターンを使ってターゲットの文字列に対して様々な操作を行うオブジェクトです。
+マッチャはjava.util.regex.Matcherクラスで定義されています。このクラスはコンストラクタは用意されておらず、Patternクラスで定義されているmatcherを使って作成します。
+matcher
+public Matcher matcher(CharSequence input)
+指定された入力とこのパターンをマッチする正規表現エンジンを作成します。
+パラメータ:
+input - マッチされる文字シーケンス
+※引数にはターゲットとなる文字列を、CharSequenceインターフェースを実装したクラスのオブジェクトを指定して下さい。Stringクラスなどが該当します。
+■ マッチャが作成されたら、マッチャに対して様々な操作を指示できます。
+例えば、ターゲットの文字列にパターンを適用しマッチしているかどうか調べるにはMatcherクラスで定義されているfindメソッドを使います
+作成したマッチャオブジェクトに対してこのメソッドを実行すると、ターゲット文字列がパターンにマッチしているかどうか調べ結果をboolean型の値で返します。
+
+・エスケープシーケンス
+\'
+\"
+\\
+
+
+シングルクオーテーション
+ダブルクオーテーション
+\文字
+
+・System.out.println(''');
+
+
+
+■文字を表すには「'」から「'」までに1つの文字を囲んで表現しますが、このプログラムでは2番目の「'」が文字ではなく文字の終端を表す「'」だと解釈されてしまいます。その結果上記のように記述すると「'」と「'」の間にも文字が記述されていないと言うはエラーとなります。
+■ このような場合に「'」の代わりに「\'」を記述すると、この「'」は文字の終端を表す「'」ではなく1つの文字としての「'」として扱われます。
+System.out.println('\'');
+上記の場合には1番目と3番目の「'」の間に文字の「'」が記述されているものとして処理されます。
+
+・この机は"1500円"です
+コンソールに出力
+
+
+
+System.out.println("この机は\"1500円\"です");
+
+・パターンの中のエスケープ処理
+パターンを表す文字列の中には任意の文字を記述することが出来ますが、特殊な用途で使用される文字にはエスケープ処理が必要となります。
+\ * + . ? { } ( ) [ ] ^ $ - |
+
+
+
+これらの文字はパターンの中で使用されると特別な意味を持ちます。そこで単なる文字として扱いたい場合には「\」記号を使ってエスケープ処理を行います。
+"\*"と書いた場合は特殊な意味を持たない"*"という1つの文字として扱われます。
+
+・例えば"^"という文字に一致するパターンを作成する場合を考えてみます。
+"^"はパターンの中では特別な意味を持つ文字のため単なる文字として扱いたい場合は\記号によるエスケープ処理が必要です。実際には次のように記述します。
+
+
+\^
+そこで次のように記述してしまうと間違いとなります。
+String regex = "\^";
+Pattern p = Pattern.compile(regex);
+文字列の中で\記号は特別な意味を持ちます。その為、今度は"\"に対して\記号によるエスケープ処理が必要となります。実際には次のように記述します。
+String regex = "\\^";
+Pattern p = Pattern.compile(regex);
+最初のエスケープはパターンを表す文字列の記述ルールに従って行ったもので、次のエスケープはJava言語の文字列の中で\記号を記述する場合のルールに従ったものです。"\\"と続けて記述されていてもそれぞれ意味が違う場合がありますので注意して下さい。
+
+・ public static void main(String args[]){
+String str1 = "a";
+String str2 = ".";
+
+String regex1 = ".";
+Pattern p1 = Pattern.compile(regex1);
+
+String regex2 = "\\.";
+Pattern p2 = Pattern.compile(regex2);
+
+check(p1, str1);
+check(p1, str2);
+check(p2, str1);
+check(p2, str2);
+}
+
+private static void check(Pattern p, String target){
+Matcher m = p.matcher(target);
+
+System.out.print(target + " は " + p.pattern() + " に");
+
+if (m.find()){
+System.out.println("マッチします");
+}else{
+System.out.println("マッチしません");
+}
+}
+}
+実行結果
+
+
+
+a は . にマッチします
+. は . にマッチします
+a は \. にマッチしません
+. は \. にマッチします
+今回はまず"."で表されるパターンにマッチするかどうか調べています。パターンでは"."は任意の一文字を表す特殊な文字のため、"a"でも"."でもマッチします。それに対して"\."は"."という単なる文字を表すパターンの為、"a"にはマッチしませんが"."にはマッチします。
+
+・class JSample3_1{
+public static void main(String args[]){
+String str1 = "stat[01]end";
+String str2 = "array[int]";
+
+String regex = "\\[.*\\]";
+Pattern p = Pattern.compile(regex);
+
+check(p, str1);
+check(p, str2);
+}
+
+private static void check(Pattern p, String target){
+Matcher m = p.matcher(target);
+
+if (m.find()){
+System.out.println("マッチします");
+System.out.println("マッチした部分は " + m.group() + " です");
+}else{
+System.out.println("マッチしません");
+}
+}
+}
+実行結果
+
+
+
+マッチします
+マッチした部分は [01] です
+マッチします
+マッチした部分は [int] です
+※今回は"["で始まり"]"で終わる文字列があるかどうかのパターンを作成しマッチするかどうか調べています。またマッチした場合は、ターゲット文字列の中で実際にマッチした部分を表示しています。
+
+・ String str = "Tomato is 100yen, Lemon is 80yen.";
+String regex = "\\d.+?yen";
+Pattern p = Pattern.compile(regex);
+
+Matcher m = p.matcher(str);
+while(m.find()){
+System.out.println(m.group());
+}
+
+
+
+100yen
+80yen
+■※ groupメソッドはマッチした文字列を取得するメソッドです。別のページで解説します。
+■findメソッドは最初に呼び出された時にターゲット文字列の最初からマッチするかどうかを見ていきます。よって今回の場合はまず"100yen"にマッチします。
+Tomato is 100yen, Lemon is 80yen.
+ここでもう一度findメソッドを呼び出してみます。findメソッドは前回の呼び出しが正常に終了した場合、前回のマッチで一致しなかった最初の文字からマッチするかどうかを確認します。つまり"100yen"の次の","の位置です。
+Tomato is 100yen, Lemon is 80yen.
+","の位置からパターンにマッチするのは"80yen"です
+ここでもう一度findメソッドを呼び出してみます。今度の場合も同じく前回のマッチで一致しなかった最初の文字からマッチするかどうかを確認します。つまり"80yen"の次の"."の位置です。
+■ "."の位置からパターンにマッチするのは存在しないため、findメソッドは失敗します。
+このようにfindメソッドを使うことでパターンがターゲット文字列にマッチするかどうか確認することができ、さらにfindに成功した場合には続けて他にマッチするものがないか調べることができます。
+findメソッドは成功すると戻り値としてtrueを返しますので、1つのターゲット文字列にマッチする文字列を順に取り出すには上記のように記述することができます
+■あなたの提示されたstrにあてはめると、最初のfind()の後は以下のようになります。
+- \ d: 1
+- . + ?: 0 0
+- y e n: y e n
+よって、マッチした部分全体を表示するコードを追加すれば、100yenがマッチしたことがわかるはずです。
+ちなみにパターン内の+の後の?を削除してしまうと最長一致になるので、最初の1回のfind()で、100yen, Lemon is 80yenがマッチします。
+ざっくり言うと、元の正規表現パターンは「数字で始まって直近のyenまで」を探し出すパターンと言うことになります。
+■
+正規表現についてはjava.util.regex.PatternのAPIリファレンスの中に説明があります。\\dは数字([0-9]と同じ)、.は任意の1文字、+?は１回以上の繰り返し（最短一致数量子）といったことが網羅的に記載されてますのでまずはここをご覧ください
+
+
+・String str = "Tomato is 100yen, Lemon is 80yen.";
+String regex = "\\d.*yen";
+Pattern p = Pattern.compile(regex);
+
+Matcher m = p.matcher(str);
+while(m.find()){
+System.out.println(m.group());
+}
+}
+}
+実行結果
+
+
+
+100yen, Lemon is 80yen
+
+・public static void main(String args[]){
+String str = "Tomato is 100yen, Lemon is 80yen.";
+String regex = "\\d.+yen";
+Pattern p = Pattern.compile(regex);
+
+Matcher m = p.matcher(str);
+while(m.find()){
+System.out.println(m.group());
+}
+}
+実行結果
+
+
+
+100yen, Lemon is 80yen
+
+・public static void main(String args[]){
+String str = "おーい";
+String regex = "おー*い";
+Pattern p = Pattern.compile(regex);
+
+Matcher m = p.matcher(str);
+while(m.find()){
+System.out.println(m.group());
+}
+}
+}
+実行結果
+
+
+
+おーい
+※直前の文字が0個以上ある「*」
+　「*」はその直前（左）にある文字が0個以上あることを意味します。0個以上なのでその文字が無くても合致します。
+"おー*い"
+
+○　”おい”
+○　”おーい”
+○　”おーーーーーい”
+　この場合、「ー」が0個以上ということになります。
+　先ほどの例で出てきた「.*Java.*」は、「*」の直前の文字が「.」になっています。「.」はどんな文字でもいいので、「.*」でどんな文字がいくつあってもいいし、全く無くてもいいということになります。
+　
+・ String str = "おーい";
+String regex = "*おーい";
+Pattern p = Pattern.compile(regex);
+
+Matcher m = p.matcher(str);
+while(m.find()){
+System.out.println(m.group());
+}
+}
+実行結果
+
+
+
+Exception in thread "main" java.util.regex.PatternSyntaxException:
+
+・String str = "おーい";
+String regex = ".*おーい";
+Pattern p = Pattern.compile(regex);
+
+Matcher m = p.matcher(str);
+while(m.find()){
+System.out.println(m.group());
+}
+実行結果
+
+
+
+おーい
+
+・「+」
+"おー+い"
+
+
+
+その直前にある文字が1つ以上あることを意味します。
+×　”おい”
+○　”おーい”
+○　”おーーーーーい”
+　1つ以上ないといけないので、この場合「おい」では合致しないことに注意して下さい。
+　
+・ String str = "おい";
+String regex = "おー?い";
+Pattern p = Pattern.compile(regex);
+
+Matcher m = p.matcher(str);
+while(m.find()){
+System.out.println(m.group());
+}
+実行結果
+
+
+
+おい
+■直前の文字が1つだけあるか無い「?」
+　「?」はその直前にある文字があってもなくても合致します。ただし2個以上あれば合致しません。
+"おー?い"
+
+○　”おい”
+○　”おーい”
+×　”おーーーーーい”
+
+・ String str = "おーーい";
+String regex = "おー?い";
+Pattern p = Pattern.compile(regex);
+
+Matcher m = p.matcher(str);
+while(m.find()){
+System.out.println(m.group());
+}
+実行結果
+
+
+
+なし
+
+・"(むかし)+、ある所に"
+
+
+
+○　”むかし、ある所に”
+○　”むかしむかし、ある所に”
+
+・"今日は(暑い|寒い|涼しい)です"
+
+
+
+○　”今日は暑いです”
+○　”今日は寒いです”
+○　”今日は涼しいです”
+
+・"今日は暑い|寒い|涼しいです"
+
+
+
+×　”今日は暑いです”
+○　”今日は暑い”
+○　”寒い”
+○　”涼しいです”
+
+・"[J,j]ava"
+
+
+
+○　”Java”
+○　”java”
+×　”JAVA”
+○　”,ava”
+■このようにコンマもただの文字として認識され、「J」か「,」か「j」という意味になってしまいます。
+
+・[01-]"
+
+
+
+○　”0″
+○　”1″
+○　”-“
+×　”2″
+※数字やアルファベットで挟まなければ、ハイフンはただの文字としてのハイフンとして認識されます。
+
+・"好きな数字は[16-9]です"
+
+
+
+○　”好きな数字は1です”
+○　”好きな数字は7です”
+×　”好きな数字は2です”
+×　”好きな数字は5です”
+※「1か6～9」という意味になります。「16～9」ではないので注意が必要です
+
+・"好きな数字は[^49]です"
+
+
+
+■[ ]内で否定を表す「^」
+　[abc]はa、b、cの内どれか一文字という意味ですが、a、b、c以外のどれか一文字という表現を作ることも出来ます。「^」を使います。
+　○　”好きな数字は1です”
+○　”好きな数字は7です”
+×　”好きな数字は4です”
+×　”好きな数字は9です”
+※[ ]の初めに「^」を付けることで、[ ]内の文字以外という意味になります。「^」の右隣の一文字だけでなく[ ]内全体に否定の意味がかかってくるので注意して下さい。
+
+・例えば、「OK?」という文字と合致しているか調べたい場合。
+"OK?"
+
+
+
+×　”OK?”
+○　”OK”
+○　”o”
+■「?」は直前の一文字が一つだけあるor無いという意味にとられるので、この場合、「K」が一つだけあるor無いという意味を示す正規表現になることになります。
+　正規表現において意味を持つ記号を、普通の文字として使いたい場合は、\を使ってエスケープする必要があります。
+\?
+　ただし、\一つだとエスケープ記号と認識されるので、この場合、
+\\?
+と二つ続けて書く必要があります。
+■先ほどの例をエスケープを使って正しく書き直すと、こうなります。↓
+"OK\\?"
+○　”OK?”
+×　”OK”
+×　”o”
+
+・"ab+"
+abc
+abbc
+abbbbc
+はどうなるか
+
+
+
+○ abc
+○ abbc
+○ abbbbc
