@@ -1,0 +1,333 @@
+SpringBatch
+○@Bean
+
+
+
+■@Beanと書いたメソッドでインスタンス化されたクラスがシングルトンクラスとしてDIコンテナに登録される。任意のクラスで@Autowiredで注入してアクセスできる。
+@Beanというものについて調べた時に @Configurationと記述したクラス内のメソッドに@Beanを記述することで@Beanを定義することができ、任意のクラスで@Autowiredで注入することで定義したBeanを使うことができる。
+■間違った使い方
+★CreateBean.java
+@Configuration
+public class CreateBean {
+
+@Bean
+public String getHoge(){
+return "hoge";
+}
+}
+★BatchProcessing.java
+@Component
+public class BatchProcessing {
+
+@Autowired
+CreateBean createBean;
+
+@Scheduled(initialDelay = 3000, fixedDelay = 5000)
+public void initialDelay(){
+System.out.println(createBean.getHoge());
+}
+}
+※@Scheduledは定期実行するためのアノテーションになります。
+結果は
+hoge
+hoge
+hoge
+hoge
+試しに@Beanを消してビルドしてもエラーも出ず、同じ結果になります。
+じゃあ結局Beanって何なんだ！！
+アノテーションなくても動くじゃん！!
+■@Beanの正しい使い方
+★Count.java
+public class Count {
+
+private int count;
+
+public int getCount(){
+return count++;
+}
+}
+このクラスは、呼ばれるたびに変数countをインクリメントして返すgetCount()メソッドと、インクリメントする変数countだけを持ったシンプルなクラスです。
+★CreateBean.java
+@Configuration
+public class CreateBean {
+
+@Bean
+public Count getCount(){
+return new Count();
+}
+}
+ここでCountクラスをDIコンテナに登録しています。
+★BatchProcessing.java
+@Component
+public class BatchProcessing {
+
+@Autowired
+Count count;
+
+@Scheduled(initialDelay = 3000, fixedDelay = 5000)
+public void initialDelay(){
+System.out.println(count.getCount());
+}
+}
+ここで登録したCountクラスを@Autowiredで注入しています。
+結果
+0
+1
+2
+3
+～
+⇒メソッドに＠Beanを記述するという言葉に引っ張られて、普通のStringやintを返すメソッドに@Beanを記述していましたが Stringやintを返すメソッドに@Beanをつけても何の意味もありません。
+@Beanを記述したメソッドでインスタンス化したクラスを返して、DIコンテナに登録します。そして任意のクラスで@Autowiredで変数に注入して使うようです。
+@Beanで定義したクラスはデフォルトではシングルトンとしてDIコンテナに格納される
+
+○Spring Batchの処理単位
+
+
+
+■Spring Batchはステップと呼ばれる単位で処理を記述していきます。
+リスタートや条件分岐は、ステップ単位になります。
+⇒ステップ単位の処理イメージ
+まずはイメージ図を見てみることにします。
+Spring Batchにおいて処理を記述するときは、上記のようにステップ（step）と呼ばれる単位で記述されます
+例えば条件分岐する場合、ステップの中で条件分岐することはありません。
+また、並行処理の場合もステップの中で並行処理をすることはありません。
+つまり、ステップが処理の最小単位になります。
+リスタートする場合も同様ですが、実はステップにはチャンクとよばれるパターンがあり、
+チャンクを採用したステップではコミット単位でリスタート開始位置が決まります。
+■いずれにしても、設計をするときに、「1つのステップに入れる処理をどこまで細かくするか」がポイントになります。
+細かくすればそれだけ、リスタートするときの開始位置が増えるので、FAILしたあとのリカバリ処理時間が短くなる可能性が高くなります。
+
+○ステップの種類
+
+
+
+ステップには主に2つの種類があります。
+「taskletのみのステップ」と「チャンクによるステップ」です。
+
+○taskletのみのステップ
+
+
+
+■
+--------
+step -
+tasklet-
+-------
+※tasklet自体が1つのクラスになっていて、クラス内の処理内容を記述する。
+taskletは、同名のインターフェースが用意されています。
+Java上でimplementsして実際の処理を記述するだけです。
+例
+@Component
+public class Tasklet1 implements Tasklet {
+
+@Override
+public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+System.out.println("tasklet1!!");
+return RepeatStatus.FINISHED;
+}
+■リスタート可能にしたい場合は、DBやファイルにごみデータが残っている可能性を考慮した処理になっている必要があります。
+例えば、ワークテーブルを使用した処理であれば、taskletの処理の開始時にワークテーブルをクリアしてから開始すれば
+たとえリスタートしたときにごみデータが残っていてもデータの整合性は保たれると思われます。
+（このように単純にクリアすればよいケースばかりではありませんが）
+いずれにしても、リスタート可能にする場合は配慮が必要です。
+付け加えておきますと、Spring Batchではtaskletタイプのステップの部品をいくつか用意してくれています。
+例えばシステムコマンドを実行する部品などは有名です。
+
+○チャンクによるステップ
+
+
+
+■
+--------
+step
+chunk tasklet
+ItemReader
+(DBやファイルなどのデータの読み込み)
+ItemProcesserに渡す
+↓
+Item
+↓
+ItemProcesser(データの変換など)
+↓
+Item
+Item
+↓
+ItemWriter(DBやファイルなどのデータの書込)
+-------
+矢印(右)「チャンク」という単語はSpring Batchの専門用語ではありません。
+一般的なバッチ処理の言葉です。
+チャンクとは、コミット単位にデータをひとまとめにしたものです。
+上図では、item’を複数囲った、丸角の四角がチャンクにあたります。
+SringBatchではチャンクは、item’を要素としたListとして表現します。
+■SpringBatchでは、データをitemと呼びますので、上記のイメージでもitemと記述しています。
+具体的には通常itemはPOJOにすることを推奨しています。実際には、itemの型はジェネリックで自由に決めることができますのでHashMapなども使用できます。
+■おおまかな処理は以下のようになります。
+　【チャンクにおける処理概要】
+　①ItemReaderがDBやファイルなどからデータを取得します。取得したデータはItemProcessorに渡します。
+　②ItemProcessorは、受け取ったデータ（item）を変換します。（処理を飛ばすこともできます）
+　　変換は、例えば「会員情報オブジェクトをitemとして受け取り、確認メールの本文文字列を作る」という変換をした場合は
+　　変換後のデータ（item’）はStringとなります。
+　　item’は、itemとクラスの型が同じでも、同じでなくてもかまいません。
+　　chunk taskletは、変換後のデータ（item’）をListに溜め込みます。
+　③chunk taskletは、①～②を繰り返して、コミット数に達するまでListに溜め込みをします。
+　　コミット数に達したらItemWriterにListを渡します。
+　④ItemWriterは、Listで受け取ったitem’をすべてDB、ファイルなどに書き込みます。メールで送信するということもできます。
+　　失敗した場合は基本的にrollbackしますので、Listの内容すべてがDBに書き込まれるか、すべてが書き込まれないか、どちらかになります。
+　　書き込みをする部品はいくつか既に用意されていますが、部品ごとにrollbackなどの動作は違うはずですのでよく確認して
+　　使用しましょう。
+　　【チャンクにおけるリスタート】
+　チャンクタイプのステップに対してリスタートが発生した場合、どこから処理開始するのでしょうか？
+　実は、コミット単位に開始位置が決まります。
+　基本的にはItemReaderがコミットした数を覚えていて、リスタート時にその位置から読み込みを開始するのです。
+　DB処理のように数の多いバッチ処理を行う場合によく考慮された機能かと思います。
+　
+○チャンク実装例
+
+
+
+http://dev.classmethod.jp/server-side/java/use_spring-batch_chunk/
+
+○spring-bootでspringbatch
+tasklet（タスクレット）を使用したバッチ処理
+
+
+
+■pom.xml
+<dependency>
+<groupId>org.springframework.boot</groupId>
+<artifactId>spring-boot-starter-batch</artifactId>
+</dependency>
+※これを記入しないと
+import org.springframework.batch.core.JobExecution;
+などが使えなくなる。
+■起動クラス
+@SpringBootApplication
+public class BatchTaskletApplication {
+
+public static void main(String[] args) {
+SpringApplication.run(BatchTaskletApplication.class, args);
+}
+}
+■BatchTasklet
+@Configuration
+@EnableBatchProcessing
+public class BatchTasklet {
+
+@Autowired private Tasklet1 tasklet1;
+@Autowired private Tasklet2 tasklet2;
+@Autowired private JobBuilderFactory jobBuilderFactory;
+@Autowired private StepBuilderFactory stepBuilderFactory;
+
+@Bean
+public Step step1() {
+return stepBuilderFactory.get("step1")
+.tasklet(tasklet1)
+.build();
+}
+
+@Bean
+public Step step2() {
+return stepBuilderFactory.get("step2")
+.tasklet(tasklet2)
+.build();
+}
+
+@Bean
+public Job job(Step step1, Step step2) throws Exception {
+return jobBuilderFactory.get("job")
+.incrementer(new RunIdIncrementer())
+.listener(listener())
+.start(step1)
+.next(step2)
+.build();
+}
+
+@Bean
+public JobExecutionListener listener() {
+return new JobListener();
+}
+
+}
+※ステップとジョブでバッチ処理を行うクラス。
+25行目と32行目でタスクレットを使用するだけで、Reader、Processer、Writerは有りません。シンプルですね。
+ステップではStepBuilderFactoryを、ジョブではJobBuilderFactoryを使用しています。
+40行目、ジョブの開始と終了を知らせるリスナー。
+46～49行目、リスナーのBeanを作成しています。
+41行目、チャンクの場合はflow(step1)としていましたが、タスクレットではstart(step2)を使用。
+■Tasklet1
+@Component
+public class Tasklet1 implements Tasklet {
+
+@Override
+public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+System.out.println("tasklet1!!");
+return RepeatStatus.FINISHED;
+}
+■Tasklet2
+@Component
+public class Tasklet2 implements Tasklet {
+
+@Override
+public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+System.out.println("tasklet2!!");
+return RepeatStatus.FINISHED;
+}
+※ステップに登録するタスクレットを準備。
+Tasklet1と2は標準出力する文字が違うだけです。
+13行目、タスクレットインターフェースを実装。
+15～19行目、タスクレットインターフェースのメソッドexecute。
+ジョブ/ステップで呼ばれると実行され、戻り値に設定したRepeasStatus.FINISHEDかエラーを投げることで終了します。
+■JobListener
+public class JobListener extends JobExecutionListenerSupport {
+
+@Override
+public void beforeJob(JobExecution jobExecution) {
+super.beforeJob(jobExecution);
+System.out.println("ジョブ開始");
+}
+
+@Override
+public void afterJob(JobExecution jobExecution) {
+super.afterJob(jobExecution);
+System.out.println("ジョブ終了");
+}
+}
+※ジョブの開始と終了を知らせてくれます。JobExecutionListenerSupportを実装するだけ。
+■実行結果
+～
+ジョブ開始
+2017-07-01 23:40:15.105 INFO 6776 --- [ restartedMain] o.s.batch.core.job.SimpleStepHandler : Executing step: [step1]
+tasklet1!!
+2017-07-01 23:40:15.148 INFO 6776 --- [ restartedMain] o.s.batch.core.job.SimpleStepHandler : Executing step: [step2]
+tasklet2!!
+ジョブ終了
+～
+
+○Javaにおけるリスナー
+
+
+
+■Javaでは、何かのイベントが発生すると、そのイベントが発生したコンポーネントの中を調べ、そのイベントに対応したイベントリスナーが組み込まれていないかどうかチェックします。イベントリスナーが見つからなければ、何も起こりません。もし見つかった場合には、そのイベントリスナーの中にある、所定のメソッドを呼び出してイベントの処理を行います。
+矢印(右)リスナーは、イベントが発生したときに呼ばれるクラスです。
+
+○＜リスナークラスサンプル：　test.LogListener.java＞
+
+
+
+■public class LogListener extends JobExecutionListenerSupport{
+protected static final Log log = LogFactory.getLog(LogListener.class);
+
+@Override
+public void afterJob(JobExecution jobExecution) {
+log.info("ジョブ終了");
+}
+
+public void beforeJob(JobExecution jobExecution) {
+log.info("ジョブ開始");
+};
+}
+矢印(右)リスナークラスは、interfaceを実装するだけです。
+しかし、メソッドが多いinterfaceは、必要のないメソッドまで実装しなければならないため、面倒です。
+そこで用意されたのが、JobExecutionListenerSupportです。
+このクラスは、メソッドだけを実装しているサポートクラスです。（処理の記述はなし）
+そうすると上記のように必要なメソッドだけを実装すればよくなります。
