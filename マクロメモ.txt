@@ -1,0 +1,677 @@
+・出力ファイルの作成ソース
+
+
+
+Dim filePath As String
+filePath = "C:￥￥～"
+if InStr(filePath,"False") = 0 Then
+Application.StatusBar ="処理中"
+
+Open filePath For Output As #1
+
+Close #1
+Application.StatusBar =""
+End if
+
+・If Not
+
+
+
+If Not Range("A1").Value = 10 Then
+Range("A7").Value = "セルA1の値は10ではありません"
+
+・InStr
+
+
+
+■InStr関数は、引数string1で指定した文字列の中から、引数string2で指定した文字列を検索して、見つかった位置を返します。
+⇒引数string2で指定した文字列が見つからなかったときや、引数に空欄("")を指定したときなどに、InStr関数が返す値は次のとおりです。
+内容 返り値
+引数string1が空欄("")のとき 0
+引数string1がNull値のとき Null値
+引数string2が空欄("")のとき 引数startに指定した値
+引数string2がNull値のとき Null値
+引数string2が見つからないとき 0
+引数startの値が引数string1の文字数を超えるとき 0
+一般的なVBAでは、文字列がNullになることは少ないので、Null値を返すことはないです。見つかったら1以上の数値を返し、見つからなかったら0を返す、と覚えておけばいいでしょう。
+⇒Sub Sample2()
+''アクティブセルに「田中 亨」が入力されているとします
+''アクティブセルの1つ右のセルに苗字を
+''アクティブセルの2つ右のセルに名前を代入します
+Dim N As Long
+N = InStr(ActiveCell, " ")
+ActiveCell.Offset(0, 1) = Left(ActiveCell, N - 1)
+ActiveCell.Offset(0, 2) = Mid(ActiveCell, N + 1)
+End Sub
+⇒引数startを省略すると、文字列の先頭(1文字目)から探します。引数startを動的に変化させると、引数string1の中に、引数string2が何個あるかを調べることができます。
+Sub Sample6()
+Dim N As Long, cnt As Long, String1 As String, String2 As String
+String1 = "C:\Work\2010\Sub\Book1.xlsx"
+String2 = "\"
+N = InStr(1, String1, String2)
+Do While N > 0
+cnt = cnt + 1
+N = InStr(N + 1, String1, String2)
+Loop
+MsgBox String2 & " は、" & cnt & "個あります"
+End Sub
+⇒InStr関数は、大文字と小文字を区別します。次のコードは、小文字の「abcd」から大文字の「C」を探しているので、見つからず0を返します。
+例
+Sub Sample7()
+MsgBox InStr("abcd", "C") ''「0」を返します
+End Sub
+⇒大文字と小文字を同一視して検索するには、引数string1と引数string2を、両方とも大文字または小文字に統一して比較します。
+例
+Sub Sample8()
+Dim String1 As String, String2 As String
+String1 = "C:\WORK\Book1.xlsx"
+String2 = "Work"
+MsgBox InStr(UCase(String1), UCase(String2))
+End Sub
+
+・Application.ScreenUpdating プロパティ
+
+
+
+■無駄な表示を止める
+⇒画面の描画は時間のかかる処理です。
+たとえば、セルに直接値を代入するだけなら、それはメモリ内での出来事です。しかし、代入した結果を表示するには、画面の描画を更新しなければなりません。これは、セルに値を代入するだけでなく、アクティブセルを移動するときも同じです。アクティブセルは、周囲が太線で囲まれます。アクティブセルを移動するということは、直前の太線を消して、新しく別のセルに太線を表示するということです。もし、画面がスクロールするのなら、行番号や列番号の表示も書き換えなければなりません。Excelのマクロでは、できるだけ不要な画面描画を抑止するのが、高速化のポイントです。
+⇒ApplicationオブジェクトのScreenUpdatingプロパティにFalseを設定すると、それ以降の画面描画を抑止されます。
+⇒違い
+Sub Test1()
+Dim i As Long
+For i = 1 To 5000
+Cells(i, 1).Select
+Selection = i
+Next i
+End Sub
+
+Sub Test2()
+Dim i As Long
+Application.ScreenUpdating = False
+For i = 1 To 5000
+Cells(i, 1).Select
+Selection = i
+Next i
+Application.ScreenUpdating = True
+End Sub
+
+・Application.StatusBar プロパティ
+
+
+
+■ステータスバーへの表示
+⇒ユーザーに対して何らかのメッセージを表示するために、スタータスバーへメッセージを表示することが可能です。
+例
+Sub テスト()
+
+Dim old As Boolean
+old = Application.DisplayStatusBar
+
+Application.DisplayStatusBar = True
+Application.StatusBar = "マクロ実行中です"
+MsgBox "ステータスバーを表示しました"
+Application.StatusBar = False
+Application.DisplayStatusBar = old
+End Sub
+
+・「Call」ステートメント
+
+
+
+■「Call」ステートメントの後にプロシージャ名を記述することでプロシージャを呼び出すことができます。
+Call otherCellSet
+
+Sub otherCellSet()
+Range("A2").Value = Range("A1").Value * 2
+Range("A3").Value = Range("A2").Value * 2
+End Sub
+
+・Open filePath For Binary Access Write As #1
+
+
+
+バイナリファイルを読み書きする
+◆ファイルを開く
+ファイルを扱う際には最初にファイルを開く処理を行います。
+⇒Open fileName For Binary Access access_mode As #fileNumber
+パラメータの説明
+引数 説明
+fileName 開くファイル名をフルパスで指定します。
+mode アクセスの方法を指定します。ここでは次のいずれかを指定します。
+ステートメント 用途
+Read 入力
+Write 出力
+Read Write 入出力
+fileNumber ファイル番号を指定します。
+⇒テキストファイルを開く時にはForキーワードに対しInputやOutputを指定していましたが、バイナリファイルを開く時にはBinaryを指定します。代わりにAccessキーワードをつけてaccess_modeでどのように扱うかを指定します。このAccessキーワードは省略可能ですが、省略した場合は自動的にシステムにより可能なアクセス方法に決められます。意図しない操作によりファイルが壊れる可能性が無いとは言えないので、しっかり明示しておきましょう。
+ファイル番号はファイル操作の識別に利用されます。それ以後の読み取り・書き込み・閉じるはファイル番号で指定します。先頭の"#"は付けなくても良いですが、ファイル番号であることを示すために付けておきましょう。
+ファイル番号はFreeFile関数から取得するようにします。FreeFile関数は次に使用可能なファイル番号を返します。プログラム内で1回だけ開くのならば 1 などの具体的な数字を使っても良いのですが、何らかの修正でファイル番号が重複してしまうことを防ぐ為にもFreeFile関数を使用しましょう。
+⇒次の例は、読み取り目的でファイルを開きます。
+　　Dim fName As String
+　　Dim fileNum As Long
+　　fName = App.Path & "\test.txt"
+　　fileNum = FreeFile()
+　　Open fName For Binary Access Read As #fileNum
+
+・LCase(string)
+
+
+
+■アルファベットの大文字を小文字に変換します。
+⇒引数stringには、任意の文字列式を指定します。
+⇒サンプル
+次の例は、ユーザーが入力したアルファベットを小文字に変換して表示します。
+Sub Sample()
+Dim str As String
+str = InputBox("文字を入力してください")
+MsgBox LCase(str)
+End Sub
+
+・Application.DisplayAlerts
+
+
+
+True の場合、マクロの実行中に特定の警告やメッセージを表示します。値の取得および設定が可能です。ブール型 (Boolean) の値を使用します。
+
+・コンパイルエラー：SubまたはFunction が定義されていません。
+
+
+
+MsgBox関数の正しい記述は「MsgBox "メッセージ文字列"」ですが、関数名のMsgBoxが「nsgBox」となっています。こちらを実行するとコンパイルエラーの「コンパイルエラー：SubまたはFunction が定義されていません。」と表示されます。こちらは、関数名が間違っているというエラーです。
+例
+Sub sample()
+nsgBox "msgbox関数"
+End Sub
+
+・Functionプロシージャ
+
+
+
+■プロシージャにはSubプロシージャだけではなく、Functionと言うプロシージャが用意されています。
+⇒Functionプロシージャの大きな特徴は呼び出し元に値を戻す事ができることです。その為、あたかも関数のように動作しますのでユーザー定義関数とも言います。
+⇒
+Functionプロシージャの構文は次のようになっています。
+まず定義を見ておきます。プロシージャを呼び出す方は変更がありませんが、呼び出される方のプロシージャにて、引数の定義の仕方が異なります。
+■Function プロシージャ名(引数 As データ型) As 戻り値のデータ型
+プロシージャ名 = 戻り値
+End Function
+プロシージャ内で様々な処理を行った後で、プロシージャ名に値を格納することで呼び出し元に値を返す事ができます。この返される値を戻り値と言います。例えばInteger型の引数を1つ受け取り、戻り値としてString型の値を返すようなプロシージャは次のようになります。
+例
+Function hantei(ByVal tokuten As Integer) As String
+Dim kekka As String
+
+If tokuten >= 80 Then
+kekka = "合格"
+Else
+kekka = "不合格"
+End If
+
+hantei = kekka
+End Function
+⇒次に呼び出し元の方です。Functionプロシージャを呼び出すと同時に、呼び出したFunctionプロシージャから戻ってくる値を受け取るように記述しなければなりません。
+例
+Sub テスト()
+Dim kekka As String
+
+kekka = hantei(75)
+End Sub
+上記の場合、「hantei」プロシージャを呼び出すと、「hantei」プロシージャ内で処理が行われた結果、値が戻ってきます。その戻ってきた値が変数「kekka」に格納されるわけです。
+
+・InStrRev(string1,string2[,start[,compare]])
+
+
+
+■引数string1には、検索の対象となる文字列を指定します。
+引数string2には、引数string1の中から検索する文字列を指定します。
+引数startは省略可能です。検索を始める位置を指定します。
+引数compareは省略可能です。文字列を比較するモードを指定します。
+⇒解説
+InStrRev関数は、引数string1で指定した文字列の中から引数string2で指定した文字列を後方から検索して、見つかった位置を返します。
+例
+Dim myStr, fStr
+myStr = "文字列を検索します。文字列を検索します。"
+fStr = "検索"
+MsgBox "文字列: " & myStr & vbCR &_
+"検索文字列: " & fStr & vbCR & vbCR &_
+"InStr :" & InStr(myStr, fStr) & vbCR &_
+"InStrRev :" & InStrRev(myStr, fStr),,"InStr, InStrRev 関数"
+⇒
+InStr:5
+InStrRev:15
+
+・Asc 関数
+
+
+
+■Asc 関数は、指定した文字の文字コードを返します。
+文字コードを扱う処理をするときに使用します。
+文字のバイトデータを取得するには AscB 関数を使用します。
+文字の Unicode を取得するには AscW 関数を使用します。
+⇒構文
+Asc(文字)
+名前 説明
+引数「文字」 取得したい文字コードの文字を指定します。
+戻り値 数値型 (Integer)
+⇒解説
+引数「文字」に文字列を渡したときは 1 文字目の文字コードを返します。
+文字が半角のときは 0 ～ 255 の範囲を、全角のときは -32768 ～ 32767 の範囲の文字コードを返します。
+文字コードから文字に変換するには「Chr 関数」を使用します。
+使用例
+⇒Dim i As Integer
+i = Asc("A")
+Debug.Print(i) ' 65
+⇒i = Asc("あ")
+Debug.Print(i) ' -32096
+⇒Dim s As String
+s = Chr(65)
+i = Asc(s)
+Debug.Print(i) ' 65
+
+・FreeFile関数
+
+
+
+■構文
+FreeFile(num)
+引数numには、０または１を指定します。
+⇒解説
+Openメソッドで指定する、使用可能なファイル番号を返します。
+引数numに０を指定すると、FreeFileは１～255の範囲のファイル番号を返します。
+引数numに１を指定すると、FreeFileは256～511の範囲のファイル番号を返します。
+引数numを省略すると、０が指定されたものとみなします。
+Openメソッドで、既に使用されているファイル番号を指定すると、実行時エラーが発生します。FreeFile関数を使うことで、ファイル番号の重複を避けることができます。
+※Tips
+引数numを省略するときは、括弧「()」も省略します。
+サンプル
+次の例は、FreeFile関数で使用可能なファイル番号を取得します。
+例
+Sub Sample()
+Dim n As Integer, m As Integer, buf As String
+n = FreeFile '１を返します
+Open "c:\autoexec.bat" For Input As n
+Line Input #n, buf
+m = FreeFile '２を返します
+Open "C:\Test.txt" For Output As m
+Print #m, buf
+Close m
+Close n
+End Sub
+
+・「名前を付けて保存」ダイアログを表示するには
+
+
+
+Applicationオブジェクトの「GetSaveAsFilename」メソッドを使います。
+例
+Dim fname As String
+fname = Application.GetSaveAsFilename
+メソッドを実行した結果、指定したファイル名を戻り値として返してきます。ただし、ダイアログで「キャンセル」ボタンをクリックした場合にはファイル名ではなく「False」が帰ってきます。このメソッドではファイル名が取得できるだけなので、ブックを保存する場合には取得したファイル名を使って別途ブックを保存する処理を行って下さい。
+Dim fname As String
+fname = Application.GetSaveAsFilename
+If fname <> "False" Then
+ActiveWorkbook.SaveAs Filename:=fname
+End If
+
+・マクロを実行しているファイル名を取得
+
+
+
+myfile = ThisWorkbook.Name
+
+・FileSystemObject.GetBaseName(path)
+
+
+
+ファイルのベース名を返します。ベース名とは、ファイル名のうち拡張子(ピリオドを含む)を除く文字列です。
+引数pathにはファイル名を指定します。
+ファイル名のうち拡張子だけを取得するにはGetExtensionNameプロパティを使います。
+Sub test13()
+Dim FSO As Object
+Set FSO = CreateObject("Scripting.FileSystemObject")
+''Book1を返します
+MsgBox FSO.GetBaseName("C:\Work\Book1.xls")
+Set FSO = Nothing
+End Sub
+
+・CreateObject関数
+
+
+
+外部アプリケーションをオブジェクトとして操作できる関数でIE(InternetExplorer)を操作するために欠かせないIE(InternetExplorer)オブジェクトを生成する関数でもあります。
+例
+IE(InternetExplorer)オブジェクト作成し、「VBAのIE制御」サイトのトップページを表示させるマクロになります。
+Sub sample()
+
+　Dim objIE As InternetExplorer
+　'IE(InternetExplorer)のオブジェクトを作成する
+　Set objIE = CreateObject("InternetExplorer.Application")
+'IE(InternetExplorer)を表示する
+objIE.Visible = True
+
+'指定したURLのページを表示する
+objIE.Navigate "http://www.vba-ie.net/"
+　'完全にページが表示されるまで待機する
+　Do While objIE.Busy = True Or objIE.ReadyState <> 4
+　　DoEvents
+　Loop
+End Sub
+
+・ファイルシステムオブジェクトを使うには、
+
+
+
+CreateObject関数でScripting.FileSystemObjectのインスタンス作成し、その後はインスタンスを保存した変数を使ってファイルやフォルダの操作を行います。
+
+図 1FileSystemObjectの書式
+Set 変数 = CreateObject("Scripting.FileSystemObject")
+[VBS][VBA] Scripting.FileSystemObjectオブジェクトを作成します。
+
+
+・イミディエイトウィンドウ
+
+
+
+■ソースコード上に記載されている変数は、マウスを当てるだけで内容が確認できますが、その行為だけでは変数内容が見られないケースも出てきます。
+⇒ 隠れているシートやセルの内容
+⇒ (難しいですが)配列化させた変数で現在指されていない配列要素
+⇒オブジェクトの上のソースコード上に記載がないプロパティ値
+などがそうです。このような場合は、「イミディエイトウィンドウ」を開いて確認します。
+「イミディエイトウィンドウ」は、VBEの「表示」メニューにあります。選択すると「空」のウィンドウが開きます。
+⇒イミディエイトウィンドウ
+このウィンドウに「?」を先頭に置いて、表示させたい変数や式、プロパティ値(オブジェクトから明示する)を記述し、Enterを押すと、次の行に値が表示されます。
+また、コード中に「イミディエイトウィンドウ」に表示させる内容(プロシージャ名や変数値)を記述させることもできます。記述中に「Debug.Print」に続いて表示させる文字列を指定します。
+例
+?aiu
+unko
+?Cells(1,1)
+123
+ユーザーフォームなどで、イベントが輻輳してしまうようなケースでは、「ステップ実行」を行なうと、実際の動作とイベントの状況が異なる場合がありますから、各プロシージャの先頭にこのサンプルのようにプロシージャ名を指定すると、「イミディエイトウィンドウ」にどの順にプロシージャが遷移したかが上から順に表示されます。
+複雑なループ処理を作る場合も、どのループの順に動くかなどをチェックするのに便利です。
+例
+Dim n As Integer
+
+For n = 1 To 10
+Debug.Print n 'イミディエイト ウインドウに値を表示
+If n = 7 Then Stop 'STOPで止める
+Next n
+⇒ 1
+2
+3
+4
+5
+6
+7
+
+・ウォッチウィンドウ
+
+
+
+■連続して変数や式の結果を確認する必要がある場合は「ウォッチウィンドウ」を使う方法もあります。複数の変数や式を登録しておくと一覧で表示されるので初心者には便利だと思います。
+⇒「ウォッチウィンドウ」は、マクロの起動前か中断中にウィンドウを右クリックして「ウォッチ式の追加」でウォッチしたい変数や式を登録しておく必要があります。
+
+・ウォッチウィンドウ 使い方
+
+
+
+■ウォッチウィンドウはプログラムコード中の変数やプロパティの値を調べる場合に使用します。
+⇒その際、ウォッチ式に変数やプロパティを追加します。
+1、コードより調べたい変数を反転表示させます。
+2、メニューよりデバッグ(D)→ウォッチ式の追加(A)をクリックします。
+3、ウォッチ式の追加のフォームが表示されたら式(E)に反転表示させた変数が入力済になっていることを確認し、〔ＯＫ〕をクリックします。
+4、ウォッチウィンドウに変数が表示されるので〔Ｆ８〕を押すと1行ごとにコードが実行され、変数の値を調べることができます。
+
+・ローカルウィンドウ
+
+
+
+■ 一方、「ウォッチウィンドウ」を変数の値だけに限って事前登録なく表示できるようにしてあるのが「ローカルウィンドウ」です。
+⇒これは「ウォッチウィンドウ」と違い、事前に「式」の登録が必要ないので呼び出しだけで簡単に見られますが、変数が多い場合は監視不要な変数まで表示されてしまいます。
+⇒ブレークポイント張ってでないと見れない。
+
+・Debug.Print"
+
+
+
+⇒イミディエイトウィンドウは処理を中断せずに、変数やプロパティの値を確認したい場合などに使用します。 ■"Debug.Print"につづけて変数やプロパティを指定することで、処理中の情報をイミディエイトウィンドウに表示することができます。
+例
+Sub unko()
+
+For i = 1 To 10
+
+Debug.Print i
+
+Next i
+
+End Sub
+⇒イミディエイトウィンドウの中身を開くと
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+
+・Auto_Open
+
+
+
+■ファイルを開いたときに必ず実行されるSubプロシージャ
+※ファイルを開いたときに、「これはAuto_Openマクロによって表示されたメッセージです。」というメッセージを表示させる例
+⇒Sub Auto_Open()
+　MsgBox "これはAuto_Openマクロによって表示されたメッセージです。"
+End Sub
+「Auto_Open」は大文字小文字は関係ありませんので、「auto_open」としても構いません。
+例
+Sub Auto_Open
+Call Main
+End Sub
+
+public sub Main()～
+
+・エラー処理
+
+
+
+■エラーが発生すると、どんなエラーが発生したかの情報が Errオブジェクトに格納されます。これは、On Error Resume Nextで「エラーが起きても停止しない」にしていても同様です。On Error Resume Nextは「エラー(で停止すること)を無視する」だけで「エラーを発生させない」命令ではありません。On Error Resume Nextを実行していても、エラーが発生したときには、どんなエラーが発生したかの情報がErrオブジェクトに格納されます。
+⇒エラーが発生したときは、Errオブジェクトのプロパティを調べることでどんなエラーが発生したかを調べることができます。Errオブジェクトでよく使われるプロパティとメソッドは次の通りです。これくらいを覚えておけばいいでしょう。
+■プロパティまたはメソッド 働き
+Number プロパティ エラーの種類を識別する番号が格納されます
+Description プロパティ エラーに関する簡単な説明が格納されます
+Clear メソッド エラーの情報を初期化します
+例
+Sub unko()
+
+On Error GoTo ErrorSyori
+
+Workbooks.Open ("C:\unkokoko")
+
+MsgBox "処理成功"
+
+ErrorSyori:
+
+MsgBox Err.Number & vbCrLf & Err.Description
+
+End Sub
+
+・ApplicationオブジェクトのScreenUpdatingプロパティ
+
+
+
+■画面ちらちら見えるのをなくす。レターマクロでフォーマットの置換文字列を置換しているところが見えなくして、処理速度を高めるなど。
+⇒Falseを設定すると、それ以降の画面描画を抑止
+例
+Sub Test1()
+Dim i As Long
+For i = 1 To 5000
+Cells(i, 1).Select
+Selection = i
+Next i
+End Sub
+
+Sub Test2()
+Dim i As Long
+Application.ScreenUpdating = False
+For i = 1 To 5000
+Cells(i, 1).Select
+Selection = i
+Next i
+Application.ScreenUpdating = True
+End Sub
+
+・なぜデバッグする
+
+
+
+変数にとりたいものがとれてるよねの確認など。
+
+・変数の中を置換
+
+
+
+例
+Dim 変数 As String
+変数 = "あいう"
+変数 = replace(変数,"い","え")
+End sub
+
+・クラスモジュール マクロ
+
+
+
+今回はベテランVBA使いの方にもあまり活用されていないと思われるクラスモジュールの活用について。
+現在発売されている書籍でもClassモジュールについての説明がほとんど無く、パーフェクト○○とか、完全○○とか書かれた網羅系の書籍をあたると一番最後の方に申し訳程度に掲載されているくらいだ。
+またその説明も、「使い方」に終始しており「使いどころ」については触れられていない
+クラスモジュールを扱っているVBA本
+は残念ながら日本の書籍ではまともにクラスモジュールを扱っているものは殆ど無い。
+
+・マクロ クラスモジュール使用例
+
+
+
+■オブジェクト名＝Module1
+Sub unko()
+
+Dim Err As MyErrorClass
+Set Err = New MyErrorClass
+
+For j = 1 To 10
+
+Debug.Print j
+
+If j = 3 Then
+
+Err.Say
+
+End If
+
+Next j
+
+MsgBox "処理成功"
+End Sub
+
+■オブジェクト名＝MyErrorClass
+Public Function Say()
+MsgBox ("unko" + vbLf + "unko")
+
+End Function
+
+・OraDynasetオブジェクト
+
+
+
+説明
+OraDynasetオブジェクトは、SQL SELECT文から作成されたデータの参照と更新を許可します。
+備考
+OraDynasetオブジェクトは、SQL SELECT問合せの結果セットまたはストアド・プロシージャやファンクションから戻ったPL/SQLカーソル変数を表します。これは本来、クライアント側でスクロールおよび更新できるカーソルで、実行した問合せで生成された行セットを参照できます。
+例
+' データベース処理（Oracle）
+'*******************************
+' 参照設定：Oracle InProc Server 4.0 Type Library
+Public Sub DB_PROC_ORACLE()
+On Error GoTo Err_Han
+
+'変数定義
+Dim OraSess As OraSession
+Dim OraDB As OraDatabase
+Dim OraDS As OraDynaset
+Dim sInstance As String
+Dim sUser As String
+Dim sPassword As String
+Dim vSQL As Variant
+
+'DB接続情報
+sInstance = "TEST"
+sUser = "USER"
+sPassword = "PASSWORD"
+
+'オブジェクト作成
+Set OraSess = CreateObject("OracleInProcServer.XOraSession")
+'DB接続
+Set OraDB = OraSess.OpenDatabase(sInstance, sUser & "/" & sPassword, ORADB_DEFAULT)
+
+'--------
+' 参照系
+'--------
+'Select文作成
+vSQL = "select * from T_TEST"
+'SQLセット
+Set OraDS = OraDB.CreateDynaset(vSQL, ORADYN_READONLY)
+'結果取得
+With OraDS
+'件数カウント
+If .RecordCount <> 0 Then
+'対象レコード分ループ
+Do Until .EOF
+Debug.Print .fields(0)
+'次のレコードへ
+.DbMoveNext
+Loop
+End If
+End With
+
+'--------
+' 更新系
+'--------
+'Insert文作成
+vSQL = "Insert into T_TEST (FLD1) values ('XXX')"
+'SQL実行
+OraDB.ExecuteSQL (vSQL)
+
+GoTo Obj_Rls:
+
+'------------
+' エラー処理
+'------------
+Err_Han:
+MsgBox (Err.Description)
+
+'----------
+' 開放処理
+'----------
+Obj_Rls:
+Set OraDS = Nothing
+Set OraDB = Nothing
+Set OraSess = Nothing
+MsgBox ("処理完了")
+End Sub
+Caution
+コードが右に長い場合があります。最下の横スクロールバーで確認して下さい。
+Information
+当ページはJavaScriptを使用しています。ご覧になる際はブラウザのJavaScript機能をONにして下さい。
+Page Link
+Excel-VBA- 
