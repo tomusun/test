@@ -1,0 +1,957 @@
+・Listの要素をソートする（独自クラス）
+
+
+
+★Listの要素が独自作成クラスでそれをソートしたい場合があると思いますが、Javaではそうしたソートも簡単に行えるような仕組みが用意されています。
+方法としては、データクラスとソートの条件を記述したComparatorサブクラスを用意して、Collections.sortにそれらを渡すとソートされます。サンプルは以下をご覧ください。
+★主要メソッド
+【java.util.Collectionsクラスのソートに関する主要メソッド】 戻値型 メソッド 説明
+void Collections.sort(List a, Comparator b) リストaをbに従いソートする
+■import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+
+public class ComparatorSortSample {
+
+public static void main(String[] args) {
+//ArrayListを生成する
+ArrayList<SyainClass> al = new ArrayList<SyainClass>();
+
+//Integer型の数値を追加する
+al.add(new SyainClass(1, "太郎"));
+al.add(new SyainClass(5, "五郎"));
+al.add(new SyainClass(3, "三郎"));
+al.add(new SyainClass(2, "次郎"));
+al.add(new SyainClass(4, "四郎"));
+
+
+//SyainComparatorクラスの条件に従いソートする
+Collections.sort(al, new SyainComparator());
+
+//結果を画面表示する
+Iterator<SyainClass> it = al.iterator();
+while (it.hasNext()) {
+SyainClass data = it.next();
+System.out.println(data.getSyainNo() + ":" + data.getSyainName());
+}
+■public class SyainClass {
+
+private int syainNo; //社員番号
+private String syainName; //社員名
+
+//コンストラクタ
+public SyainClass(int syainNo, String syainName) {
+this.syainNo = syainNo;
+this.syainName = syainName;
+}
+
+//社員番号取得
+public int getSyainNo(){
+return this.syainNo;
+}
+
+//社員名取得
+public String getSyainName(){
+return this.syainName;
+}
+}
+■import java.util.Comparator;
+
+public class SyainComparator implements Comparator<SyainClass> {
+
+//比較メソッド（データクラスを比較して-1, 0, 1を返すように記述する）
+public int compare(SyainClass a, SyainClass b) {
+int no1 = a.getSyainNo();
+int no2 = b.getSyainNo();
+
+//こうすると社員番号の昇順でソートされる
+if (no1 > no2) {
+return 1;
+
+} else if (no1 == no2) {
+return 0;
+
+} else {
+return -1;
+
+}
+}
+
+}
+実行結果
+1:太郎
+2:次郎
+3:三郎
+4:四郎
+5:五郎
+※ //こうすると社員番号の降順でソートされる
+if (no1 > no2) {
+return -1;
+
+} else if (no1 == no2) {
+return 0;
+
+} else {
+return 1;
+
+}
+
+・Javaで自作クラスをソートする3通りの方法【Java8】
+
+
+
+■1. ラムダ式を用いる方法(Java8以降
+■2. Comparableインターフェースを実装する方法
+ComparableインターフェースのcompareToメソッドをオーバーライドして実装する方法です。
+
+import java.util.ArrayList;
+import java.util.Collections;
+
+class Person implements Comparable<Person>{
+int age;
+String name;
+public Person( int a, String n ){
+age = a;
+name = n;
+}
+public String toString(){
+return name + ":" + Integer.toString(age);
+}
+
+@Override
+public int compareTo( Person p ){
+return this.age - p.age;
+}
+}
+
+class Main{
+public static void main(String[] av){
+ArrayList<Person> al = new ArrayList<>();
+al.add( new Person( 11, "katsuo" ) );
+al.add( new Person( 24, "sazae" ) );
+al.add( new Person( 9, "wakame" ) );
+Collections.sort( al );
+System.out.println( al );
+}
+}
+実行結果
+[wakame:9, katsuo:11, sazae:24]
+※Comparableインターフェースはjava.langパッケージに属しているので、importすることなく利用できます。compareToの返り値はラムダ式と同様にint型でなければなりません。ここで、Comparableに型名を指定しましょう。指定しない場合、compareToの引数にObject型をとらなければなりません。キャストの手間もあり、面倒です。
+Java8以前はArrayListにsort関数が実装されていない点に注意です。
+■3. Comparatorを使う方法:
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
+●class Person{
+int age;
+String name;
+public Person( int a, String n ){
+age = a;
+name = n;
+}
+public String toString(){
+return name + ":" + Integer.toString(age);
+}
+}
+●class Main{
+public static void main(String[] av){
+ArrayList<Person> al = new ArrayList<>();
+al.add( new Person( 11, "katsuo" ) );
+al.add( new Person( 24, "sazae" ) );
+al.add( new Person( 9, "wakame" ) );
+Collections.sort( al, new Comparator<Person>(){
+@Override
+public int compare(Person a, Person b){
+return a.age - b.age;
+}
+});
+System.out.println( al );
+}
+}
+実行結果
+[wakame:9, katsuo:11, sazae:24]
+Comparator型を無名クラスで生成しています。ここでも、Comparatorに型指定をしておきましょう。実はラムダ式と内部的にやっていることは一緒ですが、コードが長くなってします。Java8以降であれば、ラムダ式で書いた方がコードの見通しもよくなると思います。
+
+・package cccSort;
+
+import java.util.ArrayList;
+import java.util.Collections;
+
+public class Main {
+
+public static void main(String[] args) {
+ArrayList<Person> al = new ArrayList<>();
+al.add( new Person( 11, "katsuo" ) );
+al.add( new Person( 24, "sazae" ) );
+al.add( new Person( 9, "wakame" ) );
+Collections.sort( al );
+System.out.println( al );
+}
+
+}
+■package cccSort;
+
+class Person implements Comparable<Person>{
+int age;
+String name;
+public Person( int a, String n ){
+age = a;
+name = n;
+}
+public String toString(){
+return name + ":" + Integer.toString(age);
+}
+
+@Override
+public int compareTo( Person p ){
+return p.age - this.age;
+}
+}
+実行結果
+[sazae:24, katsuo:11, wakame:9]
+
+
+・String を要素とする ArrayList を用意し、それを並び替える方法を示します。
+
+
+
+public class SortTest {
+
+public static void main(String[] args) {
+ArrayList<String> stateList = new ArrayList<String>();
+stateList.add("TX");
+stateList.add("WA");
+stateList.add("CA");
+for(int i=0;i<stateList.size();i++){ System.out.println(stateList.get(i)); } Collections.sort(stateList); System.out.println("--- Sorted ---"); for(int i=0;i<stateList.size();i++){ System.out.println(stateList.get(i)); } } } 実行結果 TX WA CA --- Sorted --- CA TX WA ※ABC 順で並び替えられていますね。 このように自然で自明な並び替えの場合、Collections.sort を呼べばたいていの場合デフォルトのソートで十分間に合います。 ・compareToでは、Humanオブジェクト同士を比較します。 そして、自オブジェクト(this)を前にソートしたければマイナスの値を返すようにします。 逆に、後ろにソートしたければプラスの値を返すようにします。 今回は、「年齢が若い順にソートしたい」ので、this.ageが小さい場合にマイナスの値を返します。 ■import java.util.ArrayList; import java.util.Collections; import java.util.List; public class SampleSortTest { public static void main(String[] args) { List<MyComparableObject> list = new ArrayList<>();
+list.add(new MyComparableObject(20, "あさだ"));
+list.add(new MyComparableObject(20, "あさくら"));
+list.add(new MyComparableObject(18, "たなか"));
+list.add(new MyComparableObject(32, "さくま"));
+
+for(MyComparableObject obj:list){
+System.out.println(obj.getAge() + ""+ obj.getUserName());
+}
+
+Collections.sort(list);
+System.out.println("--Sort--");
+
+for(MyComparableObject obj:list){
+System.out.println(obj.getAge() + ""+ obj.getUserName());
+}
+}
+}
+■public class MyComparableObject implements Comparable<MyComparableObject> {
+
+private int age; //年齢
+private String userName; //名前
+
+public MyComparableObject(int age, String userName) {
+this.age = age;
+this.userName = userName;
+}
+
+public int getAge() {
+return age;
+}
+
+public void setAge(int age) {
+this.age = age;
+}
+
+public String getUserName() {
+return userName;
+}
+
+public void setUserName(String userName) {
+this.userName = userName;
+}
+
+/**
+* @return このインスタンスが引数として渡されたオブジェクトより前に並び替えられる場合負の値。
+* このインスタンスが引数として渡されたオブジェクトと同じ順序の場合0。
+* このインスタンスが引数として渡されたオブジェクトより後ろに並び替えられる場合正の値。
+*/
+public int compareTo(MyComparableObject passedObj) {
+
+//このインスタンスが、compareToの引数として渡されたObjectより小さい(前に並ぶ)なら負の値、
+//このインスタンスが、compareToの引数として渡されたObjectより大きい(後ろに並ぶ)なら正の値を返す。
+//同じなら、0を返せばよい。
+if(this.age<passedObj.age){
+return -1;
+}else if(this.age>passedObj.age){
+return 1;
+}else{
+return 0;
+}
+}
+}
+実行結果
+20あさだ
+20あさくら
+18たなか
+32さくま
+--Sort--
+18たなか
+20あさだ
+20あさくら
+32さくま
+
+・ComparableとComparatorの違い
+
+
+
+■Comparableインターフェースは並び替えを行うオブジェクトのクラス自体に実装します。
+(自分自身が並び替えのルールを保持している)
+■Comparatorインターフェースは並び替えを行うオブジェクトのクラスとは別のクラスに実装します。
+(自分自身は並び替えのルールを保持せず、他のクラスが並び替えのルールを保持している)
+
+・public class SmartEnergy {
+
+public static void main(String[] args) {
+List<Student> students = new ArrayList<>();
+students.add(new Student("いのうえなおみ", 24, 'f', 158));
+students.add(new Student("たかはしたつや", 23, 'm', 176));
+students.add(new Student("いのうえなおみ", 27, 'm', 164));
+students.add(new Student("えのもとめぐみ", 24, 'f', 162));
+students.add(new Student("えのもとたすく", 24, 'm', 178));
+students.add(new Student("さくらぎたかはる", 26, 'f', 163));
+
+Collections.sort(students, new Comparator<Student>() {
+public int compare(Student student1, Student student2) {
+return student1.getAge() - student2.getAge();
+}
+});
+
+for (Student student : students) {
+System.out.println(student.getName() + "," + student.getAge() + ","
++ student.getSex() + "," + student.getHeight());
+}
+}
+}
+と同じ
+
+
+
+■public class SmartEnergy {
+
+public static void main(String[] args) {
+List<Student> students = new ArrayList<>();
+students.add(new Student("いのうえなおみ", 24, 'f', 158));
+students.add(new Student("たかはしたつや", 23, 'm', 176));
+students.add(new Student("いのうえなおみ", 27, 'm', 164));
+students.add(new Student("えのもとめぐみ", 24, 'f', 162));
+students.add(new Student("えのもとたすく", 24, 'm', 178));
+students.add(new Student("さくらぎたかはる", 26, 'f', 163));
+
+Collections.sort(students, new SampleComparator());
+
+for (Student student : students) {
+System.out.println(student.getName() + "," + student.getAge() + ","
++ student.getSex() + "," + student.getHeight());
+}
+}
+}
+■import java.util.Comparator;
+
+class SampleComparator implements Comparator<Student>{
+public int compare(Student student1, Student student2) {
+return student1.getAge() - student2.getAge();
+}
+}
+※ちなみに、ComparatorのジェネリクスをStudentにしていますが、これは並び替えの対象がStudentだからです。ジェネリクスを指定しなくても以下のように書けばコンパイルはできますし、正常に動作します。
+
+（記述例３：推奨しない）
+Arrays.sort(studentarray, new Comparator() {
+public int compare(Object student1, Object student2) {
+return ((Student)student1).getAge() - ((Student)student2).getAge();
+}
+});
+
+なんですが、Eclipseを使ってると、色々と警告がでます。単純にダウンキャストを使ってるので未検査のダウンキャストかと思いきや、そうじゃないみたいです。中身はよく分かりませんが、この書き方は推奨しないよということみたいです。Java1.4まではこれで良かったんだそうな。。（昔はジェネリクスという考え方が無かった）
+■ためしに、returnの返却値をstudent2.getAge() - student1.getAge()とすると、年齢で降順（年齢が大きい順）に並び替わります。
+
+
+・２．文字順で並び替え
+あいうえお順で並び替えるとき
+
+
+
+■StringのcompareTo()メソッドを使います。次のコードを☆☆☆に書き加えてください。（１．で☆☆☆に挿入したのは一旦削除してください）
+★public class SmartEnergy {
+
+public static void main(String[] args) {
+List<Student> students = new ArrayList<>();
+students.add(new Student("いのうえなおみ", 24, 'f', 158));
+students.add(new Student("たかはしたつや", 23, 'm', 176));
+students.add(new Student("いのうえなおみ", 27, 'm', 164));
+students.add(new Student("えのもとめぐみ", 24, 'f', 162));
+students.add(new Student("えのもとたすく", 24, 'm', 178));
+students.add(new Student("さくらぎたかはる", 26, 'f', 163));
+
+//☆☆☆
+
+Collections.sort(students, new Comparator<Student>() {
+public int compare(Student student1, Student student2) {
+return student1.getName().compareTo((student2.getName()));
+}
+});
+
+for (Student student : students) {
+System.out.println(student.getName() + "," + student.getAge() + ","
++ student.getSex() + "," + student.getHeight());
+}
+}
+}
+実行結果
+いのうえなおみ,24,f,158
+いのうえなおみ,27,m,164
+えのもとたすく,24,m,178
+えのもとめぐみ,24,f,162
+さくらぎたかはる,26,f,163
+たかはしたつや,23,m,176
+※ただし、注意しなければいけないのは、StringのcompareTo()メソッドはUNICODE的な順番を比較しています。ひらがなであれば問題ないですが、漢字だと上手くいかない可能性が高いです。
+
+・３．年齢順(昇順)、あいうえお順(昇順)で並び替え
+
+
+
+public class SmartEnergy {
+
+public static void main(String[] args) {
+List<Student> students = new ArrayList<>();
+students.add(new Student("いのうえなおみ", 24, 'f', 158));
+students.add(new Student("たかはしたつや", 23, 'm', 176));
+students.add(new Student("いのうえなおみ", 27, 'm', 164));
+students.add(new Student("えのもとめぐみ", 24, 'f', 162));
+students.add(new Student("えのもとたすく", 24, 'm', 178));
+students.add(new Student("さくらぎたかはる", 26, 'f', 163));
+
+Collections.sort(students, new Comparator<Student>() {
+public int compare(Student student1, Student student2) {
+int temp = student1.getAge() - student2.getAge();
+if (temp == 0){
+return student1.getName().compareTo(student2.getName());
+}
+return temp;
+}
+});
+
+for (Student student : students) {
+System.out.println(student.getName() + "," + student.getAge() + ","
++ student.getSex() + "," + student.getHeight());
+}
+}
+}
+実行結果
+たかはしたつや,23,m,176
+いのうえなおみ,24,f,158
+えのもとたすく,24,m,178
+えのもとめぐみ,24,f,162
+さくらぎたかはる,26,f,163
+いのうえなおみ,27,m,164
+
+・３．年齢順(昇順)、あいうえお順(降順)で並び替え
+
+
+
+public class SmartEnergy {
+
+public static void main(String[] args) {
+List<Student> students = new ArrayList<>();
+students.add(new Student("いのうえなおみ", 24, 'f', 158));
+students.add(new Student("たかはしたつや", 23, 'm', 176));
+students.add(new Student("いのうえなおみ", 27, 'm', 164));
+students.add(new Student("えのもとめぐみ", 24, 'f', 162));
+students.add(new Student("えのもとたすく", 24, 'm', 178));
+students.add(new Student("さくらぎたかはる", 26, 'f', 163));
+
+Collections.sort(students, new Comparator<Student>() {
+public int compare(Student student1, Student student2) {
+int temp = student1.getAge() - student2.getAge();
+if (temp == 0){
+return student2.getName().compareTo(student1.getName());
+}
+return temp;
+}
+});
+
+for (Student student : students) {
+System.out.println(student.getName() + "," + student.getAge() + ","
++ student.getSex() + "," + student.getHeight());
+}
+}
+}
+たかはしたつや,23,m,176
+えのもとめぐみ,24,f,162
+えのもとたすく,24,m,178
+いのうえなおみ,24,f,158
+さくらぎたかはる,26,f,163
+いのうえなおみ,27,m,164
+
+・３．年齢順(降順)、あいうえお順(降順)で並び替え
+
+
+
+public class SmartEnergy {
+
+public static void main(String[] args) {
+List<Student> students = new ArrayList<>();
+students.add(new Student("いのうえなおみ", 24, 'f', 158));
+students.add(new Student("たかはしたつや", 23, 'm', 176));
+students.add(new Student("いのうえなおみ", 27, 'm', 164));
+students.add(new Student("えのもとめぐみ", 24, 'f', 162));
+students.add(new Student("えのもとたすく", 24, 'm', 178));
+students.add(new Student("さくらぎたかはる", 26, 'f', 163));
+
+Collections.sort(students, new Comparator<Student>() {
+public int compare(Student student1, Student student2) {
+int temp = student2.getAge() - student1.getAge();
+if (temp == 0){
+return student2.getName().compareTo(student1.getName());
+}
+return temp;
+}
+});
+
+for (Student student : students) {
+System.out.println(student.getName() + "," + student.getAge() + ","
++ student.getSex() + "," + student.getHeight());
+}
+}
+}
+実行結果
+いのうえなおみ,27,m,164
+さくらぎたかはる,26,f,163
+えのもとめぐみ,24,f,162
+えのもとたすく,24,m,178
+いのうえなおみ,24,f,158
+たかはしたつや,23,m,176
+
+・４．性別(char型)、年齢、名前の順に昇順に並び替える
+
+
+
+
+public class SmartEnergy {
+
+public static void main(String[] args) {
+List<Student> students = new ArrayList<>();
+students.add(new Student("いのうえなおみ", 24, 'f', 158));
+students.add(new Student("たかはしたつや", 23, 'm', 176));
+students.add(new Student("いのうえなおみ", 27, 'm', 164));
+students.add(new Student("えのもとめぐみ", 24, 'f', 162));
+students.add(new Student("えのもとたすく", 24, 'm', 178));
+students.add(new Student("さくらぎたかはる", 26, 'f', 163));
+
+//性別、年齢、名前の順に昇順に並び替える
+Collections.sort(students, new Comparator<Student>() {
+public int compare(Student student1, Student student2) {
+int temp = 0;
+if (student1.getSex() == 'm' && student2.getSex() == 'f')
+temp = -1;
+if (student1.getSex() == 'f' && student2.getSex() == 'm')
+temp = 1;
+if (temp == 0) {
+temp = student1.getAge() - student2.getAge();
+if (temp == 0)
+temp = student1.getName().compareTo(student2.getName());
+}
+return temp;
+}
+});
+
+for (Student student : students) {
+System.out.println(student.getName() + "," + student.getAge() + ","
++ student.getSex() + "," + student.getHeight());
+}
+}
+}
+実行結果
+たかはしたつや,23,m,176
+えのもとたすく,24,m,178
+いのうえなおみ,27,m,164
+いのうえなおみ,24,f,158
+えのもとめぐみ,24,f,162
+さくらぎたかはる,26,f,163
+
+・性別、年齢、名前の順に昇順に並び替えているのですが性別におけるソートの理屈がよく分かりません。なぜ性別「m」の要素が先頭に入るリストになるのか
+
+
+
+■compareメソッドは、何をするかというと、渡された２つのオブジェクトの順序（大小）を決定します。
+■順序付けのために2つの引数を比較します。最初の引数が2番目の引数より小さい場合は負の整数、両方が等しい場合は0、最初の引数が2番目の引数より大きい場合は正の整数を返します。
+という果たすべきルールがあるので、
+if (student1.getSex() == 'm' && student2.getSex() == 'f')
+temp = -1;
+このコードの中でtempに-1を設定していることの意味は
+最初のオブジェクトstudent1の性別がmで２番目のオブジェクトstudent2の性別がfである場合
+student1 < student2 である。
+つまり男性が小さいオブジェクトであるという意味です。
+なので、小さいオブジェクトである性別がmのオブジェクトが前に来ます。
+
+・性別が'x'→'f'→'m'の順にならべよ。同じ性別内では、年齢順に、同じ年齢であれば名前順（あいうえお順）に並べよ。
+
+
+
+public class SmartEnergy {
+
+public static void main(String[] args) {
+List<Student> students = new ArrayList<>();
+students.add(new Student("いのうえなおみ", 24, 'f', 158));
+students.add(new Student("たかはしたつや", 23, 'm', 176));
+students.add(new Student("いのうえなおみ", 27, 'm', 164));
+students.add(new Student("えのもとめぐみ", 24, 'f', 162));
+students.add(new Student("えのもとたすく", 24, 'm', 178));
+students.add(new Student("さくらぎたかはる", 26, 'f', 163));
+students.add(new Student("くらもとますみ", 26, 'x', 168));
+
+Collections.sort(students, new Comparator<Student>() {
+public int compare(Student student1, Student student2) {
+int temp = 0;
+// 性別から、順序を定めるために全9通りのうち性別が異なる
+// 6通りから判断し、tempに格納する。同じ性別の場合は0のまま。
+if (student1.getSex() == 'f' && student2.getSex() == 'm')
+temp = -1;
+if (student1.getSex() == 'f' && student2.getSex() == 'x')
+temp = 1;
+if (student1.getSex() == 'm' && student2.getSex() == 'f')
+temp = 1;
+if (student1.getSex() == 'm' && student2.getSex() == 'x')
+temp = 1;
+if (student1.getSex() == 'x' && student2.getSex() == 'f')
+temp = -1;
+if (student1.getSex() == 'x' && student2.getSex() == 'm')
+temp = -1;
+// 同じ姓別である場合は、年齢順に
+if (temp == 0)
+temp = student1.getAge() - student2.getAge();
+// 同じ性別で同じ年齢ならば、名前順に
+if (temp == 0)
+temp = student1.getName().compareTo(student2.getName());
+return temp;
+}
+});
+
+for (Student student : students) {
+System.out.println(student.getName() + "," + student.getAge() + ","
++ student.getSex() + "," + student.getHeight());
+}
+}
+}
+実行結果
+くらもとますみ,26,x,168
+いのうえなおみ,24,f,158
+えのもとめぐみ,24,f,162
+さくらぎたかはる,26,f,163
+たかはしたつや,23,m,176
+えのもとたすく,24,m,178
+いのうえなおみ,27,m,164
+
+・情報提供区分(昇順)、通し番号(昇順)
+
+
+
+■public class GasSort {
+
+public static void main(String[] args) {
+
+
+List<DokanEntity> DokanEntitys = new ArrayList<>();
+DokanEntitys.add(new DokanEntity("20170402", 2, 1));
+DokanEntitys.add(new DokanEntity("20170402", 6, 1));
+DokanEntitys.add(new DokanEntity("20170402", 1, 2));
+
+Collections.sort(DokanEntitys, new Comparator<DokanEntity>() {
+public int compare(DokanEntity dokanEntity1, DokanEntity dokanEntity2) {
+int temp = dokanEntity1.getInfoKubun() - dokanEntity2.getInfoKubun();
+
+if(temp == 0){
+temp = dokanEntity1.getTosiNo() - dokanEntity2.getTosiNo();
+return temp;
+}
+return temp;
+
+}});
+for (DokanEntity dokanEntity : DokanEntitys) {
+System.out.println(dokanEntity.getDate() + "," + dokanEntity.getInfoKubun() + ","
++ dokanEntity.getTosiNo());
+}
+}
+}
+■public class DokanEntity {
+
+private String date;
+private int infoKubun;
+private int tosiNo;
+
+public DokanEntity(String date, int infoKubun, int tosiNo){
+this.date = date;
+this.infoKubun = infoKubun;
+this.tosiNo = tosiNo;
+}
+
+public String getDate() {
+return date;
+}
+public void setDate(String date) {
+this.date = date;
+}
+public int getInfoKubun() {
+return infoKubun;
+}
+public void setInfoKubun(int infoKubun) {
+this.infoKubun = infoKubun;
+}
+public int getTosiNo() {
+return tosiNo;
+}
+public void setTosiNo(int tosiNo) {
+this.tosiNo = tosiNo;
+}
+実行結果
+20170402,1,2
+20170402,2,1
+20170402,6,1
+
+・日付(昇順)、情報提供区分(昇順)、通し番号(降順)
+
+
+
+package gggSort;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+public class GasSort {
+
+public static void main(String[] args) {
+
+List<DokanEntity> DokanEntitys = new ArrayList<>();
+DokanEntitys.add(new DokanEntity("20170402", 2, 1));
+DokanEntitys.add(new DokanEntity("20170403", 1, 1));
+DokanEntitys.add(new DokanEntity("20170404", 6, 1));
+DokanEntitys.add(new DokanEntity("20170403", 1, 2));
+DokanEntitys.add(new DokanEntity("20170403", 2, 1));
+
+Collections.sort(DokanEntitys, new Comparator<DokanEntity>() {
+public int compare(DokanEntity dokanEntity1, DokanEntity dokanEntity2) {
+int temp = dokanEntity1.getDate().compareTo(dokanEntity2.getDate());
+
+if(temp == 0){
+temp = dokanEntity1.getInfoKubun() - dokanEntity2.getInfoKubun();
+}
+if(temp == 0){
+temp = dokanEntity2.getTosiNo() - dokanEntity1.getTosiNo();
+}
+return temp;
+
+}});
+for (DokanEntity dokanEntity : DokanEntitys) {
+System.out.println(dokanEntity.getDate() + "," + dokanEntity.getInfoKubun() + ","
++ dokanEntity.getTosiNo());
+}
+}
+}
+実行結果
+20170402,2,1
+20170403,1,2
+20170403,1,1
+20170403,2,1
+20170404,6,1
+
+・漢字でソート
+
+
+
+// あ、い、う、え、おで始まる文字をListに入れる
+String[] strArray1 = { "阿吽", "以下", "宇宙", "縁側", "尾ひれ" };
+List<String> list = new ArrayList<String>();
+list = Arrays.asList( strArray1 );
+
+// 通常のCollections.sortを使用した場合
+// 読みなどは関係なく、単純なUnicode上のコード順になる
+Collections.sort( list );
+System.out.println( list );
+//=> [以下, 宇宙, 尾ひれ, 縁側, 阿吽]
+
+// Collatorを使用した場合
+// アイウエオ順にソートされている
+Collator collator = Collator.getInstance( Locale.JAPANESE );
+Collections.sort( list, collator );
+System.out.println( list );
+//=> [阿吽, 以下, 宇宙, 縁側, 尾ひれ]
+■java.text.Collatorによる、それっぽい日本語ソート
+技術評論社から出てる文字コード技術入門を読んでいたら、java.text.Collatorというのが出てきた。使ったことなかったけど、より自然な文字列のソートをしてくれるものらしい。
+Collatorを使うと単純な文字コード順ではなく、ある程度、読み（基本的には音読み？）を意識した順番でソートしてくれる。
+
+・String[] KanjiNumbers = {"一","二","三","四","五","六","七","八","九"};
+List<String> stringList = Arrays.asList(KanjiNumbers);
+
+Collections.sort(stringList);//ソート
+System.out.println(stringList);//表示
+結果
+
+
+
+[一, 七, 三, 九, 二, 五, 八, 六, 四]
+⇒
+Collections#sort()を使った場合、1,7,3...と並んでしまう。
+調べた結果、デフォルトではUnicodeの順番に並ぶらしい
+数字 UTF16
+一 feff4e00
+七 feff4e03
+三 feff4e09
+九 feff4e5d
+二 feff4e8c
+五 feff4e94
+八 feff516b
+六 feff516d
+十 feff5341
+四 feff56db
+
+・String[] KanjiNumbers = {"一","二","三","四","五","六","七","八","九"};
+List<String> stringList = Arrays.asList(KanjiNumbers);
+
+Collator collator = Collator.getInstance(Locale.JAPAN);
+Collections.sort(stringList,collator);
+System.out.println(stringList);
+
+
+
+結果
+[一, 九, 五, 三, 四, 七, 二, 八, 六]
+確証はないがこのルールで並んでいると思う
+数字 音読み
+一 いち
+九 きゅう
+五 ご
+三 さん
+四 し
+七 なな
+二 に
+八 やつ？
+六 ろく
+
+・Locale オブジェクト
+
+
+
+■Locale オブジェクトは、地理的、政治的、または文化的に特定の地域を表します。ある 操作で Locale を必要とするタスクがある場合、その操作をロケールに依存する操作と いいます。
+■ロケール（既定の地域・ 言語）
+
+・オブジェクトのソート(漢字)
+public class SmartEnergy {
+
+public static void main(String[] args) throws UnsupportedEncodingException {
+List<Student> students = new ArrayList<>();
+students.add(new Student("井上直美", 24, 'f', 158));
+students.add(new Student("高橋達也", 23, 'm', 176));
+students.add(new Student("安藤純一", 27, 'm', 164));
+students.add(new Student("榎本恵", 24, 'f', 162));
+students.add(new Student("榎本タスク", 24, 'm', 178));
+students.add(new Student("桜木満", 26, 'f', 163));
+
+Collections.sort(students, new Comparator<Student>() {
+public int compare(Student student1, Student student2) {
+final Collator japanCollation =Collator.getInstance( Locale.JAPANESE );
+int temp = 0;
+temp = japanCollation.compare(student1.getName(),student2.getName());
+return temp;
+}
+});
+
+for (Student student : students) {
+System.out.println(student.getName() + "," + student.getAge() + ","
++ student.getSex() + "," + student.getHeight());
+}
+実行結果
+安藤純一,27,m,164
+井上直美,24,f,158
+榎本タスク,24,m,178
+榎本恵,24,f,162
+高橋達也,23,m,176
+桜木満,26,f,163
+※高橋のところが音読みでソートしていることが問題。
+⇒正しくソートさせるように修正
+
+
+
+
+よみがなのフィールドを作成してそれを使う様に変更
+■public class SmartEnergy {
+
+public static void main(String[] args) throws UnsupportedEncodingException {
+
+List<Student> students = new ArrayList<>();
+students.add(new Student("井上直美", "いのうえ なおみ", 24, 'f', 158));
+students.add(new Student("矢田一郎", "やだ いちろう", 23, 'm', 176));
+students.add(new Student("安藤純一", "あんどう じゅんいち", 27, 'm', 164));
+students.add(new Student("榎本恵", "えのもと めぐみ", 24, 'f', 162));
+students.add(new Student("榎本タスク", "えのもと たすく", 24, 'm', 178));
+students.add(new Student("桜木満", "さくらぎ みつる", 26, 'f', 163));
+
+Collections.sort(students, new Comparator<Student>() {
+public int compare(Student student1, Student student2) {
+int temp = 0;
+
+temp = student1.getFurigana().compareTo(student2.getFurigana());
+return temp;
+}
+});
+
+for (Student student : students) {
+System.out.println(student.getName() + "," + student.getFurigana() + ","+ student.getAge() + ","
++ student.getSex() + "," + student.getHeight());
+}
+実行結果
+安藤純一,あんどう じゅんいち,27,m,164
+井上直美,いのうえ なおみ,24,f,158
+榎本タスク,えのもと たすく,24,m,178
+榎本恵,えのもと めぐみ,24,f,162
+桜木満,さくらぎ みつる,26,f,163
+矢田一郎,やだ いちろう,23,m,176
+■public class Student {
+
+// 年齢
+private int age;
+// 身長
+private int height;
+// 名前
+private String name;
+
+// 名前ふりがな
+private String furigana;
+
+// 性別
+private char sex;
+
+// コンストラクタ
+public Student(String name,String furigana, int age, char sex, int height){
+this.age = age;
+this.height = height;
+this.name = name;
+this.furigana = furigana;
+this.sex = sex;
+}
+// 以下、ゲッターとセッター
+public int getAge(){ return age; }
+public void setAge(int age){ this.age = age; }
+public int getHeight() { return height; }
+public void setHeight(int height) { this.height = height; }
+public String getName() { return name; }
+public void setName(String name) { this.name = name; }
+public String getFurigana() {
+return furigana;
+}
+public void setFurigana(String furigana) {
+this.furigana = furigana;
+}
+public char getSex() { return sex; }
+public void setSex(char sex) { this.sex = sex; }
+}
+※よみがなのフィールドを作成してそれを使う様に変更
+漢字を元にソートしてしまうと、たとえば「河野（かわの）」と「河野（こうの）」の区別ができないなどの根本的な問題があります
