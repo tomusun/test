@@ -1,0 +1,391 @@
+enum詳細
+・処理結果の成否を列挙型
+
+
+
+■列挙型はクラスのように自分で作ることができるデータ型で、定数をまとめたものになります。
+では今回、処理結果の成否を列挙型で持つことにします。
+列挙型を作るには enum というキーワードを使ってあげて、列挙型の名前を Result のように書いてあげて、次に続く { } の中にこの列挙型が用いる定数をいくらでも書いていくことができます。
+では今回は SUCCESS と ERROR としましょう。
+定数なので大文字で書くと良いでしょう。
+それから最後のカンマはあってもなくても良いので…、データを追加するときなどに便利なのでとりあえず付けておきたいと思います。
+こうすると Result 型を使うことができるので、例えば「Result res;」のように宣言することができて、res には SUCCESS か ERROR のどちらかが入るのだな、ということが分かりやすくなります。
+あとは値を代入したり、条件分岐に使うことができたりします。
+⇒例えば処理が上手く行かなかった場合は res に ERROR を入れたいのですが、その場合は「res = Result.ERROR;」としてあげれば OK です。
+あとは switch 文で条件分岐したかった場合は res の値に応じて case を書いていけば OK です。
+ここの res は Result 型というのがわかっているので、このように Result と書かずに SUCCESS とか ERROR とかいきなり書いていってしまえば OK です。
+では処理を書いていきたいのですが、とりあえず SUCCESS と ERROR の条件分岐をしてしまいましょう。
+それぞれに何らかのメッセージを出力したいかと思うので、では SUCCESS の時は OK! にしてあげて…、ERROR の時には NG! にしてあげたいと思います。
+⇒ちなみに、列挙型を定義すると ordinal() という特殊なメソッドも定義されて、0 からはじまる連番がセットされたりします。
+この場合だと、SUCCESS が 0 で ERROR が 1 ですね。
+この数値を取り出したい場合は ordinal メソッドを使えば良いので、例えば「System.out.println(res.ordinal());」としてあげると SUCCESS の場合は 0、そして ERROR の場合は 1 が出力されるはずです。
+では実行してみましょう。
+今 ERROR なので NG! と 1 が出力されるはずです。
+ちなみに列挙型は実はもっと奥が深くて、内部的には特殊なクラスとして扱われているので実はこの中にフィールドやメソッドを持つことができます。
+例
+// 列挙型
+enum Result {
+SUCCESS, // 0
+ERROR, // 1
+}
+
+public class MyApp {
+
+public static void main(String[] args) {
+Result res;
+
+res = Result.ERROR;
+
+switch (res) {
+case SUCCESS:
+System.out.println("OK!");
+System.out.println(res.ordinal()); // 0
+break;
+case ERROR:
+System.out.println("NG!");
+System.out.println(res.ordinal()); // 1
+break;
+}
+}
+}
+
+・Enumを使うことによる最大のメリットは、
+
+
+
+■ソースの可読性が上がることだと思います。定数はintやStringで定義せず、Enumを使うことで読みやすいソースにしましょう。
+Enumのポイント的なもの
+enumを定義すると自動的に「java.lang.Enum<E>」を継承する
+ordinalは要素を追加すると値が変わるのでコード値を定義した方がよい
+extendsは出来ないけれどimplementsは出来る
+インタフェースを用意してジェネリクスを使用することで汎用化できる
+
+・
+■public enum Globe {
+MARC,
+KEIKO,
+TK
+}
+■public class Main {
+
+public static void main(String[] args) {
+Globe g = Globe.TK;
+switch (g) {
+case MARC:
+System.out.println("マルセイユ出身");
+break;
+case KEIKO:
+System.out.println("大分出身");
+break;
+case TK:
+System.out.println("東京出身");
+break;
+default:
+}
+}
+}
+実行結果
+
+
+
+東京出身
+※Javaではswitch文に列挙型が使用可能なので、Enumを条件分岐に使用することができます。
+
+・
+■public enum Globe {
+/** 列挙定数の定義 */
+MARC("酒井龍一"),
+KEIKO("山田桂子"),
+TK("小室哲哉");
+
+/** フィールド変数 */
+private String label;
+
+/** コンストラクタ */
+Globe(String label) {
+this.label = label;
+}
+
+/** 名称取得メソッド */
+public String getLabel() {
+return this.label;
+}
+}
+※動きとして
+MARC("酒井龍一")⇒Globe(String label)⇒KEIKO("山田桂子")⇒Globe(String label)⇒TK("小室哲哉")⇒Globe(String label)
+※labelはunkoに変えても問題ない。
+■public class Main {
+
+public static void main(String[] args) {
+for (Globe globe : Globe.values()) {
+// [列挙定数の位置]定数名,ラベル
+System.out.println("[" + globe.ordinal() + "]" + globe.name() + "," + globe.getLabel())
+}
+}
+}
+実行結果
+
+
+
+[0]MARC,酒井龍一
+[1]KEIKO,山田桂子
+[2]TK,小室哲哉
+※Enumは列挙型という「型」 ですので、フィールド変数やメソッドも定義することができます。
+⇒上記のように、フィールド変数を定義してコンストラクタを用意することで、列挙定数「TK」に対応する名称「小室哲哉」を定義することができました。
+※Enumを定義すると自動的に「java.lang.Enum<E>」を継承するため、列挙定数の位置を表す「ordinal」、定数名を表す「name」も定義された状態となります。
+列挙定数を定義した順に、ordinalがゼロから順番に割り当てられていることが分かります。
+
+・列挙定数の位置を指定して名称を取得
+列挙定数の位置が”1″の名称を 取得してみましょう
+
+
+
+■public class Main {
+
+public static void main(String[] args) {
+String label = Globe.getLabelByOrdinal(1);
+System.out.println("ボーカル：" + label);
+}
+}
+実行結果
+ボーカル：山田桂子
+■public enum Globe {
+/** 列挙定数の定義 */
+MARC("酒井龍一"),
+KEIKO("山田桂子"),
+TK("小室哲哉");
+
+/** フィールド変数 */
+private String label;
+
+/** コンストラクタ */
+Globe(String label) {
+this.label = label;
+}
+
+/** 名称取得メソッド */
+public String getLabel() {
+return this.label;
+}
+
+public static String getLabelByOrdinal(int ordinal) {
+// 列挙定数を取得
+Globe[] globe = Globe.values();//globeの中身、[MARC, KEIKO, TK]
+// 列挙定数の位置（ordinal）を指定してラベルを取得
+return globe[ordinal].getLabel();
+}
+}
+※このように、列挙定数の位置を指定することで、定数の名称を取得できることが分かりました。しかしながら通常、定数はコード値が決まっていて、位置を指定して名称を取得したりしませんよね？
+
+・コード値から名称を取得する
+
+
+
+
+■public enum Globe {
+/** 列挙定数の定義 */
+MARC("酒井龍一", 11),
+KEIKO("山田桂子", 12),
+TK("小室哲哉", 13);
+
+/** フィールド変数 */
+private String label;
+private int value;
+
+/** コンストラクタ */
+Globe(String label, int value) {
+this.label = label;
+this.value = value;
+}
+
+/** 名称取得メソッド */
+public String getLabel() {
+return this.label;
+}
+
+/** 値取得メソッド */
+public int getValue() {
+return this.value;
+}
+}
+■public class Main {
+
+public static void main(String[] args) {
+for (Globe globe : Globe.values()) {
+// // [列挙定数の序数]名前,ラベル,値
+System.out.println("[" + globe.ordinal() + "]" + globe.name() + ","
++ globe.getLabel() + "," + globe.getValue());
+}
+}
+}
+実行結果
+[0]MARC,酒井龍一,11
+[1]KEIKO,山田桂子,12
+[2]TK,小室哲哉,13
+
+・コード値を指定して名称を取得
+
+
+
+■public class Main {
+
+public static void main(String[] args) {
+String label = Globe.getLabelOfGlobe(11);
+System.out.println("ラップ：" + label);
+}
+}
+実行結果
+ラップ：酒井龍一
+■public enum Globe {
+/** 列挙定数の定義 */
+MARC("酒井龍一", 11),
+KEIKO("山田桂子", 12),
+TK("小室哲哉", 13);
+
+/** フィールド変数 */
+private String label;
+private int value;
+
+/** コンストラクタ */
+Globe(String label, int value) {
+this.label = label;
+this.value = value;
+}
+
+/** 名称取得メソッド */
+public String getLabel() {
+return this.label;
+}
+
+/** 値取得メソッド */
+public int getValue() {
+return this.value;
+}
+
+public static String getLabelOfGlobe(int value) {
+String label = "";
+for (Globe globe : Globe.values()) {
+if (globe.getValue() == value) {
+label = globe.getLabel();
+break;
+}
+}
+return label;
+}
+}
+
+・【疑問】Enum毎に同じ処理を書かなければいけない？
+STEP3では、メソッド「getLabelOfGlobe」を定義して、コード値から名称を取得しました。しかしながら、このメソッドは列挙型「Globe」にしか対応していません。
+次のようなEnumが定義されている場合、コード値から名称を取得するメソッドを新たに定義しなければならないのでしょうか？
+
+
+
+★Enumを使った処理を共通化する
+インタフェース（interface）とジェネリクス（Generics）を使用して、共通化を図ります。
+■public interface CodeEnumIF {
+
+/** コード名称の取得 */
+public String getLabel();
+
+/** コード値の取得 */
+public int getValue();
+}
+※「コード名称を取得する処理」と「コード値を取得する処理」は、各Enumに共通している処理なので、インタフェースでメソッドを用意します。
+■public class CodeEnum {
+
+/**
+* globeのEnum
+*/
+public enum Globe implements CodeEnumIF {
+/** 列挙定数の定義 */
+MARC("酒井龍一", 11),
+KEIKO("山田桂子", 12),
+TK("小室哲哉", 13);
+
+/** フィールド変数 */
+private String label;
+private int value;
+
+/** コンストラクタ */
+Globe(String label, int value) {
+this.label = label;
+this.value = value;
+}
+
+/** コード名称の取得（CodeEnumIF.getLabel の実装） */
+public String getLabel() {
+return this.label;
+}
+
+/** コード値の取得（CodeEnumIF.getValue の実装） */
+public int getValue() {
+return this.value;
+}
+}
+
+/**
+* TM NETWORKのEnum
+*/
+public enum TmNetwork implements CodeEnumIF {
+/** 列挙定数の定義 */
+KINE("木根尚登", 11),
+UTSU("宇都宮隆", 12),
+KOMURO("小室哲哉", 13);
+
+/** フィールド変数 */
+private String label;
+private int value;
+
+/** コンストラクタ */
+TmNetwork(String label, int value) {
+this.label = label;
+this.value = value;
+}
+
+/** コード名称の取得（CodeEnumIF.getLabel の実装） */
+public String getLabel() {
+return this.label;
+}
+
+/** コード値の取得（CodeEnumIF.getValue の実装） */
+public int getValue() {
+return this.value;
+}
+}
+}
+■public class CodeUtil {
+public static <E extends CodeEnumIF> String getLabel(Class<E> enumClass, int value) {
+String label = "";
+for (E e : enumClass.getEnumConstants()) {//enumClass.getEnumConstants()⇒[KINE, UTSU, KOMURO]
+if (e.getValue() == value) {//e.getValue()⇒12など
+label = e.getLabel();
+break;
+}
+}
+return label;
+}
+}
+※ここでは、型に依存せず汎用的に利用できるメソッドにするために、「ジェネリクス」という機能を使っています。
+ジェネリクスとは？
+ジェネリクスとは、型をパラメータ化することにより、汎用的に扱えるようにする機能のことです。定義された型は「総称型」とも呼ばれ、利用時に特定の型に対応付けられます。
+※
+上記のメソッドでは、
+<E extends CodeEnumIF>
+が該当しますね。
+このコードは、インタフェース「CodeEnumIF」を継承した総称型「E」という意味を持っています。今回の例で「E」に該当するのは「Globe」「TmNetwork」の2つということになります。
+■import renyuu1.CodeEnum.Globe;
+import renyuu1.CodeEnum.TmNetwork;
+
+public class Main {
+
+public static void main(String[] args) {
+//列挙型「Globe」から名称を取得
+String vocal = CodeUtil.getLabel(TmNetwork.class, 12);
+System.out.println("ボーカル：" + vocal);
+
+//列挙型「TmNetwork」から名称を取得
+String vocal2 = CodeUtil.getLabel(Globe.class, 12);
+System.out.println("ボーカル：" + vocal2);
+}
+}
+※上記のようにClassオブジェクトを引数として渡すだけで、各列挙型からコード値に対応する名称を取得することが出来ました
