@@ -1,0 +1,170 @@
+○文字列に改行コードがあれば削除する処理（サクラエディタでも意識すること）
+
+
+
+■String crf = System.getProperty("line.separator");
+String str = "あいうえお\r\nかきくけこ\r\nさしすせそ";
+System.out.println(str.replaceAll(crf, ""));
+※改行コードは
+Win: \r\n
+Linux :\n
+です。
+改行コードは「プラットフォーム（＝OS)依存」です。
+まじめにやるならば、改行コードはプロパティから取得する必要があります
+
+○Pairクラス
+
+
+
+org.apache.commons.lang3.tuple.Pair
+■Apache Commons Collections に用意されています。インスタンスを作るのにファクトリメソッドを使わせたり、MutableかImmutableか選べたり、
+値の取り出し方に幅を持たせてあったりと、丁寧な作りをしています。
+インスタンス作成
+Pair.of(key, value)
+MutablePair.of(key, value)
+キー・値の取り出し
+Key は getKey() か getLeft() で、Value は getValue() か getRight() で可能
+値の変更
+MutablePair は setValue() メソッドにより値だけ変更可能
+矢印(右)例
+インスタンス作成
+例
+String from = ～
+String to = ～
+return Pair.of(from,to);
+Pair<String,String> pair = split～
+uketsukeEntiy.set～(pair.getKey());
+uketsukeEntiy.set～(pair.getValue());
+例2
+List<Pair<String,List<SuperHero>>> listByTeikyoInfokbn =
+new ArrayList<Pair<String,List<SuperHero>>>();
+
+List<SuperHero> listWork = new ArrayList<SuperHero>();
+listWork.add(work)
+listWork.add(Pair.of("日付",listwork);
+
+○会社コード、供給地点特定番号、日付にぶら下がるオブジェクト
+を持つＭａｐ
+
+
+
+■SuperHero superHero = new SuperHero();
+
+superHero.setHP("131");
+superHero.setMP("231");
+
+Map<String,Map<String,List<Pair<String,List<SuperHero>>>>> mapByKaisyaCode =
+new HashMap<String,Map<String,List<Pair<String,List<SuperHero>>>>>();
+
+Map<String,List<Pair<String,List<SuperHero>>>> mapByKyokyuuchitenTokuteiNo =
+new HashMap<String,List<Pair<String,List<SuperHero>>>>();
+
+List<Pair<String,List<SuperHero>>> listByTeikyoInfokbn =
+new ArrayList<Pair<String,List<SuperHero>>>();
+
+List<SuperHero> listWork = new ArrayList<SuperHero>();
+listWork.add(superHero);
+listWork.add(superHero);
+
+listByTeikyoInfokbn.add(Pair.of("20170630", listWork));
+listByTeikyoInfokbn.add(Pair.of("20170701", listWork));
+
+mapByKyokyuuchitenTokuteiNo.put("123456", listByTeikyoInfokbn);
+
+mapByKaisyaCode.put("0001",mapByKyokyuuchitenTokuteiNo);
+
+System.out.println(mapByKaisyaCode);
+
+●mapByKaisyaCodeの中身
+{0001={123456=[(20170630,[rensyuu.SuperHero@6b159400, rensyuu.SuperHero@6b159400]), (20170701,[rensyuu.SuperHero@6b159400, rensyuu.SuperHero@6b159400])]}}
+
+○Pairを使わないで
+
+
+
+■SuperHero superHero = new SuperHero();
+
+superHero.setHP("131");
+superHero.setMP("231");
+
+Map<String,Map<String,List<Map<String,List<SuperHero>>>>> mapByKaisyaCode =
+new HashMap<String,Map<String,List<Map<String,List<SuperHero>>>>>();
+
+Map<String,List<Map<String,List<SuperHero>>>> mapByKyokyuuchitenTokuteiNo =
+new HashMap<String,List<Map<String,List<SuperHero>>>>();
+
+List<Map<String,List<SuperHero>>> listByTeikyoInfokbn =
+new ArrayList<Map<String,List<SuperHero>>>();
+
+List<SuperHero> listWork = new ArrayList<SuperHero>();
+listWork.add(superHero);
+listWork.add(superHero);
+
+Map<String,List<SuperHero>> map = new HashMap<String,List<SuperHero>>();
+map.put("20170630", listWork);
+map.put("20170701", listWork);
+
+listByTeikyoInfokbn.add(map);
+
+mapByKyokyuuchitenTokuteiNo.put("123456", listByTeikyoInfokbn);
+
+mapByKaisyaCode.put("0001",mapByKyokyuuchitenTokuteiNo);
+●mapByKaisyaCodeの中身
+{0001={123456=[{20170630=[rensyuu.SuperHero@38c966da, rensyuu.SuperHero@38c966da], 20170701=[rensyuu.SuperHero@38c966da, rensyuu.SuperHero@38c966da]}]}}
+
+○会社コードの取得
+
+
+
+Set<String> keys = mapByKaisyaCode.keySet();
+String KaisyaCode = keys.iterator().next();
+System.out.println(KaisyaCode);
+
+○供給地点特定番号の取得
+
+
+
+Map<String,List<Map<String,List<SuperHero>>>> syutokuByKyokyuuchitenTokuteiNo =
+mapByKaisyaCode.get("0001");
+Set<String> keys2 = syutokuByKyokyuuchitenTokuteiNo.keySet();
+String kyokyuuchitenTokuteiNo = keys2.iterator().next();
+System.out.println(kyokyuuchitenTokuteiNo);
+
+○日付の取得
+
+
+
+Map<String,List<Map<String,List<SuperHero>>>> syutokuByKyokyuuchitenTokuteiNo =
+mapByKaisyaCode.get("0001");
+List<Map<String,List<SuperHero>>> dateList = syutokuByKyokyuuchitenTokuteiNo.get("123456");
+
+for(int i =0;i < dateList.size();i++){
+Map<String,List<SuperHero>> dateMap= date.get(i);
+
+for (String key3 : dateMap.keySet()) {
+System.out.println("val : " + key3);
+}
+⇒
+val : 20170630
+val : 20170701
+
+○日付にぶら下がるオブジェクトの取得
+
+
+
+■List<Map<String,List<SuperHero>>> dateList = syutokuByKyokyuuchitenTokuteiNo.get("123456");
+
+for(int i =0;i < dateList.size();i++){
+Map<String,List<SuperHero>> dateMap= dateList.get(i);
+
+for (String key3 : dateMap.keySet()) {
+List<SuperHero> SuperHeros = dateMap.get(key3);
+for(SuperHero superHeroOne:SuperHeros){
+System.out.println("object : " + superHeroOne.getMP());
+}
+}
+⇒
+object : 231
+object : 231
+object : 231
+object : 231 
