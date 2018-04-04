@@ -1,0 +1,63 @@
+package rensyuu2;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class CsvDiff {
+
+	public static void main(String[] args) {
+
+		String filename1= "C:\\Users\~\\Desktop\\File1.txt";
+		String filename2= "C:\\Users\~\\Desktop\\File2.txt";
+
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(filename1));
+			BufferedReader reader2 = new BufferedReader(new FileReader(filename2));
+
+			String str = null;
+			String str2 = null;
+			String custCode = null;
+			String seikyuGaku = null;
+			String custCode2 = null;
+			String seikyuGaku2 = null;
+			int addKingaku = 0;
+
+			List<String> list = new ArrayList<String>();
+			while((str = reader.readLine()) != null){
+
+				String array[] = str.split( "," );
+				custCode = array[0];
+				seikyuGaku = array[1];
+				System.out.println(custCode);
+
+				while((str2 = reader2.readLine()) != null){
+
+					String array2[] = str2.split( "," );
+					custCode2 = array2[0];
+					seikyuGaku2 = array2[1];
+
+					if(custCode.equals(custCode2)){
+						list.add(custCode2);
+					}
+				}
+				if(list.size() == 1){
+					if(seikyuGaku.equals(seikyuGaku2)){
+						System.out.println("¿‹Šz‚ªˆê’v‚µ‚Ä‚¢‚Ü‚·");
+					}
+				}else if(list.size() > 1){
+					for(String kingaku:list){
+						addKingaku +=Integer.parseInt(kingaku);
+					}
+					//if()
+				}
+			}
+			reader.close();
+			reader2.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
