@@ -1,0 +1,2416 @@
+◯要素をまとめて選択
+
+
+
+■$("要素名")
+要素をまとめて選択することができる
+例
+$('a')
+
+◯属性を利用した選択方法
+基本となる書き方
+
+
+
+■$('[属性="値"]')
+属性がこの値のものを選択という意味
+例
+$('[title="jQuery"]');
+
+◯属性の値に指定した文字列を含むという意味
+
+
+
+■$('[属性*="文字列"]')
+イコールの前にアスタリスクを書くと属性の値に指定した文字列を含むという意味
+
+◯スペース区切りされた属性の値の中に指定した値と一致するものを含む
+
+
+
+■$('[属性~="値"]')
+チルダを使うと
+スペース区切りされた属性の値の中に指定した値と一致するものを含む※１つでも一致するば選択することができる
+例
+class ="project jquery"
+
+◯指定した属性の値を含まない
+
+
+
+■$('[属性!="値"]')
+指定した属性の値を含まない
+not([属性="値"])と等価
+
+◯属性の値が指定した文字列で終わる。
+
+
+
+■$('[属性$="文字列"]')
+属性の値が指定した文字列で終わる。
+
+◯a要素でhref属性がhttps:で始まるものを選択
+
+
+
+■$('[属性^="文字列"]')
+ハット記号を書いた場合
+属性の値が指定した文字列で始まる。
+例
+$('a[href^="https:"]')
+a要素でhref属性がhttps:で始まる
+
+◯p要素全体の中で0番目の要素
+
+
+
+$("p:eq(0)")
+p要素全体の中で0番目の要素
+
+◯p要素全体の中で2番目より大きな要素
+
+
+
+$("p:gt(2)")
+p要素全体の中で2番目より大きな要素。丸カッコで選択した数より大きな数のものを選択できる
+gt=greater than
+
+◯p要素全体の中で2番目より小さな要素
+
+
+
+$("p:lt(2)")
+p要素全体の中で2番目より小さな要素。数字の番号よりも小さな番号を選択できる。
+
+◯p要素全体の中で偶数(0,2,4,...)の要素を選択
+
+
+
+$("p:even")
+p要素全体の中で偶数(0,2,4,...)の要素を選択するという意味
+
+◯p要素全体の中で奇数(1,3,5,...)の要素を選択
+
+
+
+$("p:odd")
+p要素全体の中で奇数(1,3,5,...)の要素を選択するという意味
+
+◯p要素全体の中で最初の要素
+
+
+
+$("p:first")
+p要素全体の中で最初の要素
+$("p:eq(0)")と同じ
+
+・親が同一の要素の中で先頭がpの要素
+
+
+
+$("p:first-child")
+親が同一の要素の中で先頭がpの要素
+⇒
+<body>
+<di v class="block sec1">
+<h1>タイトル1</h1>⇒pではないので選択されない
+<p>その1</p>
+<p>その2</p>
+<p>その3</p>
+</di v>
+<di v class="block sec2">
+<p>その4</p>⇒選択される
+<p>その5</p>
+<p>その6</p>
+<di v>補足</di v>
+</di v>
+<di v class="block sec3">
+<p>そのA</p>⇒選択される
+<p>そのB</p>
+<p>そのC</p>
+</di v>
+</body>
+
+・親が同一の要素の中で最初に出てくるpの要素
+
+
+
+$("p:first-of-type")
+親が同一の要素の中で最初に出てくるpの要素
+⇒
+<body>
+<di v class="block sec1">
+<h1>タイトル1</h1>
+<p>その1</p>⇒選択される
+<p>その2</p>
+<p>その3</p>
+</di v>
+<di v class="block sec2">
+<p>その4</p>⇒選択される
+<p>その5</p>
+<p>その6</p>
+<di v>補足</di v>
+</di v>
+<di v class="block sec3">
+<p>そのA</p>⇒選択される
+<p>そのB</p>
+<p>そのC</p>
+</di v>
+</body>
+
+・p要素全体の中で末尾の要素
+
+
+
+$("p:last")
+p要素全体の中で末尾の要素
+<body>
+<di v class="block sec1">
+<h1>タイトル1</h1>
+<p>その1</p>
+<p>その2</p>
+<p>その3</p>
+</di v>
+<di v class="block sec2">
+<p>その4</p>
+<p>その5</p>
+<p>その6</p>
+<di v>補足</di v>
+</di v>
+<di v class="block sec3">
+<p>そのA</p>
+<p>そのB</p>
+<p>そのC</p>⇒選択される
+</di v>
+</body>
+
+・親が同一の要素の中で末尾がpの要素
+
+
+
+$("p:last-child")
+親が同一の要素の中で末尾がpの要素
+body>
+<di v class="block sec1">
+<h1>タイトル1</h1>
+<p>その1</p>
+<p>その2</p>
+<p>その3</p>⇒選択される
+</di v>
+<di v class="block sec2">
+<p>その4</p>
+<p>その5</p>
+<p>その6</p>
+<di v>補足</di v>>⇒末尾がpではないので選択されない
+</di v>
+<di v class="block sec3">
+<p>そのA</p>
+<p>そのB</p>
+<p>そのC</p>⇒選択される
+</di v>
+</body>
+
+・親が同一の要素の中で末尾に出てくるpの要素
+
+
+
+$("p:last-of-type")
+親が同一の要素の中で末尾に出てくるpの要素
+body>
+<di v class="block sec1">
+<h1>タイトル1</h1>
+<p>その1</p>
+<p>その2</p>
+<p>その3</p>⇒選択される
+</di v>
+<di v class="block sec2">
+<p>その4</p>
+<p>その5</p>
+<p>その6</p>⇒選択される
+<di v>補足</di v>>
+</di v>
+<di v class="block sec3">
+<p>そのA</p>
+<p>そのB</p>
+<p>そのC</p>⇒選択される
+</di v>
+</body>
+
+・n番目を選択する
+
+
+
+
+$("p:nth-～")という一連のセレクタ
+CSS由来で1から数えるので注意が必要。
+$("p:nth-child(1)")
+親が同一の要素の中で1番目がpの要素を選択
+body>
+<di v class="block sec1">
+<h1>タイトル1</h1>⇒p要素ではないので選択されない
+<p>その1</p>
+<p>その2</p>
+<p>その3</p>
+</di v>
+<di v class="block sec2">
+<p>その4</p>⇒選択される
+<p>その5</p>
+<p>その6</p>
+<di v>補足</di v>>
+</di v>
+<di v class="block sec3">
+<p>そのA</p>⇒選択される
+<p>そのB</p>
+<p>そのC</p>
+</di v>
+</body>
+■$("p:nth-child(～)")
+～の中は
+数字
+evenを書くと1から数えて偶数番目
+oddを書くと1から数えて奇数番目
+式 3n+1なら3の倍数1 ※複雑な選択ができるので便利
+などが入る
+例
+$("p:nth-child(even)")
+<p>その1</p>
+<p>その3</p>
+<p>その5</p>
+<p>そのB</p>
+が選択される
+
+・親が同一の要素の中で1番目に出てくるp要素
+
+
+
+$("p:nth-of-type(1)")
+親が同一の要素の中で1番目に出てくるp要素
+<p>その1</p>
+<p>その4</p>
+<p>そのA</p>
+が選択される
+
+・親が同一の要素の中で末尾から1番目がpの要素
+
+
+
+$("p:nth-last-child(1)")
+親が同一の要素の中で末尾から1番目がpの要素
+<p>その3</p>
+<p>そのC</p>
+が選択される
+
+・親が同一の要素の中で末尾から1番目に出てくるp要素
+
+
+
+$("p:nth-last-of-type(1)")
+親が同一の要素の中で末尾から1番目に出てくるp要素
+<p>その3</p>
+<p>その6</p>
+<p>そのC</p>
+
+★★
+◯同じ要素でsec1クラスの直後にあるdi v
+
+
+
+■$(".sec1 + di v")
+同じ要素でsec1クラスの直後にあるdi v
+左側の要素の直後にある右側の要素を選択することができる
+例
+<di v class="block sec1">
+<h1>タイトル1</h1>
+<p>その1</p>
+<p>その2</p>
+<p>その3</p>
+</di v>
+<di v class="block sec2">⇒選択される
+<p>その4</p>
+<p>その5</p>
+<p>その6</p>
+<di v>補足</di v>>
+</di v>
+
+◯同じ親要素でsec1クラスの後に続くdi v
+
+
+
+■$(".sec1 ~ di v")
+同じ親要素でsec1クラスの後に続くdi v
+⇒
+<di v class="block sec1">
+<h1>タイトル1</h1>
+<p>その1</p>
+<p>その2</p>
+<p>その3</p>
+</di v>
+<di v class="block sec2">⇒選択される
+<p>その4</p>
+<p>その5</p>
+<p>その6</p>
+<di v>補足</di v>>
+</di v>
+<di v class="block sec3">⇒選択される
+<p>そのA</p>
+<p>そのB</p>
+<p>そのC</p>
+</di v>
+
+◯body要素の子孫のdi v
+
+
+
+■$("body di v")
+body要素の子孫のdi v
+⇒
+<di v class="block sec1">⇒選択される
+<h1>タイトル1</h1>
+<p>その1</p>
+<p>その2</p>
+<p>その3</p>
+</di v>
+<di v class="block sec2">⇒選択される
+<p>その4</p>
+<p>その5</p>
+<p>その6</p>
+<di v>補足</di v>>⇒選択される
+</di v>
+<di v class="block sec3">⇒選択される
+<p>そのA</p>
+<p>そのB</p>
+<p>そのC</p>
+</di v>
+
+◯body要素の子のdi v ※直下のみ
+
+
+
+■$("body > di v")
+body要素の子のdi v ※直下のみ
+⇒
+<di v class="block sec1">
+<di v class="block sec2">
+<di v class="block sec3">
+の3つが選択される
+
+◯<input type="～">
+$('input[type="text"]')
+という書き方は面倒。
+
+
+
+■簡単に書くための短い書き方が用意されている。
+⇒簡単な指定でフォームの部品を選択できる
+$(":text") ※input[type="text"]の対応をしている
+$(":file")
+$(":password")
+$(":checkbox")
+$(":radio")
+$(":button")
+※<button>のものと<input type="button">のものも選択される。
+$(":image")
+※<input type="image">のものが選択される。<img>は選択されない
+$(":reset")　リセットボタンは、入力フォームに記入した内容を全て削除し、入力する前の状態に戻す（リセットする）ボタンです。
+※<input type="reset">が選択される
+$(":submit")
+※<button>のものと<input type="submit">が選択される。<button>の初期値はtype="submit"のため
+
+◯フォーム部品の選択された状態に対する選択
+
+
+
+$(":selected")
+選択状態のoption
+例
+<select>
+<option>選択肢1</option>⇒選択肢1を選んだら選択される
+<option selected="">選択肢2</option>⇒選択肢2を選んだら選択される
+</select>
+
+◯チェックされている要素を選択。
+
+
+
+■$(":checked")
+チェックされている要素を選択。
+※チェックされているチェックボックスとラジオボタンも選択される
+例
+<label><input type="checkbox">チェックボックス</label>
+<label><input type="radio" name="group" value="1">値1</label>
+<label><input type="radio" name="group" value="2">値2</label>
+※$(":checked")だけだと非常に多くのものが選択されてしまうので、
+$(":checkbox:checked")やidを指定する形で$("#cb:checked")などで使用する。
+⇒
+例
+<input type="checkbox" id="cb">
+チェックしていたら選択される。チェックを外すと何も選択されていない形になる。
+例2
+<label><input type="radio" name="group" value="1">値1</label>
+<label><input type="radio" name="group" value="2">値2</label>
+に対し、$("input[name=group]:cheked")
+
+◯要素の状態に対する選択
+フォーカス、表示状態の要素と非表示状態の要素を選択する
+
+
+
+$(":focus")
+フォーカスの当たっているものが選択状態になる。
+$(":visible")
+$(":hidden")
+表示状態の要素と非表示状態の要素を選択する
+例
+まず$("input").hide()で隠す。
+$(":visible")をやると表示状態のものだけが選択された状態になる
+$(":hidden")をやるとブラウザ上に表示されていないものが選択される
+
+◯有効な要素と無効な要素が選択
+
+
+
+$(":enable")
+$(":disable")
+有効な要素と無効な要素が選択される。
+例
+<input type="reset" disabled>が選択される
+
+◯要素の中身の状態に対する選択
+空
+
+
+
+$(":empty")
+中身が空の要素を選択
+例
+$("select:empty")
+
+◯自身が親である要素を選択
+
+
+
+$(":parent")
+自身が親である要素を選択する。内部にテキストやほかの要素を選択するという意味になる
+例
+$("select:parent")
+
+◯子孫の要素に指定の文字列を含む
+
+
+
+$(":contains(～)")
+子孫の要素に指定の文字列を含む
+例
+$(":contains(1)") 1という文字列を子孫の要素に含んでいる要素という意味
+⇒
+<label><input type="radio" name="group" value="1">値1</label>
+<button>ボタン1</button>
+が選択される
+
+◯子孫の要素に指定の要素を含む
+
+
+
+$(":has(～)")
+子孫の要素に指定の要素を含む
+例
+$(":has(input)")
+子孫の要素にinput要素を含む要素を選択する
+⇒
+<label><input type="checkbox">チェックボックス</label>
+<label><input type="radio" name="group" value="1">値1</label>
+<label><input type="radio" name="group" value="2">値2</label>
+が選択される
+
+◯～ではない要素
+body内の要素でinputでないものを選択
+
+
+
+$(":not(～)")
+～ではない要素
+例
+$("body :not(input)"); //body内の要素でinputでないもの
+例2
+$("body :not(input):empty");
+※コロンによる条件の指定は連続して書くことも可能
+
+◯ヘッダー要素を指定した選択方法
+h1、h2などのh数字という要素を選択
+
+
+
+$(":header");
+h1、h2などのh数字という要素を選択することができる
+例
+$(":header").each(function(){
+console.log($(this).text());
+⇒そのページの目次を手軽に表示することができる
+
+◯横断に関するAPIのドキュメントは下記にまとまっている
+
+
+
+http://api.jquery.com/category/traversing/
+
+◯横断とは
+
+
+
+■選択した要素を基点として他の要素を選択する処理をいう
+⇒例えば、ある要素の前や後の要素、ある要素の親や子の要素。
+ボタンをクリック⇒ボタンの次の要素の内容を変えるといった処理ができるようになる。
+
+◯兄弟要素の横断方法を学ぶ
+兄弟要素とは
+
+
+
+■DOMのツリーで同じ親を持つ同じ階層の要素のこと指す
+大きく分けて3種類ある
+兄弟後 .next() .nextAll() .nextUntil()
+兄弟後 .prev() .prevAll() .prevUntil()
+兄弟全 .siblings()
+
+◯ <body>
+<ul style="position: relative;">
+<li>1</li>
+<li>2
+<ul id="target2">
+<li>2-1</li>
+<li>2-2
+<ul>
+<li>2-2-1</li <li>2-2-2</li>
+<li>2-2-3</li>
+<li id="target1">2-2-4</li>
+<li>2-2-5</li>
+<li>2-2-6</li>
+<li>2-2-7</li>
+</ul>
+</li>
+<li>2-3</li>
+</ul>
+</li>
+<li>3</li>
+</ul>
+</body>
+
+◯兄弟要素で後の要素
+
+
+
+$("～").next()
+兄弟要素で後の要素
+例
+$("#target1").next()
+⇒<li>2-2-5</li>が選択される
+■$("～").next(セレクタ)
+セレクタ指定時は一致する場合のみ
+例
+$("#target1").next("spa n")
+⇒次の要素ではspa n"ではないので空になる。つまり選択されない。
+$("#target1").next("li")
+⇒<li>2-2-5</li>が選択される
+■$("#target1").nextAll()
+⇒<li>2-2-5</li>
+<li>2-2-6</li>
+<li>2-2-7</li>
+が選択される
+■$("～").nextAll(セレクタ)
+セレクタ指定時は一致する要素のみ
+
+◯兄弟要素で後すべて。ただし条件の要素の前まで。
+
+
+
+■$("～").nextUntil(条件)
+兄弟要素で後すべて。ただし条件の要素の前まで。
+例
+$("#target1").nextUntil(":contains(7)") //7という文字列を含んでいる要素という意味
+⇒<li>2-2-5</li>
+<li>2-2-6</li>
+が選択される
+
+◯$("#target1").prevUntil(":contains(1)")
+
+
+
+⇒<li>2-2-2</li>
+<li>2-2-3</li>
+が選択される
+
+◯$("～").prevUntil(条件,フィルタ)
+フィルタ指定時は一致する要素のみ
+
+◯兄弟要素すべてを選択
+
+
+
+■$("～").siblings()
+兄弟要素すべてを選択する
+例
+$("#target1").siblings()
+<li>2-2-1</li>
+<li>2-2-2</li>
+<li>2-2-3</li>
+<li>2-2-5</li>
+<li>2-2-6</li>
+<li>2-2-7</li>
+が選択された状態
+■$("～").siblings(セレクタ)
+セレクタ指定時は一致する要素のみ
+
+◯子系
+子要素や孫要素の横断方法
+
+
+
+子　.children() .contents .find()
+
+◯1つ下の階層を選択
+
+
+
+■$("～").children()
+1つ下の階層
+例
+$("#target2").children();
+<li>2-1</li>
+<li>2-2
+<ul>
+<li>2-2-1</li>
+<li>2-2-2</li>
+<li>2-2-3</li>
+<li id="target1">2-2-4</li>
+<li>2-2-5</li>
+<li>2-2-6</li>
+<li>2-2-7</li>
+</ul>
+</li>
+<li>2-3</li>
+が選択された状態
+
+◯$("～").childrenセレクタ
+セレクタが一致した要素のみ
+例
+
+
+
+例
+$("#target2").children(":even");
+⇒<li>2-2-1</li>
+<li>2-2-3</li>
+が選択される
+
+◯1つ下の階層を選択
+
+
+
+■$("～").contents()
+1つ下の階層
+childrenと違うのはテキストノードを含むこと。
+例
+<ul id="target2">
+<li>2-1</li>の間の部分。今は改行とスペース。
+
+◯条件に一致する子孫要素を選択
+
+
+
+■$("～").find(条件)
+条件に一致する子孫要素
+例
+$("#target2").find(("li");
+⇒
+<li>2-1</li>
+<li>2-2
+<ul>
+<li>2-2-1</li>
+<li>2-2-2</li>
+<li>2-2-3</li>
+<li id="target1">2-2-4</li>
+<li>2-2-5</li>
+<li>2-2-6</li>
+<li>2-2-7</li>
+</ul>
+</li>
+<li>2-3</li>
+が選択
+
+◯親系
+親要素や先祖要素の横断方法
+
+
+
+親 .parent() .parents() .parentsUntil()
+親条件 .closest() .offsetParent()
+
+◯親要素(1階層上)
+
+
+
+■$("～").parent()
+親要素(1階層上)
+例
+$("#target1").parent();
+⇒1つ上のul要素が選択される
+
+◯先祖要素(全ての親要素)
+
+
+
+■$("～").parents()
+先祖要素(全ての親要素)
+例
+$("#target1").parents();
+階層を1つづつさかのぼって全て選択している。
+
+◯$("～").parent(セレクタ)
+$("～").parents(セレクタ)
+セレクタが一致した要素のみ
+
+◯先祖要素。ただし条件の要素の1つ前まで
+
+
+
+■$("～").parentsUntil(条件)
+先祖要素。ただし条件の要素の1つ前まで
+例
+$("#target1").parentsUntil("#target2");
+⇒<ul id="target2">が選択されないところまで選択している
+
+・$("～").parentsUntil(条件,フィルタ)
+　フィルタ指定時は一致する要素のみ
+
+◯自身から先祖要素にさかのぼり最初に条件に一致した要素
+
+
+
+■$("～").closest(条件)
+自身から先祖要素にさかのぼり最初に条件に一致した要素
+例
+$("#target1").closest("ul")
+⇒先祖要素の中で最初に出てくるul要素を選択している
+例2
+$("#target1").closest("li")
+⇒target1を自分自身から先祖要素にさかのぼっていく,その中で最初に出てくるli要素は自分自身なので<li id="target1">2-2-4</li>を選択している
+
+◯先祖要素で、positionがrelative,absolute,fixedのいずれかの要素を選択。
+
+
+
+■$("～").offsetParent()
+先祖要素で、positionがrelative,absolute,fixedのいずれかの要素を選択。
+要素の位置計算を行うときに利用する。
+例
+$("#target1").offsetParent()
+　→<ul style="position: relative;">が選択される 
+
+★★
+◯絞り込み系のメソッド
+条件で絞り込む
+まずli要素をすべて選択し、ul要素を持っているものに絞る
+
+
+
+■$("～").filter(条件)
+条件で絞り込む
+例
+$("li").filter(":has(ul)");　※まずli要素をすべて選択し、フィルターを使ってul要素を持っているものに絞る
+⇒
+<body>
+<ul style="position: relative;">
+<li class="top">0</li>
+<li>1　⇒選択される
+<ul class="nst1">
+<li class="top">1-0</li>
+<li>1-1　⇒選択される
+<ul class="nst2">
+<li class="top">1-1-0</li>
+<li>1-1-1</li>
+<li>1-1-2</li>
+<li>1-1-3</li>
+<li>1-1-4</li>
+<li>1-1-5</li>
+<li>1-1-6</li>
+</ul>
+</li>
+<li>1-2</li>
+</ul>
+</li>
+<li>2</li>
+</ul>
+</body>
+
+◯$("li").filter(":last-child");
+
+
+
+⇒
+　<li>1-1-6</li>
+　<li>1-2</li>
+　<li>2</li>
+が選択される
+
+◯フィルターに関数を指定した場合
+
+
+
+■$(".nst2 li").filter(function(i){
+return i % 3 == 0;
+});　//iには0,1,2,3,4,5,6が入る
+※フィルターに関数を指定した場合は、returnでtrueが戻った要素のものが選択対象
+３の倍数のみを選択対象とするプログラム
+⇒
+<li class="top">1-1-0</li>
+<li>1-1-3</li>
+<li>1-1-6</li>
+が選択される
+
+◯li要素の中でul要素を内部に持っているものを選択
+
+
+
+■$("～").has(条件)
+条件を持っている要素を選択
+例
+$("li").has("ul")　※li要素の中でul要素を内部に持っているものを選択
+⇒
+<li>1　⇒選択される
+<ul class="nst1">
+<li class="top">1-0</li>
+<li>1-1　⇒選択される
+
+◯番号指定系
+現在選択している要素を番号で絞り込むメソッド
+
+
+
+.eq()
+.first()
+.last()
+.slice()
+
+◯番号の要素を選択
+
+
+
+■$("～").eq(番号)
+番号の要素を選択
+⇒選択したJqueryオブジェクトの配列上のデータの中で指定した番号の要素を取り出す。この取り出したものはJqueryオブジェクト。
+例
+$(".nst2 li").eq(2);
+⇒<li>1-1-2</li>が選択される
+例2
+$(".nst2 li").eq(-2);
+⇒<li>1-1-5</li>が選択される。-1,-2と数える
+
+◯先頭の要素を選択。
+
+
+
+$("～").first()
+先頭の要素を選択。$("～").eq(0)と同じ
+例
+$(".nst2 li").first();
+　⇒<li class="top">1-1-0</li>が選択される
+
+◯末尾の要素を選択
+
+
+
+$("～").last()
+末尾の要素を選択
+例
+$(".nst2 li").last();
+⇒ <li>1-1-6</li>が選択される
+
+◯開始から終了の１つ前までの要素を選択
+
+
+
+■$("～").slice(開始[,終了])
+開始から終了の１つ前までの要素を選択。終了省略時は末尾まで。
+例
+$(".nst2 li").slice(2);
+⇒
+　<li>1-1-2</li>
+<li>1-1-3</li>
+<li>1-1-4</li>
+<li>1-1-5</li>
+<li>1-1-6</li>
+が選択される
+例2
+$(".nst2 li").slice(2,4);
+⇒
+　<li>1-1-2</li>
+<li>1-1-3</li>
+が選択される
+例3
+$(".nst2 li").slice(-2);
+⇒
+<li>1-1-5</li>
+<li>1-1-6</li>
+が選択される
+例4
+$(".nst2 li").slice(-4,-2);　※-4から-2の一つ手前までを選択
+⇒
+<li>1-1-3</li>
+<li>1-1-4</li>
+が選択される
+
+◯否定形
+リストの中でクラスがtop以外の要素を選択
+
+
+
+■$("～").not(条件)
+条件以外の要素を選択
+例
+$("li").not(".top")
+⇒リストの中でクラスがtop以外の要素を選択
+
+◯３の倍数のものを除外
+
+
+
+■$(".nst2 li").not(function(i){
+return i % 3 == 0;
+});//引数iには要素の番号が入っている。要素１つづつに関数を実行して戻り値がtrueのものを否定、除外する。
+※３の倍数のものを除外している。
+<li>1-1-1</li>
+<li>1-1-2</li>
+<li>1-1-4</li>
+<li>1-1-5</li>
+を選択。
+
+◯選択追加系
+現在選択している要素に追加する方法。メソッド
+
+
+
+.add()
+.addBack()
+
+◯条件の要素を追加
+
+
+
+■$("～").add(条件)
+条件の要素を追加
+例
+$(".nst2 li").add(".top");
+例2
+<ul>
+<li>list item 1</li>
+<li>list item 2</li>
+<li>list item 3</li>
+</ul>
+<p>a paragraph</p>
+⇒$( "li" ).add( "p" ).css( "background-color", "red" );
+※P要素が新しく作られるというわけではなく、条件に追加されるということ
+
+◯現在の要素に加え１つ前の要素を追加
+
+
+
+■$("～").～().addBack()
+現在の要素に加え１つ前の要素を追加
+～()で選択した要素に加え、$("～")の要素も選択する
+例
+$(".top").next().addBack();
+⇒nextで選択した要素に加えてクラスtopの要素も追加される
+　　<li class="top">0</li>
+<li>～</li>
+<li class="top">1-0</li>
+<li>～</li>
+<li class="top">1-1-0</li>
+<li>1-1-1</li>
+が選択される
+
+◯条件に一致した１つ前の要素
+
+
+
+■$("～").～().addBack(条件)
+条件に一致した１つ前の要素
+例
+$(".top").next().addBack(":odd");//奇数のものが選択されている
+⇒
+　<li>～</li>
+<li class="top">1-0</li>
+<li>～</li>
+<li>1-1-1</li>
+が選択される
+※<li class="top">0</li>⇒選択されない
+<li class="top">1-0</li>⇒選択される
+<li class="top">1-1-0</li>⇒選
+
+◯選択破棄
+現在選択している要素の選択を破棄して１つ前の状態にする。
+
+
+
+■$("～").～().end()
+１つ前の状態に戻す。
+～()を破棄して$("～")の状態にする
+例
+・$(".nst2 .top").nextAll().css("color","red").end().css("color","blue");
+⇒<li class="top" style="color:blue;">1-1-0</li>が青色になる。
+<li>1-1-1</li>
+<li>1-1-2</li>
+<li>1-1-3</li>
+<li>1-1-4</li>
+<li>1-1-5</li>
+<li>1-1-6</li>
+が赤色になる。
+赤色にした後、nextAllの選択を破棄して$(".nst2 .top")を選択した状態にして青色にする。
+
+◯現在選択している要素全てに対して処理を行う。
+
+
+
+■.each
+現在選択している要素全てに対して処理を行う。
+$("～").each(function(i,e){})
+要素すべてに対して処理
+functionの第一引数は選択した要素の番号を表す。第２引数は選択した要素自身を表す。thisは現在処理中の要素を指す。eとfunction内のthisは同じものを指す。
+例
+・$(".nst2 li").each(function(i,e){
+var num = "[" + i + "]";
+console.log(num, $(this).text());　※thisはDOM要素なのでJqueryで囲ること。
+});
+実行結果
+[0] 1-1-0
+[1] 1-1-1
+[2] 1-1-2
+[3] 1-1-3
+[4] 1-1-4
+[5] 1-1-5
+[6] 1-1-6
+
+◯.map()
+
+
+
+■現在選択している要素全てに対して処理を行い、functionのreturnの結果をまとめた新しいJQueryオブジェクトを作成する。
+$("～").map(function(i,e){})
+書き方は基本的にはeachと同じ。
+例
+$(".nst2 li").map(function(i,e){
+var num = "[" + i + "]";
+return num + " " + $(this).text();
+});
+実行結果
+["[0] 1-1-0"
+"[1] 1-1-1"
+"[2] 1-1-2"
+"[3] 1-1-3"
+"[4] 1-1-4"
+"[5] 1-1-5"
+"[6] 1-1-6"]
+※配列ではなくJQueryオブジェクト。
+そのため配列として処理を行うにはgetメソッドで配列を取り出す必要がある。取り出した配列で改行区切りで結合して出力している
+$(".nst2 li").map(function(i,e){
+var num = "[" + i + "]";
+return num + " " + $(this).text();
+}).get().join("\n");
+⇒eachは内部で処理を行うだけであったがmapは結果を取り出して加工することができる。用途が違うので注意。
+
+◯現在選択している要素が条件を満たしているか判定する
+
+
+
+■.is()
+現在選択している要素が条件を満たしているか判定する。
+要素が条件を満たすか true falseで得ることができる。
+$("～").is(条件)
+例
+$("li").each(function(i,e){
+var $this = $(this);
+if($this.is(":last-child")){
+$this.css("color","blue");
+}
+});
+例2
+$("li").click(function(){
+var $this = $(this);
+if($this.is(".top")){
+console.log("top!!");
+}else{
+console.log("not top.");
+}
+});0;
+※クラスがtopであるかないかで結果が変わってくる。
+
+◯JQueryのイベントに関するドキュメント
+
+
+
+http://api.jquery.com/category/events/
+
+◯イベント系メソッドの共通知識
+
+
+
+イベント系メソッド＝イベントの設定(クリックしたときの処理を設定するなど)、イベントの発火(クリックを起こすなど)
+■$("～").メソッド(function(){});//クリックしたときなどの処理を設定などfunctionの中の処理が実行される。
+⇒よく使われるほう
+■$("～").メソッド(); //クリックしたときの処理を実行する。など
+
+◯イベント系のメソッドに処理を登録する際の書き方
+
+
+
+$(function() {
+// h1のクリックに処理を設定
+$("h1").click(function() {
+console.log("h1 クリック");
+});
+
+// pのクリック用の処理
+var pClick = function() {
+console.log("p クリック");
+};
+var pWClick = function() {
+console.log("p ダブルクリック");
+};
+
+// pのクリック、ダブルクリックに処理を設定
+$("p").click(pClick);
+$("p").dblclick(pWClick);
+});
+※イベント系のメソッドに処理を登録する際は直接functionを書くやり方やfunctionの処理を変数に格納しておき設定する方法もある。
+
+◯フォーム系＆シリアライズ メソッド
+
+
+
+.change()
+.submit()
+.serialize()
+.serializeArray()
+
+◯
+<body>
+<form id="f">
+名前:<input type="text" name="name"><br>
+性別
+<label><input type="radio" name="sex" value="m">男</label>
+<label><input type="radio" name="sex" value="f">女</label>
+<br>
+<label>
+<input type="checkbox" name="tos" value="ok">
+利用規約の確認
+</label>
+<br>
+<input type="submit">
+</form>
+</body>
+⇒
+$(function() {
+// ラジオボタンの値変更された時の処理
+
+
+
+$(":radio").change(function() {
+var name = $(this).attr("name");//name属性の値を得る
+var val = $(this).val();
+console.log(name, val);
+});
+実行結果
+sex m
+sex f
+など切り替えたときに出力
+
+◯// チェックボックスの値変更
+
+
+
+$(":checkbox").change(function() {
+var name = $(this).attr("name");
+var isChecked = $(this).prop("checked");//チェックが入っているかどうかの判定。trueかfalseを得る
+console.log(name, isChecked);
+});
+実行結果
+tos true
+tos false ※チェックボックス外した時
+
+◯// 入力欄の値変更
+
+
+
+$(":text").change(function() {
+var name = $(this).attr("name");
+var val = $(this).val();
+console.log(name, val);
+});
+※ほかの要素にフォーカスが当たった時に出力
+
+◯// submitの処理
+
+
+
+$("#f").submit(function() {
+console.log(this);//このthisは formになる
+
+// フォームデータのシリアライズ
+
+
+
+console.log($(this).serialize()); //フォームから送られるデータを得ることができる。＆やイコールからなる文字列を取得できる。
+console.log($(this).serializeArray());　//配列として得ることができる。
+
+// イベントを停止(サブミットの処理を停止させている。)。イベントでは「return false」とすることでイベントがDOMツリーを伝播していくことを止めることができる。よくある使い方としては入力欄がすべて埋まっていない時に「return false」とすることでサブミットを停止する。そして、アラートなどで入力欄が入力されていませんと表示するという使い方が多い。
+return false;
+});
+※submitメソッドはフォームに対して登録するので注意
+実行結果
+<form id="f">...</form>
+name=s&sex=f&tos=ok
+0: {name: "name", value: "s"}
+1: {name: "sex", value: "f"}
+2: {name: "tos", value: "ok"}
+
+◯リサイズやスクロールのイベント メソッド
+
+
+
+.resize()
+.scroll()
+
+// ウィンドウサイズ変更
+$(window).resize(function() {//ウインドウを引数にJQueryオブジェクトを作成
+var w = $(window).width();
+var h = $(window).height();
+console.log(w, h);
+});
+
+// 行を増やす スクロールバーが表示されるまで。
+for (var i = 0; i < 5; i ++) {//p要素は最初は1つであるがappendすることで２つになる。２回目の処理では２つになり、appendすることで４つになる。このように倍々になる。
+var p = $("p").clone();
+$("body").append(p);
+}
+
+// スクロールの処理
+$(window).scroll(function() {
+var top = $(window).scrollTop();//現在のスクロールの縦位置を得ることができる。
+console.log(top + "px");
+});
+
+★★
+・イベントのバブリング
+
+
+
+■バブリングとはイベントがDOMツリーの上位に伝播していく現象
+■
+<di v id="btnOut2">
+<di v id="btnOut1">
+<button id="btn">ボタン</button><br>
+</di v>
+</di v>
+⇒
+$(function() {
+// クリック時の処理
+$("*").click(function() {// 全ての要素を対象
+var tag = this.tagName;
+var id = this.id;
+console.log("click", tag, id);
+});
+});
+実行結果
+click HTML
+click BUTTON btn
+click di v btnOut1
+click di v btnOut2
+click BODY
+click HTML
+※水の中の泡が徐々に上がっていくのに例えてバブリングと呼ぶ
+
+・上記ソースよりボタンの横をクリック
+実行結果
+
+
+
+click di v btnOut1
+click di v btnOut2
+click BODY
+click HTML
+※１つずつ上にバブリングしていくのがわかる。
+このようにバブリングは上の階層に伝わっていくが下の階層には伝わらない。
+
+・バブリングをブロックしたい場合、
+
+
+
+■「return falseを設定する」
+例
+$(function() {
+// クリック時の処理
+$("*").click(function() {// 全ての要素を対象
+var tag = this.tagName;
+var id = this.id;
+console.log("click", tag, id);
+return false;
+});
+});
+ボタンをおしても実行結果は
+click BUTTON btn
+のみ
+※バブリングはイベントの処理を行うのに必須の知識
+
+・.onメソッド
+
+
+
+■汎用的にイベントの処理を追加するオン
+.on("click",～)
+例
+<body>
+<button id="btn">追加</button>
+<ul>
+<li>項目</li>
+</ul>
+⇒
+$(function() {
+// 「追加」ボタンの処理
+$("#btn").click(function() {
+var li = $("li").clone();
+$("ul").append(li);
+});
+
+// liのクリックに処理を設定
+$("li").click(function() {//この時点で存在するli要素のみが対象
+console.log("click", this);
+});
+$("li").on("click", function() {//この時点で存在するli要素のみが対象
+console.log("on1", this);
+});
+
+// liのクリックに処理を設定
+$("ul").on("click", "li", function() {
+//ul要素配下のli要素をクリックした時。最初の時点から存在するul要素を監視し、その配下にあるliがクリックしたときの処理を」登録。配下li要素のどれかがクリックされたときにバブリングされてくるイベントを検知してリスト要素がクリックされたということを検知
+console.log("on2", this);
+});
+//このように途中で項目が増えるような内容の場合には上の階層に処理を登録しておき、onを使ってそのように処理を登録するとよい
+
+//$("body").on("click", "li", function() { bodyを入れることで今後追加するすべての要素に対して対象にすることができる。
+// console.log("on3", this);
+//});
+});
+
+</script>
+
+・「項目をクリック」
+実行結果
+
+
+
+click <li>?項目?</li>?
+on1 <li>?項目?</li>?
+on2 <li>?項目?</li>?
+
+・追加ボタンを押し、項目を増やし、増やした項目をクリック
+実行結果
+
+
+
+on2 <li>?項目?</li>?
+
+・<body>
+<button id="btnExec">実行</button><br>
+<button id="btnDelAll">イベント全削除</button><br>
+<button id="btnDelUnq">特定イベント削除</button>
+⇒
+$(function() {
+// 「実行」ボタンの処理
+$("#btnExec").click(function() {
+console.log("click click");
+});
+$("#btnExec").on("click", function() {
+console.log("on click");
+});
+$("#btnExec").on("click.myEvnt", function() {//click.unkoでも実行できる
+console.log("on click.myEvnt");
+});
+
+// 「イベント全削除」ボタンの処理
+$("#btnDelAll").click(function() {
+$("#btnExec").off("click");// イベントの処理を取り除いている
+});
+
+// 「特定イベント削除」ボタンの処理
+$("#btnDelUnq").click(function() {
+$("#btnExec").off("click.myEvnt");
+});
+});
+
+</script>
+
+・実行ボタン押下後の
+実行結果
+
+
+
+click click
+on click
+on click.myEvnt
+
+・イベント全削除ボタンをクリックしてから実行ボタン押下
+
+
+
+何も出力されない
+※クリックイベントの処理がすべて取り除かれているため
+
+・特定イベント削除ボタンをクリックしてから実行ボタン押下
+実行結果
+
+
+
+click click
+on click
+
+・イベント発火時に1回だけ呼び出されるメソッド
+
+
+
+■oneメソッド
+⇒
+<button id="btn1">ボタン1</button><br>
+<button id="btn2">ボタン2</button><br>
+<button id="btn3">ボタン3</button>
+⇒
+$(function() {
+// ボタンの処理
+$(":button").one("click", function() {
+//oneメソッドで１回だけ行われる処理を登録
+var text = $(this).text();
+console.log("click", text);
+});
+});
+//各ボタンを２回ずつ押すと、１回目はコンソールに出力されるが２回目はコンソールに出力されない。oneメソッドで１回だけ実行可能なイベントの処理が設定ししたかた
+※注意点としてボタン全体ではなく各ボタンに１回ずつ処理が設定されていること
+
+・イベントを発火させる
+
+
+
+.trigger()
+.triggerHandler()
+例
+<di v id="btnOut">
+<button id="btn1">ボタン1</button>
+</di v>
+<button id="btnTrgr">trigger</button><br>
+<button id="btnTrgrHndlr">triggerHandler</button>
+⇒
+$(function() {
+// di vの処理
+$("#btnOut").click(function() {
+console.log("click", this.id);
+});
+
+// ボタンの処理
+$("#btn1").click(function() {
+console.log("click", this.id);
+});
+
+// 「trigger」ボタンの処理
+$("#btnTrgr").click(function() {
+$("#btn1").trigger("click");//クリックイベントを発生させている。triggerメソッドは特定の要素に対して特定のイベントを発生させるもの
+});
+
+// 「triggerHandler」ボタンの処理
+// ・登録したイベントのみ実行
+// ・選択した要素の最初のみ
+// ・イベントがDOMツリーに遡ることはない。バブリングが起きない
+$("#btnTrgrHndlr").click(function() {
+$("#btn1").triggerHandler("click");
+});
+});
+</script>
+
+・ボタン１をクリックした実行結果
+
+
+
+click btn1
+click btnOut
+※バブリングで上にもさかのぼるため2つ出力
+
+・「trigger」ボタンをクリックした実行結果
+
+
+
+click btn1
+click btnOut
+
+・「triggerHandler」ボタンをクリックした実行結果
+
+
+
+click btn1
+
+・イベントオブジェクトとは
+
+
+
+■イベントのコールバック関数で得られるイベントオブジェクト
+イベント系メソッドの引数の関数は第一引数にイベントオブジェクトをとる。イベントの情報が格納されているもの。
+例
+<button id="btn">ボタン</button>
+⇒
+$(function() {
+// ボタンの処理
+$("#btn").click(function(e) {
+console.log(e);
+});
+});
+
+・イベントオブジェクトに格納されたターゲット系
+
+
+
+.target
+.currentTarget
+.delegateTarget
+.relatedTarget
+例
+<di v id="btnOut">
+<button id="btn">ボタン</button>
+</di v>
+⇒
+$(function() {
+var demo = 2;
+
+if (demo == 0) {
+$("#btnOut").click(function(e) {
+// イベント発生源の要素
+console.log("target", e.target);
+
+// 現在のイベントで対象になっている要素（this）
+console.log("currentTarget", e.currentTarget);
+});
+}
+
+if (demo == 1) {
+$("body").on("click", "#btnOut", function(e) {//body要素内の#btnOutをクリックしたときの処理
+// イベント発生源の要素
+console.log("target", e.target);
+
+// 現在のイベントで対象になっている要素（thisと同じ）
+console.log("currentTarget", e.currentTarget);
+
+// イベントハンドラーが指定されていた要素
+console.log("delegateTarget", e.delegateTarget);
+});
+}
+
+if (demo == 2) {
+$("#btn").mouseout(function(e) {
+// 関係する要素
+// （マウスが外れた後、マウスが入った要素）
+console.log("relatedTarget", e.relatedTarget);
+});
+}
+});
+
+・demo=0でボタンを押すと実行結果として
+
+
+
+target
+　<button id="btn">ボタン</button>
+currentTarget
+　<di v id="btnOut">
+～
+</di v>
+
+・demo=1でボタンを押すと実行結果として
+
+
+
+target
+　<button id="btn">ボタン</button>
+currentTarget
+　<di v id="btnOut">
+...
+delegateTarget
+　<body>...</body>
+
+・demo=2でボタンを押すと実行結果として
+
+
+
+relatedTarget
+<di v id="btnOut">...</di v>
+※id="btn"にマウスが入り、外れた先はbtnOutになる
+
+・イベントオブジェクトに格納された情報系
+
+
+
+.type
+.pageX
+.pageY
+.which
+例
+<button id="btn">ボタン</button>
+⇒
+$(function() {
+// ボタンの処理
+$("#btn").click(function(e) {
+// イベントの種類
+console.log("type", e.type);
+
+// ページ内のマウスのX,y座標
+console.log("pageX", e.pageX);
+console.log("pageY", e.pageY);
+
+// ボタンに紐付けられたキーコード
+console.log("which", e.which);
+});
+});
+実行結果
+
+
+
+type click
+pageX 37
+pageY 11
+which 1
+
+★★
+・イベントの様々な停止方法
+
+
+
+■.preventDefault()
+.stopPropagation()
+.stoplmmediatePropagation()
+■コード例
+<di v id="lnkOut">
+<a href="index.html" target="_blank" id="lnk">リンク</a>
+</di v>
+<ul>
+<li id="ulman">aaa</li>
+</ul>
+⇒
+$(function() {
+$("#lnkOut").click(function(e) {
+console.log(this.id);
+$("#ulman").hide();//バブリングを阻止しないとリンクをクリックしたときに当処理も実行されてしまう
+});
+
+$("a").click(function(e) {
+console.log(this.id, 1);
+
+// 通常実行される処理を阻止
+//e.preventDefault();
+
+// バブリングを阻止
+//e.stopPropagation();
+
+// バブリングを阻止＆
+// 以降のイベントハンドラーを阻止
+//e.stopImmediatePropagation();
+
+//return false;
+});
+$("a").click(function(e) {
+console.log(this.id, 2);
+});
+});
+
+・リンクの文字列をクリックすると
+実行結果
+
+
+
+■「index.html」を別のウインドウで開く。
+コンソールには
+lnk 1
+lnk 2
+lnkOut
+が表示
+
+・e.preventDefault();を使うと
+
+
+
+「index.html」を別のウインドウで開かないようにする。コンソールには通常通り出力される。
+
+・e.stopPropagation();を使うと
+
+
+
+コンソールには
+lnk 1
+lnk 2
+が表示
+※"#lnkOut"のクリックイベントは実行されない
+
+・e.stopImmediatePropagation();
+
+
+
+以降のイベントハンドラーを阻止というのはこの時点で打ち切るということ
+コンソールには
+lnk 1
+のみが表示
+
+・イベントして登録した最後にreturn false;とやると
+
+
+
+e.preventDefault();
+e.stopPropagation();
+をやるのと同じ意味
+
+・イベントオブジェクトを通しての情報の受け取りについて
+
+
+
+■.date
+.result
+
+・コード 例
+<di v id="btnOut">
+<button id="btn">ボタン</button>
+</di v>
+⇒
+$(function() {
+// data と result の挙動
+$("#btn").click({dt: 1}, function(e) {
+console.log(this.id, e.data, e.result);
+return "send 1";
+
+});
+$("#btn").click({dt: 2}, function(e) {
+console.log(this.id, e.data, e.result);
+return "send 2";
+});
+
+$("#btnOut").on("click", {dt: 3}, function(e) {
+console.log(this.id, e.data, e.result);
+});
+});
+
+
+
+
+■$("#btn").click({dt: 1}, function(e) {　 //クリック時の処理を２つ登録している。{dt: 1}といったイベントの処理を設定する際にそのようにオブジェクトを書いておくと、e.dataとしてデータを受け取ることができる。
+⇒
+return "send 1";//retuenで値を設定しておくと同じ要素に登録しているイベントの処理にresultとして値を渡すことができる。ただしそのように設定していてもバブリングした先、イベントのDOMツリーをさかのぼって伝播した先には値を渡すことはできない
+実行コンソール
+btn Object {dt: 1} undefined
+btn Object {dt: 2} send 1 ※1つ前のイベントのリターンの値を得ているので「send 1」が出力されている
+btnOut Object {dt: 3} undefine ※「id="btn"」に登録したイベントではないのでリターンの値は受け取れないので。
+
+・属性操作のAPIドキュメント
+
+
+
+http://api.jquery.com/category/attributes
+
+・フォームの値の取得
+
+
+
+■.val()
+<input type="text" id="text1" value="aaa"><br>
+<input type="text" id="text2" value=""><br>
+<button id="btn">ボタン</button>
+⇒
+$(function() {
+// ボタン クリック時の処理
+$("#btn").click(function() {
+var text = $("#text1").val();
+console.log(text);
+$("#text2").val(text);
+});
+});
+
+・ボタンを押すことで
+
+
+
+"#text2"のテキスト欄にid="text1"の入力値が表示される
+
+・HTMLの要素の属性を取得、設定する方法
+属性を取り除く
+
+
+
+.attr()
+.removeAttr()
+
+・コード 例
+<a id="lnk" href="https://jquery.com/">リンク</a><br>
+<button id="btn1">ボタン1</button><br>
+<button id="btn2">ボタン2</button>
+⇒
+$(function() {
+// リンク クリック時の処理
+$("#lnk").click(function() {
+var href = $(this).attr("href");
+console.log(href);
+return false;
+});
+
+// ボタン1 クリック時の処理
+$("#btn1").click(function() {
+$("#lnk").attr("href", "index.html");
+});
+
+// ボタン2 クリック時の処理
+$("#btn2").click(function() {
+$("#lnk").removeAttr("href");
+});
+});
+
+
+
+■return false;とすることでリンクを開く処理をブロックする
+文字列リンクをクリックするとコンソールに「https://jquery.com/」が出力
+
+・ボタン1 クリックして文字列リンクをクリックすると
+
+
+
+コンソールに「index.html」が出力
+※$("#lnk").attr("href", "index.html");は属性の値を設定している
+href属性の値が書き換わる
+
+・ボタン2をクリックすると
+
+
+
+文字列リンクのアンダーバーがなくなり黒色になる。
+href属性がなくなる
+
+・属性プロパティの操作
+
+
+
+■.prop()
+.removeProp()
+※attr()はHTMLで扱う要素の属性
+.prop()はJavascriptで扱うHTML Elementオブジェクトのプロパティを扱うもの
+JavascriptではHTMLタグを元に内部的にHTML Elementオブジェクトを作成している
+.prop()がよく使われるchecked
+
+・.attr("checked")　.prop("checked")
+
+
+
+■.attr("checked")
+"checked"
+undefined
+値は変化しない
+⇒
+checked属性の値を得たとき、HTMLにcheckedがあれば文字列のchecked
+ない場合はundefinedが得られる
+ブラウザ上でチェックの状態を変えても値は変化しない　最初にHTMLが読み込まれた状態で値は固定される
+■.prop("checked")
+true false
+値は変化する
+⇒チェックボックスにチェックが入っているとtrue。入っていない場合はfalse。チェックを切り替えることで変化する。
+このようにcheckedの値を得る場合はpropを使うことが望ましい
+checked以外でも
+selected
+readonly
+disabled
+の場合でもpropを使ったほうが良い
+
+・
+<label>
+<input type="checkbox" id="cb1" value="on" checked>cb1
+</label><br>
+<label>
+<input type="checkbox" id="cb2" value="on">cb2
+</label><br>
+<button id="btnAttr">attr</button><br>
+<button id="btnProp">prop</button><br>
+<button id="btnSet">set</button><br>
+<button id="btnRmv">removeProp</button>
+<script type="text/javascript">
+$(function() {
+// btnAttr クリック時の処理
+$("#btnAttr").click(function() {
+console.log("cb1", $("#cb1").attr("checked"));
+console.log("cb2", $("#cb2").attr("checked"));
+});
+
+// btnProp クリック時の処理
+$("#btnProp").click(function() {
+console.log("cb1", $("#cb1").prop("checked"));
+console.log("cb2", $("#cb2").prop("checked"));
+});
+
+// btnSet クリック時の処理
+$("#btnSet").click(function() {
+$("#cb1").prop("checked", false);
+$("#cb2").prop("checked", true);
+});
+
+// btnRmv クリック時の処理
+$("#btnRmv").click(function() {
+$(this).prop("myProp", true);
+console.log($(this).prop("myProp"));
+
+$(this).removeProp("myProp");
+console.log($(this).prop("myProp"));
+});
+});
+
+・attrボタンをクリック
+コンソール
+
+
+
+cb1 checked
+cb2 undefined
+
+・cb2の方にチェックを入れattrボタンをクリック
+コンソール
+
+
+
+cb1 checked
+cb2 undefined
+※チェックの状態を切り替えたのにも関わらずこのような形になる。
+
+・cb1の方のみにチェックを入れpropボタンをクリック
+コンソール
+
+
+
+cb1 true
+cb2 false
+
+・cb2の方のみにチェックを入れpropボタンをクリック
+コンソール
+
+
+
+cb1 false
+cb2 true
+※このようにチェックボックスの状態を得るにはpropメソッドを使用する
+
+・setボタンを押すと
+
+
+
+cb1のチェックが外れてcb2の方のチェックボックスのチェックが入る。
+※propメソッドを2つ使うことで
+チェックボックスの状態を切り替えることができる
+
+・removePropの注意点
+
+
+
+ネイティブプロパティには使えない。つまりchekedのなどのHTMLにもともとあるプロパティには使えない。
+プログラム内で設定したプロパティに対してそのプロパティを削除するという使い方
+
+・removePropボタンをクリックすると
+
+
+
+true
+undefined
+
+・クラスの操作
+
+
+
+■.addClass()
+.removeClass()
+.toggleClass()
+.hasClass()
+■コード　例
+<style type="text/css">
+.attention {
+color: red;
+}
+</style>
+<body>
+<p>text text text.</p>
+<button id="btnAdd">addClass</button><br>
+<button id="btnRmv">removeClass</button><br>
+<button id="btnTgl">toggleClass</button><br>
+<button id="btnHas">hasClass</button>
+<script type="text/javascript">
+$(function() {
+// btnAdd クリック時の処理
+$("#btnAdd").click(function() {
+$("p").addClass("attention");
+});
+
+// btnRmv クリック時の処理
+$("#btnRmv").click(function() {
+$("p").removeClass("attention");
+});
+
+// btnTgl クリック時の処理
+$("#btnTgl").click(function() {
+$("p").toggleClass("attention");
+});
+
+// btnHas クリック時の処理
+$("#btnHas").click(function() {
+console.log($("p").hasClass("attention"));
+});
+});
+
+・btnAdd クリック時
+
+
+
+p要素の色が赤色になる
+
+・btnTgl クリック時の処理
+
+
+
+P要素が赤色で表示されたり赤色表示がなくなったりする。
+※toggleClass()はクラスの設定と削除を切り替えるメソッド
+※attentionクラスを切り替えたりする。
+
+・btnHas クリック時の処理
+
+
+
+P要素にattentionクラスが設定されていない場合にはfalse
+※hasClass()でattentionクラスを持っているかどうかを取得して結果を表示
+
+・hasClassを使った例文
+
+
+<di v id="unko">
+aaa
+</di v>
+<button id="superMario">
+mario
+</button>
+⇒
+$(function() {
+$("#superMario").click(function(){
+$("#unko").addClass("unkokman");
+if($("#unko").hasClass("unkokman")){
+alert(123);
+}
+});
+});
+
+・JQueryのcssの操作に関するAPI
+
+
+
+http://api.jquery.com/category/css/
+
+★★
+・データ系メソッドのドキュメント
+
+
+
+http://api.jquery.com/category/data/
+
+・データ系メソッド 特徴
+
+
+
+カスタムデータ属性を扱う
+■カスタムデータ属性とは
+data-～と書かれた属性のことをいう。
+ユーザーが独自に作ることができ、様々な値を格納することができる。
+<tagName data-hoge="123">
+JQueryの.data()はカスタムデータ属性を利用するために使うもの。
+HTML上にカスタムデータ属性がある場合にはその値を読む。
+ただし.data()を使って値を設定してもHTML上のdata-～は書き換わらないの注意。
+JQeryの.data()はカスタム属性に関してはJQueryの内部的なキャッシュを書き換える仕様
+.data()プログラム内で要素に値を保持したい場合に使うとよい。
+
+・要素に紐づいたデータを操作
+カスタムデータ属性削除
+カスタムデータ属性割り当て
+
+
+.data()
+.removeData()
+コード　例
+<button id="btn" data-name="John" data-age="18">ボタン</button>
+<script type="text/javascript">
+$(function() {
+// ボタン クリック時の処理
+$("#btn").click(function() {
+var $t = $(this);
+
+console.log("name", $t.data("name"));
+console.log("age", $t.data("age"));
+console.log("like", $t.data("like"));
+
+$t.data("age", $t.data("age") + 1);
+if ($t.data("like")) $t.removeData("like");
+else $t.data("like", "cat");
+$t.removeData("name");
+});
+});
+
+・ボタン実行後
+コンソール
+
+
+
+name John
+age 18
+like undefined
+※カスタムデータ属性で数字を設定した場合は注意が必要。数字として値が得られる。attr()では文字列で得られるので注意が必要
+data-likeはないのでそのためundefined
+⇒
+$t.data("age", $t.data("age") + 1);はageの値を更新している。
+$t.removeData("name");のnameはHTMLの属性でもともとある属性なのでremoveDataで削除することはできない。
+
+・ボタンを3回クリック
+コンソール
+
+
+
+name John
+age 18
+like undefined
+name John
+age 19
+like cat
+name John
+age 20
+like undefined
+
+・要素の操作系のメソッド　APIドキュメント
+
+
+
+http://api.jquery.com/category/manipulation/
+※メソッドは要素を追加したり、複製したり、置換したり様々な操作を行う。
+
+・要素内の末尾や先頭に挿入
+
+
+
+.append()⇒末尾に追加
+.prepend()⇒先頭に追加
+.appendTo()⇒末尾に追加
+.prependTo()⇒先頭に追加
+コード　例
+<button id="btnAppend">append</button><br>
+<button id="btnPrepend">prepend</button><br>
+<button id="btnAppendTo">appendTo</button><br>
+<button id="btnPrependTo">prependTo</button><br>
+<button id="btnFnc">fnc</button>
+<ul>
+<li>項目1</li>
+<li>項目2</li>
+<li>項目3</li>
+</ul>
+<script type="text/javascript">
+$(function() {
+// btnAppend クリック時の処理
+$("#btnAppend").click(function() {
+var li = $("<li>").text("末尾に追加");
+$("ul").append(li);
+});
+
+// btnPrepend クリック時の処理
+$("#btnPrepend").click(function() {
+var li = $("<li>").text("先頭に追加");
+$("ul").prepend(li);
+});
+
+// btnAppendTo クリック時の処理
+$("#btnAppendTo").click(function() {
+$("<li>").text("末尾に追加").appendTo("ul");
+});
+
+// btnPrependTo クリック時の処理
+$("#btnPrependTo").click(function() {
+$("<li>").text("先頭に追加").prependTo("ul");
+});
+
+// btnFnc クリック時の処理
+$("#btnFnc").click(function() {
+$("li").prepend(function(i) {
+return "<b >" + i + "</b> ";
+});
+});
+});
+
+・fucボタンを押すと
+
+
+
+画面に
+0 項目1
+1 項目2
+2 項目3
+と表示される
+
+・要素内にHTMLやテキストを設定
+
+
+
+.html()
+.text()
+.empty()
+コード　例
+<button id="btnHtml">html</button><br>
+<button id="btnText">text</button><br>
+<button id="btnEmpty">empty</button><br>
+<di v id="trgt"></di v>
+<script type="text/javascript">
+$(function() {
+// btnHtml クリック時の処理
+$("#btnHtml").click(function() {
+console.log($("body").html());//body要素のHTMLを文字列として取得している
+$("#trgt").html("<b >text</b>");
+});
+
+// btnText クリック時の処理
+$("#btnText").click(function() {
+console.log($("body").text());
+$("#trgt").text("<b >text</b>");
+});
+
+// btnEmpty クリック時の処理
+$("#btnEmpty").click(function() {
+$("#trgt").empty();
+});
+});
+
+・htmlボタンをクリック
+
+
+
+<button id="btnHtml">html</button><br>
+<button id="btnText">text</button><br>
+<button id="btnEmpty">empty</button><br>
+<di v id="trgt"></di v>
+<script type="text/javascript">
+$(function() {
+// btnHtml クリック時の処理
+$("#btnHtml").click(function() {
+console.log($("body").html());//body要素のHTMLを文字列として取得している
+$("#trgt").html("<b >text</b>");
+});
+
+// btnText クリック時の処理
+$("#btnText").click(function() {
+console.log($("body").text());
+$("#trgt").text("<b >text</b>");
+});
+
+// btnEmpty クリック時の処理
+$("#btnEmpty").click(function() {
+$("#trgt").empty();
+});
+});
+
+・textボタンをクリック
+コンソール
+
+
+
+html
+text
+empty
+※<b >text</b>をただの文字列として画面に表示している
+
+・emptyボタンをクリック
+
+
+
+id="trgt"のdi v要素の中身が消える 
+
+★★Jquery補足
+・バブリングの良い例
+※Jqueryのイベントパンドラ内 stopPropagation
+
+
+
+https://qiita.com/r_abe01/items/2433caa6ce5257a440e7
+
+・爆速でわかるjQuery.Deferred超入門
+https://techblog.yahoo.co.jp/programming/jquery-deferred/
+
+・非同期処理の後でhogeを出力させたい
+https://qiita.com/opengl-8080/items/6eba7922be168edfc439
+
+・jQuery.when() で、複数の非同期処理を扱う
+https://search.yahoo.co.jp/amp/s/www.tam-tam.co.jp/tipsnote/javascript/post5807.html/amp%3Fusqp%3Dmq331AQGCAEoATgB
+
+・jsonpとは
+https://ja.m.wikipedia.org/wiki/JSONP
+
+・jsonpで悩むある程度の人々へ
+http://tsujimotter.info/2013/01/03/jsonp/
+
+・CGIとは
+http://beginners.atompro.net/expcgi_cgi01.html
+http://www.remus.dti.ne.jp/~miyappu/html/cgki/body.html
+
+・シンプルなドロップダウンメニューが簡単に実装できるjQueryプラグイン
+
+
+
+https://www.webantena.net/javascriptjquery/plugin-droppy/
+⇒
+ヘッダーのグローバルメニュー等で、マウスオーバーによるドロップダウンメニューを実現させるためのjQueryプラグイン「Droppy」。
+シンプルなプラグインなので手軽に設定できますし、メニューの階層が深い場合でも入れ子のドロップダウンメニューが実装可能です。
+■<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script src="js/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/main.js"></script>
+<script src="droppy/javascripts/jquery.droppy.js"></script>
+<link rel="stylesheet" type="text/css" href=" droppy/stylesheets/droppy.css" />
+</head>
+<body>
+<ul id='nav'>
+<li><a href='#'>Top level 1</a></li>
+<li><a href='#'>Top level 2</a>
+<ul>
+<li><a href='#'>Sub 2 - 1</a></li>
+<li>
+<a href='#'>Sub 2 - 2</a>
+<ul>
+<li>
+<a href='#'>Sub 2 - 2 - 1</a>
+<ul>
+<li><a href='#'>Sub 2 - 2 - 1 - 1</a></li>
+<li><a href='#'>Sub 2 - 2 - 1 - 2</a></li>
+<li><a href='#'>Sub 2 - 2 - 1 - 3</a></li>
+<li><a href='#'>Sub 2 - 2 - 1 - 4</a></li>
+</ul>
+</li>
+<li><a href='#'>Sub 2 - 2 - 2</a></li>
+<li>
+<a href='#'>Sub 2 - 2 - 3</a>
+<ul>
+<li><a href='#'>Sub 2 - 2 - 3 - 1</a></li>
+<li><a href='#'>Sub 2 - 2 - 3 - 2</a></li>
+<li><a href='https://www.yahoo.co.jp/'>Sub 2 - 2 - 3 - 3</a></li>
+<li><a href='#'>Sub 2 - 2 - 3 - 4</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href='#'>Sub 2 - 3</a></li>
+</ul>
+</li>
+</ul>
+<script type="text/javascript">
+$(function() {
+$('#nav').droppy({speed: 100});
+});
+</script>

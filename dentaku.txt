@@ -1,0 +1,287 @@
+body{
+text-align:center;
+}
+#calc{
+display: inline-block;
+}
+
+・電卓アプリ
+●コード
+<style type="text/css">
+body {
+text-align: center;
+}
+#calc {
+background: #dfd;
+border: solid 2px #ccc;
+border-radius: 0.3em;
+padding: 0.75em;
+display: inline-block;
+text-align: left;
+}
+#calc * {
+font-weight: bold;
+font-size: medium;
+}
+
+#formula {
+width: 12em;
+border-radius: 0.5em;
+box-sizing: border-box;
+padding: 0.5em;
+text-align: right;
+position: relative;
+}
+
+.btnN,
+.btnF {
+background: #ffc;
+width: 3em;
+height: 3em;
+border-radius: 0.5em;
+box-sizing: border-box;
+position: relative;
+outline: none;
+}
+.btnN {background: #ffc;}
+.btnF {background: #fcc;}
+
+#calcCnfg {
+margin-top: 0.5em;
+}
+
+#hstry {
+background: #fff;
+width: 12em;
+border: solid 2px #ccc;
+border-radius: 0.3em;
+box-sizing: border-box;
+padding: 0.5em;
+margin-top: 0.3em;
+position: relative;
+}
+
+.hstryItm {
+background: #cdf;
+font-size: small !important;
+border-radius: 0.3em;
+padding: 0.3em 0.5em;
+margin: 0.2em 0;
+word-break: break-all;
+}
+
+</style>
+</head>
+<body>
+<di v id="calc">
+<di v>
+<input type="text" id="formula">
+</di v>
+<di v>
+<button class="btnN">9</button>
+<button class="btnN">8</button>
+<button class="btnN">7</button>
+<button class="btnF">*</button>
+</di v>
+<di v>
+<button class="btnN">6</button>
+<button class="btnN">5</button>
+<button class="btnN">4</button>
+<button class="btnF">/</button>
+</di v>
+<di v>
+<button class="btnN">3</button>
+<button class="btnN">2</button>
+<button class="btnN">1</button>
+<button class="btnF">-</button>
+</di v>
+<di v>
+<button class="btnF">C</button>
+<button class="btnN">0</button>
+<button class="btnF">=</button>
+<button class="btnF">+</button>
+</di v>
+<di v id="calcCnfg">
+<label>
+<input type="checkbox" id="hstryUse" checked>
+履歴表示
+</label>
+<select id="hstryMax">
+<option value="4" selected>4</option>
+<option value="8">8</option>
+<option value="16">16</option>
+</select>個
+</di v>
+<di v id="hstry"></di v>
+</di v>
+<script type="text/javascript">
+$(function() {
+var $f = $("#formula");/
+var pushF = function(c) {$f.val($f.val() + c)};
+var cnt = 1;
+var animHop = function($trgt) {
+$trgt.stop()
+.animate({top: "-8px"}, 100)
+.animate({top: "4px"}, 100)
+.animate({top: "0px"}, 50);
+};
+
+// ボタンのすき間を削除
+$("di v").contents().each(function() {
+var t = "" + this.nodeValue;
+if (t.match(/^[ \t\n]+$/)) {
+$(this).remove();
+}
+});
+
+// 数字ボタンの処理
+$(".btnN").click(function() {
+var n = $(this).text() * 1;
+pushF(n);
+});
+
+// 機能ボタンの処理
+$(".btnF").click(function() {
+var c = $(this).text();
+switch (c) {
+case "=": calc(); break;
+case "C": $f.val(""); break;
+default: pushF(c);
+}
+});
+
+// ボタンのエフェクト
+$(".btnF, .btnN").click(function() {
+animHop($(this).add($f));
+});
+
+// 計算処理
+var calc = function() {
+// 計算結果を求める
+var f = $f.val();
+var res = "err";
+try {res = eval(f)} catch(e) {}
+$f.val(res);
+
+// 履歴表示にチェックありなら履歴を追加
+if ($("#hstryUse").prop("checked")) {
+$("<di v>")
+.addClass("hstryItm")
+.text(cnt + ": " + f + " = " + res)
+.prependTo("#hstry")
+.hide().fadeIn();
+cnt ++;
+animHop($("#hstry"));
+}
+
+// 履歴最大数を超えていたら削除
+var max = $("#hstryMax").val() * 1;
+while ($(".hstryItm").length > max) {
+$(".hstryItm:last-child").remove();
+}
+};
+});
+
+
+●コード解説
+$(function() {
+var $f = $("#formula");//非常によく使うのでJqueryオブジェクトにしている
+var pushF = function(c) {$f.val($f.val() + c)};//入力欄の末尾に新しい文字を追加する処理は電卓アプリでよく使うので関数にしている。
+var cnt = 1;//履歴の番号を表す数字
+var animHop = function($trgt) {//ボタンを押したときにはねる処理。Jqueryオブジェクトを引数に取る
+$trgt.stop()//現在のアニメーションを止めた後、
+.animate({top: "-8px"}, 100)//100secかけて上に8px移動
+.animate({top: "4px"}, 100)//100secかけて元の位置から下に4px移動
+.animate({top: "0px"}, 50);//元の位置に戻っている
+};
+
+// ボタンのすき間を削除 ※htmlのボタンの間には改行やスペースの文字が入っている。この空白文字はスペース1文字分としてwebブラウザに表示されてしまう。そうなるとボタンの間に隙間が発生してしまう。そこでそうした隙間を削除する処理
+$("di v").contents().each(function() {//contents()メソッドでtextノードを含んだ子要素を得ている。そして、その子要素に対してeachメソッドで1つづつ処理を行っている
+// テキストノードなら文字列、それ以外はnullが得られる。(his.nodeValue)
+var t = "" + this.nodeValue;//""を使って文字列にしている
+if (t.match(/^[ \t\n]+$/)) {//先頭から末尾までがスペース、タブ、改行文字で構成されている場合にマッチするかの判定
+$(this).remove();//ボタンの間にある不要な文字を削除している
+}
+});
+
+// 数字ボタンの処理
+$(".btnN").click(function() {
+var n = $(this).text() * 1;//かける1をすることで数字にしている
+pushF(n);
+});
+
+// 機能ボタンの処理
+$(".btnF").click(function() {
+var c = $(this).text();
+switch (c) {
+case "=": calc(); break;//cが"="の場合はcalc();
+case "C": $f.val(""); break;//入力欄に空の文字列を設定
+default: pushF(c);//文字を入力欄の末尾に追加
+}
+});
+
+// ボタンのエフェクト
+$(".btnF, .btnN").click(function() {
+animHop($(this).add($f));//引数はクリックされたボタンとそれに加えて入力欄の要素
+});
+
+// 計算処理
+var calc = function() {
+// 計算結果を求める
+var f = $f.val();// 入力欄の値をvalue関数で得ている
+var res = "err";// 結果を表す。初期値としてerr
+try {res = eval(f)} catch(e) {}// 入力欄の文字列に対してevalを実行している。単純な計算式ならevalで数値演算の結果を得ることができる。エラーが起きなければ変数resに計算結果が格納される。エラーが起きた場合は、初期値のerrのままになる
+$f.val(res);// 計算結果を入力欄のvalue関数で表示を行っている
+
+// 履歴表示にチェックありなら履歴を追加
+if ($("#hstryUse").prop("checked")) {
+$("<di v>")
+.addClass("hstryItm")
+.text(cnt + ": " + f + " = " + res)// fは計算式とresは結果の文字列
+.prependTo("#hstry")
+.hide().fadeIn();// いったん非表示にしてfadeInさせて表示させる
+cnt ++;// 履歴のカウント番号を+1
+animHop($("#hstry"));// Idのhstryにsにメーションを加えている
+}
+
+// 履歴最大数を超えていたら削除
+var max = $("#hstryMax").val() * 1;//かける1をすることで数字にしている
+while ($(".hstryItm").length > max) {//なぜif文ではなくwhileを使っているかというと履歴表示の個数が大きい数字から小さい数字に変更されることがあるから。
+$(".hstryItm:last-child").remove();
+}
+};
+});
+
+・eval
+
+
+
+引数に指定した文字列をJavaScriptプログラムコードとして評価・実行する機能をもつ関数です。
+https://techacademy.jp/magazine/15038
+
+・word-break
+
+
+
+■文の改行の仕方について指定する（IEがCSS3の草案を先行採用）
+http://www.htmq.com/style/word-break.shtml
+
+・box-sizing
+
+
+
+http://phiary.me/css3-box-sizing/
+https://saruwakakun.com/html-css/reference/box-sizing
+
+・outlineプロパティ
+
+
+
+http://www.htmq.com/style/outline.shtml
+
+・!importantルール
+
+
+
+http://www.xml.vc/kiso/!important.html
+
