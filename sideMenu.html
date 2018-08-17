@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>Menu 2</title>
+  <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <link rel="stylesheet" href="normalize.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="favicon.ico">
+  <style>
+  html,body,div,ul,li,p,figure {
+  	margin:0;
+  	padding:0;
+  	box-sizing:border-box;
+  }
+  li {
+  	list-style: none;
+  }
+  a {
+  	text-decoration : none;
+  }
+  #header {
+  	width:100%;
+  	height:50px;
+  	background:#333;
+  	position: fixed;
+  	top:0;
+  	left:0;
+  }
+  .container {
+  	width:960px;
+  	margin:50px auto 0 auto;
+  }
+  .container:after {
+  	content: "";
+  	display: block;
+  	clear: both;
+  }
+  .sideMenu {
+  	width:250px;
+  	background:#eee;
+  	float:left;
+  }
+  .sideMenu li {
+  	height: 50px;
+  border-bottom: 1px solid #333;
+  text-align: center;
+  padding-top: 10px;
+  }
+  .sideMenu a {
+  	color: #333;
+  }
+  .mainArea {
+  	width: 700px;
+  	float: right;
+  }
+  .mainArea__article {
+  	margin-top: 20px;
+  }
+  .mainArea__article a {
+  	color: #333;
+  }
+  .mainArea__article li {
+  	height: 180px;
+  }
+  .mainArea__article li:after {
+  	content: "";
+  	display: block;
+  	clear: both;
+  }
+  .mainArea__img {
+  	width: 250px;
+  	height: 155px;
+  	background:#333;
+  	float: left;
+  	margin-right: 15px;
+  }
+  .mainArea__txt {
+  display: inline;
+  font-size: 17px;
+  }
+  #footer {
+  	width: 100%;
+  	height: 200px;
+  	background: #333;
+  }
+  #footer p {
+  	text-align: center;
+  	color: #FFF;
+  	padding-top: 30px;
+  }
+</style>
+</head>
+<body>
+  <header id="header">
+	</header>
+	<div class="container">
+		<div class="sideMenu">
+			<ul>
+				<li><a href="">TOP</a></li>
+				<li><a href="">ABOUT</a></li>
+				<li><a href="">CONTACT</a></li>
+			</ul>
+		</div>
+		<div class="mainArea">
+			<ul class="mainArea__article">
+				<li><a href=""><figure class="mainArea__img"><img src=""></figure><div class="mainArea__txt">てすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとです</div></a></li><li><a href=""><figure class="mainArea__img"><img src=""></figure><div class="mainArea__txt">てすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとです</div></a></li><li><a href=""><figure class="mainArea__img"><img src=""></figure><div class="mainArea__txt">てすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとです</div></a></li><li><a href=""><figure class="mainArea__img"><img src=""></figure><div class="mainArea__txt">てすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとです</div></a></li><li><a href=""><figure class="mainArea__img"><img src=""></figure><div class="mainArea__txt">てすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとですてすとです</div></a></li>
+			</ul>
+		</div>
+	</div>
+	<footer id="footer">
+		<p>copyright kobashi</p>
+	</footer>
+  <script>
+  (function() {
+    'use strict';
+    var target = $(".sideMenu");//ここに追尾したい要素名を記載
+    var footer = $("footer")//フッターでストップさせる
+    var targetHeight = target.outerHeight(true);
+    var targetTop = target.offset().top;
+
+    $(window).scroll(function(){
+    	var scrollTop = $(this).scrollTop();
+    	if(scrollTop > targetTop){
+            // 動的にコンテンツが追加されてもいいように、常に計算する
+            var footerTop = footer.offset().top;
+
+            if(scrollTop + targetHeight > footerTop){
+            	customTopPosition = footerTop - (scrollTop + targetHeight)
+            	target.css({position: "fixed", top:  customTopPosition + "px"});
+            }else{
+            	target.css({position: "fixed", top: "60px"});
+            }
+        }else{
+        	target.css({position: "static", top: "auto"});
+        }
+    });
+  })();
+  </script>
+
+</body>
+
+</body>
+</html>
