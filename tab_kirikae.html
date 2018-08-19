@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>Menu 2</title>
+  <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <link rel="stylesheet" href="normalize.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="favicon.ico">
+  <style>
+  html,body,ul,li,di v {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  li {
+    list-style: none;
+  }
+  a {
+    text-decoration: none;
+    color: #333;
+  }
+  .tab li {
+    display: inline-block;
+    width: 50%;
+    text-align: center;
+    font-weight: bold;
+    padding: 11px 0 5px 0;
+  }
+  .tab li.on {
+    color: #ff396e;
+    border-bottom: 4px solid #ff396e;
+    background: #f8f8f8;
+  }
+  .announceNews li {
+    height: 50px;
+    padding: 13px 0 0 10px;
+    background: white;
+  }
+  .announceNews li:nth-child(even) {
+    background: #f8f8f8;
+  }
+</style>
+</head>
+<body>
+  <div>
+    <ul class="tab">
+      <li class="on">お知らせ</li><li>ニュース</li>
+    </ul>
+    <div class="announceNews">
+      <ul>
+        <li><a href="">20160909 お知らせを更新しました</a></li>
+        <li><a href="">20160909 お知らせを更新しました</a></li>
+        <li><a href="">20160909 お知らせを更新しました</a></li>
+        <li><a href="">20160909 お知らせを更新しました</a></li>
+        <li><a href="">20160909 お知らせを更新しました</a></li>
+      </ul>
+      <ul style="display:none;">
+        <li><a href="">20160909 ニュースを更新しました</a></li>
+        <li><a href="">20160909 ニュースを更新しました</a></li>
+        <li><a href="">20160909 ニュースを更新しました</a></li>
+        <li><a href="">20160909 ニュースを更新しました</a></li>
+        <li><a href="">20160909 ニュースを更新しました</a></li>
+      </ul>
+    </div>
+
+    <script>
+    (function() {
+      'use strict';
+      $('.tab li').click(function() {
+        var index = $('.tab li').index(this);//ここでクリックされたのは何番目かということを取得し、indexに変数として格納する
+        $('.announceNews>ul').css('display','none');//基本的にはdisplay:none;をつける
+        $('.announceNews>ul').eq(index).css('display','block');//indexに格納された番号番目に対してdisplay:block;を付ける
+        $('.tab li').removeClass('on');//まず.onを消す
+        $(this).addClass('on')//クリックした方に.onを付与する
+      });
+    var index = $('.tab li').index(this);
+  })();
+  </script>
+</body>
+</html>

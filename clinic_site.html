@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>テストクリニック</title>
+  <meta name="description" content="まごころと優しさをモットーに患者さんに寄り添った施術を。清潔感溢れるクリニックです。">
+  <meta name="keywords" content="ネストクリニック,病院">
+  <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
+
+  <style>
+  /* ========================================
+  リセットcss
+  ========================================= */
+  html, body, div, span, applet, object, iframe,
+  h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+  a, abbr, acronym, address, big, cite, code,
+  del, dfn, em, img, ins, kbd, q, s, samp,
+  small, strike, strong, sub, sup, tt, var,
+  b, u, i, center,
+  dl, dt, dd, ol, ul, li,
+  fieldset, form, label, legend,
+  table, caption, tbody, tfoot, thead, tr, th, td,
+  article, aside, canvas, details, embed,
+  figure, figcaption, footer, header, hgroup,
+  menu, nav, output, ruby, section, summary,
+  time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-style:normal;
+    font-weight: normal;
+    font-size: 100%;
+    vertical-align: baseline;
+  }
+  article, aside, details, figcaption, figure,
+  footer, header, hgroup, menu, nav, section {
+    display: block;
+  }
+  html{overflow-y: scroll;}
+  blockquote, q {quotes: none;}
+  blockquote:before, blockquote:after,q:before, q:after {content: ''; content: none;}
+  input, textarea,{margin: 0; padding: 0;}
+  ol, ul{list-style:none;}
+  table{border-collapse: collapse; border-spacing:0;}
+  caption, th{text-align: left;}
+  a:focus {outline:none;}
+  /* ========================================
+  フロートの解除
+  ========================================= */
+  .clearfix:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+  }
+  /* ========================================
+  全体設計
+  ========================================= */
+  body {
+    color:#555;
+    font-size: 14px;
+    line-height: 1;
+    font-family: "メイリオ", Meiryo;
+    background-color: #fff;
+    /* box-sizing: border-box を入れても問題ない*/
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  /* ========================================
+  ラッパー
+  ========================================= */
+  div#wrapper {
+    width: 960px;
+    /* 中身において自動調整 */
+    height: auto;
+  /* margin: 0 auto 0 autoの略。autoで左右均等に振り分ける。widthとセットで記載すること*/
+    margin: 0 auto;
+  }
+
+  /* ========================================
+  ヘッダー
+  ========================================= */
+  header {
+    width: 960px;
+    height: 99px;
+  }
+
+  header h1 {
+    width: 213px;
+    height: 39px;
+    margin-top: 30px;
+    float: left;
+  }
+
+  nav {
+    float: right;
+    margin-top: 56px;
+  }
+
+  nav ul li {
+    /* これでliのものが縦4っつから横1列になる */
+    float: left;
+    margin-left: 20px;
+  }
+
+  nav ul li a {
+    color: #555555;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  /* ========================================
+  メイン画像
+  ========================================= */
+  div#mainimage {
+    width: 960px;
+    height: 300px;
+    margin-bottom: 30px;
+  }
+  /* ========================================
+  レフト
+  ========================================= */
+  div#left {
+    width: 280px;
+    height: auto;
+    /* ボックス自体を左寄せ */
+    float: left;
+    margin-right: 30px;
+  }
+
+  div#left ul li {
+    width: 278px;
+    height: 48px;
+    background-color: #f5fbff;
+    margin-bottom: 10px;
+    border: 1px solid #63abd4;
+  }
+
+  div#left ul li a {
+    font-size: 16px;
+    font-weight: bold;
+    color: #555555;
+    text-decoration: none;
+    /* 裏技でline-height(行間を指定するもの)などを使って縦方向のセンタリングしている。48px+2pxで50。1行の文章だからできるので注意*/
+    line-height: 50px;
+    padding-left: 50px;
+    display: block;
+  }
+
+  a#icon_tel {
+    background: url(img/icon_tel.png) no-repeat 14px center;
+  }
+
+  a#icon_blog {
+    background: url(img/icon_blog.png) no-repeat 14px center;
+  }
+
+  a#icon_voice {
+    background: url(img/icon_voice.png) no-repeat 14px center;
+  }
+  /* ========================================
+  ライト
+  ========================================= */
+  div#right {
+    width: 650px;
+    height: auto;
+    /* 左ずめにしている */
+    float: left;
+  }
+
+  div#right h2 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #555555;
+    margin-bottom: 15px;
+  }
+
+  div#right dt {
+    font-size: 12px;
+    color: #a8a8a8;
+    /* これだとテキストが全て横並びになってしまう(本文のすぐ隣に日付が来て変)のでdivクラスでclearしてもいいがHTMLが増えてしまってよくない。文章の横幅を回り込まなくなくなるくらいめいいぱい横幅を広げる dtに対してwidth:94px、ddに対してwidth:556pxとすることできれいに並ぶ*/
+    float: left;
+    width: 79px;
+    line-height: 40px;
+    padding-left: 15px;
+  }
+
+  div#right dd {
+    font-size: 13px;
+    color: #555555;
+    float: left;
+    width: 556px;
+    line-height: 40px;
+  }
+
+  div#right dt:nth-of-type(odd),
+  div#right dd:nth-of-type(odd) {
+    background-color: #f5f5f5;
+  }
+
+  div.clearfix {
+    clear: both;
+  }
+  /* ========================================
+  フッター
+  ========================================= */
+  footer {
+    width: 100%;
+    height: auto;
+    background-color: #63abd4;
+    margin-top: 50px;
+  }
+
+  div#footer_inner {
+    width: 960px;
+    margin: 0 auto;
+    /* このボックスが基準 */
+    position: relative;
+    padding: 20px 0;
+  }
+/* p#pagetop aの位置をposition: relativeの親要素を基準にどこにそろえるかの指定を行う必要がある。 */
+  p#pagetop a {
+    width: 78px;
+    height: 20px;
+    background-color: #63abd4;
+    text-align: center;
+    color: white;
+    display: block;
+    text-decoration: none;
+    /* 縦方向の中央揃えにするため 上のheightと同じ20pxにすると文字をボックスの中央揃えにすることができる*/
+    line-height: 20px;
+    position: absolute;
+    /* top: 0px;だとfooterの中に入っている状態になる。ネガティブのマイナス値を入れることでfooterの上に飛び出す形 */
+    top: -20px;
+    /* 右端 */
+    right: 0;
+  }
+
+  p#footer_logo {
+    float: left;
+  }
+
+  footer ul {
+    float: right;
+    margin-top: 24px;
+  }
+
+  footer ul li {
+    float: left;
+    margin-left: 20px;
+  }
+
+  footer ul li a {
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+  }
+</style>
+</head>
+<body>
+  <!-- #wrapper ここから -->
+  <div id="wrapper">
+    <!-- header ここから -->
+    <header>
+      <!-- h1でサイトの重要な見出し 画像で使っている文章をalt属性で使うとよい-->
+      <h1><img src="img/logo.png" alt="まごころと優しさを大切に ネストクリニック"></h1>
+      <nav>
+        <ul>
+          <li><a href="#">ネストクリニックについて</a></li>
+          <li><a href="#">担当医の紹介</a></li>
+          <li><a href="#">医院内の紹介</a></li>
+          <li><a href="#">アクセス</a></li>
+          <div class="clearfix"></div>
+        </ul>
+      </nav>
+      <div class="clearfix"></div>
+    </header>
+    <!-- header ここまで -->
+    <!-- #mainimage ここから -->
+    <div id="mainimage">
+      <img src="img/mainimage.jpg" alt="メイン画像">
+    </div>
+    <!-- #mainimage ここまで -->
+    <!-- #left ここから -->
+    <div id="left">
+      <ul>
+        <li><a id="icon_tel" href="#">お電話でのご予約はこちら</a></li>
+        <li><a id="icon_blog" href="#">院長のブログ</a></li>
+        <li><a id="icon_voice" href="#">お客様の声</a></li>
+      </ul>
+    </div>
+    <!-- #left ここまで -->
+    <!-- #right ここから -->
+    <div id="right">
+      <h2>お知らせ</h2>
+      <dl>
+        <dt>2014.12.12</dt>
+        <dd>ネストクリニック10周年記念コンサートのおしらせ</dd>
+        <dt>2014.12.12</dt>
+        <dd>平和記念図書館の開館日変更についてのおしらせ</dd>
+        <dt>2014.12.12</dt>
+        <dd>年末年始も休まず営業します</dd>
+        <dt>2014.12.12</dt>
+        <dd>募金活動の結果</dd>
+        <dt>2014.12.12</dt>
+        <dd>元気が出る珈琲試飲会のおしらせ</dd>
+        <div class="clearfix"></div>
+      </dl>
+    </div>
+    <!-- #right ここまで -->
+    <div class="clearfix"></div>
+  </div>
+  <!-- #wrapper ここまで -->
+  <!-- footer ここから -->
+  <footer>
+    <!-- 真ん中するためのdiv -->
+    <div id="footer_inner">
+      <p id="pagetop">
+        <a href="#">PAGETOP</a>
+      </p>
+      <p id="footer_logo">
+        <img src="img/logo_footer.png" alt="まごころと優しさを大切に ネストクリニック">
+      </p>
+      <ul>
+        <li><a href="#">ネストクリニックについて</a></li>
+        <li><a href="#">担当医の紹介</a></li>
+        <li><a href="#">医院内の紹介</a></li>
+        <li><a href="#">アクセス</a></li>
+        <div class="clearfix"></div>
+      </ul>
+      <div class="clearfix"></div>
+    </div>
+  </footer>
+  <script>
+  (function() {
+    'use strict';
+
+  })();
+  </script>
+</body>
+</html>
