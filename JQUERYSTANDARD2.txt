@@ -1,0 +1,1758 @@
+
+・要素の値や前に挿入
+
+
+
+■
+.after()
+.before()
+.insertAfter()
+.insertBefore()
+コード　例
+<button id="btnAfter">after</button><br>
+<button id="btnBefore">before</button><br>
+<button id="btnInsAfter">insertAfter</button><br>
+<button id="btnInsBefore">insertBefore</button><br>
+<ul>
+<li>項目1</li>
+<li id="trgt">項目2</li>
+<li>項目3</li>
+</ul>
+<script type="text/javascript">
+$(function() {
+// btnAfter クリック時の処理
+$("#btnAfter").click(function() {
+var li = $("<li>").text("後に追加");
+$("#trgt").after(li);
+});
+
+// btnBefore クリック時の処理
+$("#btnBefore").click(function() {
+var li = $("<li>").text("前に追加");
+$("#trgt").before(li);
+});
+
+// btnInsAfter クリック時の処理
+$("#btnInsAfter").click(function() {
+$("<li>").text("後に追加").insertAfter("#trgt");
+});
+
+// btnInsBefore クリック時の処理
+$("#btnInsBefore").click(function() {
+$("<li>").text("前に追加").insertBefore("#trgt");
+});
+});
+
+・afterボタンを押すと
+
+
+
+項目2、項目3の間に文字列「後に追加」が表示
+
+・要素を削除する方法
+
+
+
+.remove()
+.detach()
+●コード 例
+<button id="btnRemove">remove</button><br>
+<button id="btnDetach">detach</button><br>
+<ul>
+<li>text text text.</li>
+<li></li>
+<li>
+<ul></ul>
+</li>
+</ul>
+<script type="text/javascript">
+$(function() {
+$("li:eq(0)").click(function() {// リストの先頭の要素
+console.log("クリック");
+});
+
+// btnRemove クリック時の処理
+$("#btnRemove").click(function() {
+$("li:eq(0)").remove().appendTo("ul:eq(1)");
+});
+
+// btnDetach クリック時の処理
+// （イベントなどのjQueryの情報は保持）
+$("#btnDetach").click(function() {
+$("li:eq(0)").detach().appendTo("ul:eq(1)");
+});
+});
+
+・btnRemove クリック時の処理
+
+
+
+■<ul></ul>が該当。削除した要素が<ul></ul>のところに入る。ただし、一度removeした要素はイベントの処理などの情報がすべて失われている。<ul></ul>に入ったtextをクリックしてもコンソールに何も出力されない。
+
+・btnDetach クリック時の処理
+
+
+
+■<ul></ul>が該当。削除した要素が<ul></ul>のところに入る。ただし、一度removeした要素はイベントの処理などの情報がすべて失われている。<ul></ul>に入ったtextをクリックしたらこコンソールに表示。detachの場合はイベントなどの情報を保持したまま削除する。そのためウエブページから削除した要素を後で使いまわしたい場合はdetachを使う
+
+・要素を複製する
+
+
+
+.clone()
+●コード　例
+<button id="btnClone">clone</button><br>
+<ul>
+<li>text text text.</li>
+</ul>
+$(function() {
+$("li").click(function() {
+console.log("クリック");
+});
+
+// btnClone クリック時の処理
+$("#btnClone").click(function() {
+var li = $("li").clone();
+$("ul").append(li);
+});
+});
+
+・btnClone クリック時の処理
+
+
+
+■作成したリストを末尾に追加する。ボタンを押すと1つの要素が2つに複製され、またボタンを押すと2つになった要素が4つに複製され・・・・。先頭のリスト要素をクリックするとコンソールに表示されるがそれ以外をクリックしてもコンソールには何も出力されない。
+※クローンメソッドで複製された要素はイベントなどの処理は複製されないので注意
+
+・置換
+
+
+
+.replaceWith()
+.replaceAll()
+●コード 例
+<button id="btnRepWith">replaceWith</button><br>
+<button id="btnRepAll">replaceAll</button><br>
+<button id="btnRepWith2">replaceWith2</button><br>
+<ul>
+<li><spa n>項目1</spa n></li>
+<li><spa n>項目2</spa n></li>
+<li><spa n>項目3</spa n></li>
+</ul>
+<di v>text text text.</di v>
+<script type="text/javascript">
+$(function() {
+// btnRepWith クリック時の処理
+$("#btnRepWith").click(function() {
+$("spa n").replaceWith("<b>置換</b>");
+});
+
+// btnRepAll クリック時の処理
+$("#btnRepAll").click(function() {
+$("<b>置換</b>").replaceAll("spa n");
+});
+
+// btnRepWith2 クリック時の処理
+$("#btnRepWith2").click(function() {
+$("spa n").replaceWith($("di v"));
+});
+});
+
+・btnRepWith クリック時の処理
+
+
+
+■spa n要素に対してbタグで囲った文字列に置換する。リストタグの中のspa n要素でかまれていたものが<b>置換</b>に切り替わっている。
+
+・btnRepAll クリック時の処理
+
+
+
+■書き方としてreplaceWithと違い、置換する要素と置換される要素が左右逆になっている。
+リストタグの中のspa n要素でかまれていたものが<b>置換</b>に切り替わっている。
+
+・btnRepWith2 クリック時の処理
+
+
+
+■spa n要素が「text text text.」の内容を含むdi v要素に置換され、元あった「text text text.」の内容を含むdi v要素が消える。このように既存の要素を置換に利用した場合は、置換元は削除されるので注意。
+
+・ラッパー
+
+
+
+.wrap();
+.unwrap();
+.wrapInner();
+.wrapAll();
+コード　例
+tyle type="text/css">
+.brdrR {
+border: solid 2px red;
+padding: 8px;
+}
+
+.brdrG {
+border: solid 2px green;
+padding: 8px;
+}
+
+.brdrB {
+border: solid 2px blue;
+padding: 8px;
+}
+</style>
+<button id="btnWrap">wrap</button><br>
+<button id="btnUnwrap">unwrap</button><br>
+<button id="btnWrapInner">wrapInner</button><br>
+<button id="btnWrapAll">wrapAll</button><br>
+<di v class="brdrB">
+<di v class="brdrR">text text text.</di v>
+</di v>
+<di v class="brdrB">
+<di v class="brdrR">text text text.</di v>
+</di v>
+<script type="text/javascript">
+$(function() {
+// btnWrap クリック時の処理（要素を包む）
+$("#btnWrap").click(function() {
+$(".brdrR").wrap('<di v class="brdrG"></di v>');
+});
+
+// btnUnwrap クリック時の処理（親を削除）
+$("#btnUnwrap").click(function() {
+$(".brdrR").unwrap();
+});
+
+// btnWrapInner クリック時の処理（要素の内側を包む）
+$("#btnWrapInner").click(function() {
+$(".brdrR").wrapInner('<di v class="brdrG"></di v>');
+});
+
+// btnWrapAll クリック時の処理（要素をまとめて包む）
+$("#btnWrapAll").click(function() {
+$(".brdrR").wrapAll('<di v class="brdrG"></di v>');
+});
+});
+
+・btnWrap クリック時の処理（要素を包む）
+
+
+
+.brdrRに対し、<di v class="brdrG"></di v>で囲むようにしている
+⇒下記になる
+<di v class="brdrB">
+<di v class="brdrG"><di v class="brdrR">text text text.</di v></di v>
+</di v>
+
+・btnUnwrap クリック時の処理（親を削除）
+
+
+
+対象の要素を囲む親要素を削除。赤枠を囲んでいた青枠が削除された。
+<di v class="brdrR">text text text.</di v>になった。
+
+・btnWrapInner クリック時の処理（要素の内側を包む）
+
+
+
+赤枠のうち側、文字列を囲むように緑枠ができる
+<di v class="brdrB">
+<di v class="brdrR"><di v class="brdrG">text text text.</di v></di v>
+</di v>
+になる
+
+・btnWrapAll クリック時の処理（要素をまとめて包む）
+
+
+
+■対象の赤枠要素すべてを包むように緑枠が包むようになった。
+.brdrRの要素をすべて囲めるようにDOMのツリーが変更されている。
+※wrapAllは多くの場合、同じ親要素を持つものに実行するもの。違う親要素で実行するとこのような感じになるので必要
+⇒<di v class="brdrB">
+<di v class="brdrG"><di v class="brdrR">text text text.</di v><di v class="brdrR">text text text.</di v></di v>
+</di v>
+
+・エフェクト関連のAPI
+
+
+
+http://api.jquery.com/category/effects
+
+・エフェクト系のメソッドの引数に任意に設定できる。
+
+
+
+■Duration 継続時間。デフォルトでは400msかけてアニメーションを行う。引数には指定の文字列かアニメーションを行う時間を書くことができる。
+空の文字列の場合は400msec(default)
+fast 200msec
+slow 600msec
+数字2000を入れた場合は、msecの値になる。2秒。
+■Easing　緩和
+アニメーションの変化の値のグラフを設定する。
+例
+常時アニメーションするか、最初はゆっくりで後で急激に変化させるか
+そうした変化のグラフを文字列で指定する。
+初期の状態ではlinear,swingの2種類のEasingの値が用意されている。
+Easingの種類はプラグインで増やすことができる。(手軽な方法ではJquery UIというJqueryの公式のプラグインがある)
+http://api.jqueryui.com/easingsでそれぞれのグラフがどういった動きをするのかを確認できる。
+Jquery UIを手軽に利用したい場合は、CDNを利用する。GoogleのCDNならコピーしてヘッダーに張り付けるとすぐに使える。
+※http://developers.google.com/speed/libraries/#jquery-uiのsnippetの部分をコピー
+■Callback
+エフェクトの処理が終了した際に実行する関数を指定することができる。
+
+・コード例
+
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+<style type="text/css">
+
+</style>
+</head>
+<body>
+<button id="btnDuration">duration</button><br>
+<button id="btnEasing">easing</button><br>
+<button id="btnCallback">callback</button><br>
+<di v>text text text.</di v>
+<script type="text/javascript">
+$(function() {
+// btnDuration クリック時の処理
+$("#btnDuration").click(function() {
+$("di v").hide("");
+//$("di v").hide("fast");
+//$("di v").hide("slow");
+//$("di v").hide(1000);
+});
+
+// btnEasing クリック時の処理
+$("#btnEasing").click(function() {
+$("di v").hide(2000, "easeInElastic");
+});
+
+// btnCallback クリック時の処理
+$("#btnCallback").click(function() {
+$("di v").hide(1000, function() {
+console.log("end");
+});
+});
+});
+
+・btnDuration クリック時の処理
+
+
+
+アニメーションしながらdi v要素が隠れる
+$("di v").hide(""); // (default) 400msec
+$("di v").hide("fast"); // "fast" 200msec 短い時間でdi v要素が隠れる
+$("di v").hide("slow"); // "slow" 600msec
+$("di v").hide(1000); // msec指定
+
+・btnEasing クリック時の処理
+
+
+
+EasingはeaseInElasticを適用している。通常とは違う動きを見せながら非表示
+
+・btnCallback クリック時の処理
+
+
+
+$("di v").hide(1000, function() {//1秒かけて非表示にし、関数を実行している。
+console.log("end");
+});
+
+・.hide([Duration][,Easing][,Callback]);
+
+
+
+■APIドキュメントで引数が角括弧で書かれている場合はその引数はつけてもつけなくても大丈夫。
+$("di v").hide(1000, function() {//1秒かけて非表示にし、関数を実行している。
+console.log("end");
+});
+⇒DurationとCallbackを記載
+
+・フェード
+
+
+
+■要素のフェードインやフェードアウト
+.fadeIn()
+.fadeOut()
+.fadeTo()
+.fadeToggle()
+コード　例
+<button id="btnFadeOut">fadeOut</button><br>
+<button id="btnFadeIn">fadeIn</button><br>
+<button id="btnFadeTo">fadeTo</button><br>
+<button id="btnFadeToggle">fadeToggle</button><br>
+<di v>text text text.</di v>
+<script type="text/javascript">
+$(function() {
+// btnFadeOut クリック時の処理
+$("#btnFadeOut").click(function() {
+$("di v").fadeOut();
+});
+
+// btnFadeIn クリック時の処理
+$("#btnFadeIn").click(function() {
+$("di v").fadeIn();
+});
+
+// btnFadeTo クリック時の処理
+$("#btnFadeTo").click(function() {
+$("di v").fadeTo("slow", 0.5);
+});
+
+// btnFadeToggle クリック時の処理
+$("#btnFadeToggle").click(function() {
+$("di v").fadeToggle();
+});
+});
+
+・btnFadeOutしてから btnFadeIn クリック時の処理
+
+
+
+「text text text.」が表示される。
+
+・.fadeIn()
+.fadeOut()の処理は
+
+
+
+CSSのopacity 不透明度の値を変化させている。
+
+・btnFadeTo クリック時の処理
+
+
+
+di v要素を半透明になる
+※0.5という値は不透明度の値を指している。0.5という値で半透明にしている。
+
+・btnFadeToggle クリック時の処理
+
+
+
+fadeIn、.fadeOutが切り替わる
+※fadeToggle();は.fadeIn、.fadeOutを交互に繰り替えすもの。
+
+・スライド
+
+
+
+要素のスライドダウン、スライドアップをする方法
+.slideDown()⇒上から下へ要素を表示する
+.slideUp()
+.slideToggle()
+●コード　例
+<button id="btnSlideUp">slideUp</button><br>
+<button id="btnSlideDown">slideDown</button><br>
+<button id="btnSlideToggle">slideToggle</button><br>
+<di v>text text text.</di v>
+<script type="text/javascript">
+$(function() {
+// btnSlideUp クリック時の処理
+$("#btnSlideUp").click(function() {
+$("di v").slideUp();
+});
+
+// btnSlideDown クリック時の処理
+$("#btnSlideDown").click(function() {
+$("di v").slideDown();
+});
+
+// btnSlideToggle クリック時の処理
+$("#btnSlideToggle").click(function() {
+$("di v").slideToggle();
+});
+});
+
+・btnSlideUp クリック時の処理
+
+
+
+「text text text.」がスライドアップ(下から上に消える)
+
+・アニメーション
+
+
+
+.animate()⇒そのものをアニメーションするためのメソッド
+●コード例
+<!-- jQuery UI -->
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+<style type="text/css">
+di v {
+width: 300px;
+height: 100px;
+background: #fcc;
+}
+</style>
+</head>
+<body>
+<button id="btnAnm1">animate1</button><br>
+<button id="btnAnm2">animate2</button><br>
+<button id="btnAnm3">animate3</button><br>
+<di v>text text text.</di v>
+<script type="text/javascript">
+$(function() {
+// btnAnm1 クリック時の処理
+$("#btnAnm1").click(function() {
+$("di v").animate({width: "150px", height: "200px"});
+});
+
+// btnAnm2 クリック時の処理
+$("#btnAnm2").click(function() {
+$("di v").animate(
+{width: "150px", height: "200px"},
+2000, "easeInElastic", function() {
+console.log("end");
+}
+);
+});
+
+// btnAnm3 クリック時の処理　上記の書き換え版
+$("#btnAnm3").click(function() {
+$("di v").animate(
+{width: "150px", height: "200px"},
+{duration: 2000, easing: "easeInElastic",
+complete: function() {
+console.log("end");
+}}
+);
+});
+});
+
+
+・btnAnm1 クリック時の処理
+
+
+
+横幅や高さが変わった。
+※$("di v").animate({width: "150px", height: "200px"});
+});//オブジェクトを引数に取り、アニメーションが終わった後の各種CSSの値を設定する。animateで指定できるCSSの値は単純な数値を指定するCSSの設定のみが可能。横幅や高さ、透明度などは設定可能だが文字の色や背景色などの複雑なものはやれない。
+
+・btnAnm2 クリック時の処理
+
+
+
+横幅や高さが変わるような動きをした後コンソールに出力
+※2000は2秒を設定している
+
+・エフェクトをメソッドチェーンでつなげる。
+メソッドチェーンでつなげることで順番に実行できる
+コード例
+
+
+
+<button id="btn">ボタン</button><br>
+<di v>text text text.</di v>
+⇒
+$(function() {
+// btn クリック時の処理
+$("#btn").click(function() {
+$("di v").fadeOut().fadeIn().slideUp().slideDown();
+});
+});
+
+・エフェクトを遅延させる
+
+
+
+.delay()
+
+・コード 例
+<button id="btn">ボタン</button><br>
+<di v>text text text.</di v>
+⇒
+$(function() {
+// btn クリック時の処理
+$("#btn").click(function() {
+$("di v").slideUp().delay(1000).slideDown();//1秒待ち(遅延)slideDownを実行する
+});
+});
+
+・エフェクトを停止させる
+
+
+
+■.finish()
+⇒現在実行中のアニメーションとすべてのアニメーションキューを停止
+CSSプロパティは目的の値にセット。
+つまりすべてのアニメーションを停止し、アニメーションの予定をキャンセルし、最終位置に移動させる。
+■.stop()
+⇒現在実行中のアニメーションを停止する。
+2つの引数をとることができ、
+⇒.stop([clearQueue][,jumpToEnd])
+1つ目の引数はキューアニメーションを削除するか。初期状態ははfalseになる。
+2つ目の引数は現アニメーションを即座に完了するか。初期状態ははfalseになる。
+※細かな停止の設定ができる
+●コード　例
+<button id="btnAnm">animate</button><br>
+<button id="btnFinish">finish</button><br>
+<button id="btnStop1">stop1</button><br>
+<button id="btnStop2">stop2</button><br>
+<di v style="position: relative;">text text text.</di v>要素を移動させたいので
+<script type="text/javascript">
+$(function() {
+// btnAnm クリック時の処理
+$("#btnAnm").click(function() {
+$("di v")
+.animate({left: "100px"}, 2000)//2秒かける
+.animate({top: "100px"}, 500)
+.animate({left: 0}, 500)//0で初期状態
+.animate({top: 0}, 500, function() {
+console.log("end");
+});
+});
+
+// btnFinish クリック時の処理
+$("#btnFinish").click(function() {
+$("di v").finish();
+});
+
+// btnStop1 クリック時の処理
+$("#btnStop1").click(function() {
+$("di v").stop();
+});
+
+// btnStop2 クリック時の処理
+$("#btnStop2").click(function() {
+$("di v").stop(true, true);
+});
+});
+
+
+・btnAnm クリック時の処理
+
+
+
+右側へ移動し、下へ行き、左にいき、上に移動して、結果的に戻ってくる感じ
+
+・btnAnm クリック後、btnFinish クリック時の処理
+
+
+
+移動中、アニメーションが停止し、元の位置に戻ってコンソール表示
+
+・btnAnm クリック後、btnStop1 クリック時の処理
+
+
+
+実行中だった.animate({left: "100px"}, 2000)が停止され、次の.animate({top: "100px"}, 500)から続ける
+
+・ // btnStop2 クリック時の処理
+$("#btnStop2").click(function() {
+$("di v").stop(true, false);
+});
+⇒
+btnAnm クリックしてbtnStop2 クリック
+
+
+
+途中で停止し、かつ残りのアニメーションで設定されたキューアニメションがなくなって停止
+
+・// btnStop2 クリック時の処理
+$("#btnStop2").click(function() {
+$("di v").stop(false, true);
+});
+⇒
+btnAnm クリックしてbtnStop2 クリック
+
+
+右にきていたアニメーションが即座に移動完了し、残りのアニメーションが実行される
+
+・// btnStop2 クリック時の処理
+$("#btnStop2").click(function() {
+$("di v").stop(true, true);
+});
+⇒
+btnAnm クリックしてbtnStop2 クリック
+
+
+
+右に移動して、即座に移動完了し、すぐにアニメーションが削除され
+
+
+JQuery講座(キュー、エフェクトの設定、ajaxデータを取得、JSON、JSONP、データを取得してウエブページに挿入する）
+・queueという仕組み
+
+
+
+■「jQuery」で「animate」や「show」や「hide」などのメソッドを使ってアニメーション処理を行う場合、それらのメソッドが何度も実行されたらアニメーション処理はすぐに実行されるのではなく、先に実行されたアニメーション処理が終了するまで、次のアニメーションが実行されないようにキュー（queue）という仕組みに追加され管理されることになる。
+よって、「マウスホバーで～のアニメーション処理を行いたい！」といった時に、何度もすばやくマウスを重ねると、重ねた分だけキューにアニメーション処理が溜まって、マウスアウトした後もずっとアニメーションが続く現象に至る。
+■アニメを格納するqueueという仕組み
+jQueryではアニメの演出はqueueという仕組みで管理されます。これはアニメの演出を
+格納する配列で、animateだけでなく他の演出も命令（メソッドの実行）されると
+queueに格納されていきます。つまり命令された分は律儀に全て実行されます。
+■キュー、queueは平たく行ってしまうと、アニメーション等の台本みたいなもので、キューに溜まっている処理は上から順番に処理されます。
+
+・エフェクトのキューを利用する方法
+
+
+
+.queue()
+.dequeue()
+.clearQueue()
+●コード例
+<button id="btnQ1">queue1</button><br>
+<button id="btnQ2">queue2</button><br>
+<button id="btnClearQ">clearQueue</button><br>
+<di v>text text text.</di v>
+<script type="text/javascript">
+$(function() {
+// btnQ1 クリック時の処理
+$("#btnQ1").click(function() {
+$("di v").slideUp().slideDown().slideUp();
+
+// キューの数
+console.log(
+$("di v").queue().length,
+$("di v").queue("fx").length
+);
+});
+
+// btnQ2 クリック時の処理
+$("#btnQ2").click(function() {
+$("di v")
+.slideUp(function() {
+console.log("100", $(this).queue().length);
+})
+.queue(function() {
+console.log("200", $(this).queue().length);
+$(this).dequeue();
+})
+.slideDown()
+.queue(function(next) {
+console.log("300", $(this).queue().length);
+next();
+})
+.slideUp(function() {
+console.log("400", $(this).queue().length);
+})
+.queue(function() {
+console.log("500", $(this).queue().length);
+});
+});
+
+// btnClearQ クリック時の処理
+$("#btnClearQ").click(function() {
+$("di v").clearQueue();
+});
+});
+
+・btnQ1 クリック時の処理
+
+
+
+$("di v").slideUp().slideDown().slideUp();//エフェクトをこのように設定するごとにキューの数が増えていく
+コンソール
+3 3
+
+・btnQ2 クリック時の処理
+
+
+
+$("di v")
+.slideUp(function() {
+console.log("100", $(this).queue().length);//thisはdi v要素を指す。
+})
+.queue(function() {//こうするとアニメーションが発生しないキュー。dequeueメソッドがくるまで次の処理に移行しない。dequeueメソッドを忘れるとエフェクトが止まったままになるので注意
+console.log("200", $(this).queue().length);
+$(this).dequeue();
+})
+.slideDown()
+.queue(function(next) {
+console.log("300", $(this).queue().length);
+next();//nextを実行することでもエフェクトの進行を進めることができる。
+})
+コンソール
+100 6
+200 5
+300 3
+400 2
+500 1
+
+・btnQ2 クリック後すぐに、 btnClearQ クリック時の処理
+
+
+
+実行されていないキューが取り消され処理が途中で止まる。
+コンソール実行結果
+100 0
+
+・エフェクトの設定
+●コード例
+
+
+
+<button id="btn1">ボタン1</button><br>
+<button id="btn2">ボタン2</button><br>
+<di v>text text text.</di v>
+<script type="text/javascript">
+$(function() {
+// btn1 クリック時の処理
+$("#btn1").click(function() {
+console.log($.fx.interval);
+
+$.fx.interval = 500;
+$("di v").slideUp(2000).slideDown(2000);
+});
+
+// btn2 クリック時の処理
+$("#btn2").click(function() {
+console.log($.fx.off);
+
+$.fx.off = true;
+$("di v").slideUp(2000).slideDown(2000);
+});
+});
+
+・btn1 クリック時の処理
+
+
+
+onsole.log($.fx.interval);//エフェクトのコマ間の時間。この値が小さいほど精細なアニメーションになり、大きいほど荒いアニメーションになる
+$.fx.interval = 500;//500msec
+
+■コンソールに13というインターバルの初期値が表示された後、処理落ちしたアニメーションでslideUpとslideDownが
+実行された。
+
+・btn2 クリック時の処理
+
+
+
+初期値のundefinedが表示され、アニメーションが実行されない
+
+・ajaxのAPIドキュメント
+
+
+
+http://api.jquery.com/category/ajax/
+
+・ajaxのセキュリティ的な制限
+
+
+
+■ajax系の関数はローカルでは使えない。
+パソコン内にあるindex.htmlを直接ブラウザで開いてもajax系の関数は使えない。ファイルがサーバー上にある必要がある。
+■クロスドメインの問題
+通信系の処理では外部Javascript以外は同じドメインからしかファイルを読みこめない。なんでも好きなファイルを
+インターネットからとってくるということはできない。
+同じドメイン以外からファイルをとってきたい場合は外部Javascriptの形で読み込む必要がある。
+
+・URLとドメインの違い
+
+
+
+https://ferret-plus.com/8736
+
+・nginx.confの
+locationのrootの値を書き換えることでサーバーのrootのディレクトリを設定することができる
+例
+root html;の下に
+root ../../;
+を追記することで
+start "" "http://127.0.0.1/detail_course_ajax/index.html"
+を読み込めるようにしている。
+
+・$.get()
+
+
+
+■データを取得
+引数にURLを指定して、そのファイルの中身を取得するという意味。
+$.get(url[,data])
+サーバーに送るデータをマップ値で記載。
+これはCGIなどに送るパラメータ。
+マップ値　例
+{name1:param1,
+name2:param2,
+~
+nameX:paramX
+}
+■$.get(url[,data][,success])
+引数のsuccessは読み込みの成功時の処理を関数で記載。
+⇒この関数は3つの引数をとる
+function(data,textStatus,jpXHR)
+data 得られたデータ
+textStatus ステータス(文字列による通信結果のステータス情報)
+jqXHR(Jquery XMLHttpRequest)はXMLHttpRequestを拡張したもの。$.get()の戻り値としても取得可能。jqXHRはPromiseの機能も持っている。そのため、$.get()の後に.done(~)を書き、通信が成功したときの処理を書くことができる。
+※XMLHttpRequestはウエブブラウザのJavascriptに用意されているHTTP通信用のAPI
+●コード例
+<button id="btn1">ボタン1</button><br>
+<button id="btn2">ボタン2</button>
+<script type="text/javascript">
+$(function() {
+// btn1 クリック時の処理
+$("#btn1").click(function() {
+$.get("./message.txt", function(d) {/
+console.log(d);
+});
+});
+
+// btn2 クリック時の処理
+$("#btn2").click(function() {
+$.get("./message.txt")
+.done(function(d) {
+console.log(d);
+});
+});
+});
+
+・btn1 クリック時の処理
+
+
+
+message.txtの内容が読み込まれて出力
+※
+$.get("./message.txt", function(d) {//index.htmlからの相対URL。通信が成功したときの処理をfunctionで書いている。読み込んだデータを第一引数で受け取り表示
+
+・btn2 クリック時の処理
+
+
+
+.done(function(d) {//成功時の処理はdoneメソッドで行っている
+
+・外部Javascriptを読み込んで実行する
+
+
+
+$.getScript
+●コード例
+<button id="btn">ボタン</button><br>
+<script type="text/javascript">
+$(function() {
+// btn クリック時の処理
+$("#btn").click(function() {
+$.getScript("./message.js")
+.done(function(d) {//.doneからは記載がなくても大丈夫。読み込んだファイルの内容を受け取り、コンソールログで出力
+console.log(d);
+});
+});
+});
+⇒
+「message.js」の中
+console.log("読み込みました");
+
+・btn クリック時の処理
+
+
+
+読み込みました
+console.log("読み込みました");
+※.done(function(d) {//.doneからは記載がなくても大丈夫。読み込んだファイルの内容を受け取り、コンソールログで出力
+
+・JSONやJSONPを取得する
+
+
+
+$.getJson()
+
+・JSON
+
+
+
+■Javascriptのオブジェクト風の軽量なデータ交換のためのフォーマット
+例
+{"name1":"param1"},
+"name2":{"sub1":2},
+"name3":[1,2,3]}
+※注意点としてオブジェクトのプロパティ名を文字列としてダブルクォーテーションで囲う必要がある。
+JSONは単純なテキスト
+そのためクロスドメインのセキュリティ制限で外部ドメインのファイルは読みこめない。
+そうした問題を解決するのがJSONP
+
+・JSONP
+
+
+
+■(JSON with padding)
+paddingは詰め物や話や文章の不要なつけたし
+JSONにちょっとしたつけたしをしたものという意味。
+JSONPはJSONを外部Javascriptの形で読み込む
+例
+callback(
+{"name1":"param1"},
+"name2":{"sub1":2},
+"name3":[1,2,3]}
+)
+⇒こうすることでこうした中身のファイルを
+Javascriptとして読み込むとJSONを引数にして関数が実行されることになる。
+この関数を読み込み側で用意しておくと引数となったJSONを受け取ることができる。
+
+実際の運用では
+～.cgi?name=cat&callback=?
+↓
+callback=JQuery1234567890
+⇒
+こうした形でCGIを呼び出す。JQueryでcallbackの値を?としておくと自動でランダムの関数名(JQuery1234567890)
+を作り、その関数を利用して、JSONPの内部のJSONを受け取る。
+内部的にこうした関数名が作られた場合は、CGIからは下記のような値が返ってくる。
+例
+JQuery1234567890(
+{"name1":"param1"},
+"name2":{"sub1":2},
+"name3":[1,2,3]}
+)
+
+JSONはJavascriptのオブジェクトを模しているためにオブジェクトの中にオブジェクトをネストさせたり、配列を含めたりできる。
+そのためかなり複雑なデータのやり取りも可能。
+
+・サンプルコード
+
+<button id="btn">ボタン</button><br>
+<script type="text/javascript">
+$(function() {
+var url = "http://api.flickr.com/services/feeds/"
++ "photos_public.gne?jsoncallback=?";
+var data = {tags: "cc0", tagmode: "any", format: "json"};
+
+// btn クリック時の処理
+$("#btn").click(function() {
+$.getJSON(url, data)
+.done(function(d) {
+console.log(d);
+$.each(d.items, function(i, itm) {
+$("<img>").attr("src", itm.media.m).appendTo("body");
+});
+});
+});
+});
+
+・btn クリック時の処理
+
+
+
+様々なイメージ要素が追加
+コンソールに取得したJSONの内容が出力
+※
+$(function() {
+var url = "http://api.flickr.com/services/feeds/"
++ "photos_public.gne?jsoncallback=?";//jsoncallbackというパラメタを使用することでJSONPとして受け取る関数の名前を指定することができる。?とすることでJqueryにランダムな関数名をつけさせている。Jqueryによって置換されるのは「jsoncallback=?」の?のみ
+var data = {tags: "cc0", tagmode: "any", format: "json"};//flickに送るパラメタをオブジェクトとして設定
+
+// btn クリック時の処理
+$("#btn").click(function() {
+$.getJSON(url, data)
+.done(function(d) {//dにはJSONをオブジェクト化したものが入っている。
+console.log(d);//コンソールでデータの構造を確認してから階層を把握してプログラミングするとよい
+$.each(d.items, function(i, itm) {//d.itemsの配列をすべて処理している。function(i, itm)の第一引数はindex、第2引数は取り出した1つの要素を表している。
+$("<img>").attr("src", itm.media.m).appendTo("body");//mediaのmが画像のURLになっている。取り出した画像のURLを使い、JqueryでimgでsrcにURLを設定している。bodyにimg要素を追加
+
+・データを取得してウエブページに挿入する
+
+
+
+■.load
+ajax系のメソッドとは少し使い方が異なる
+これまでは
+$.メソッド()
+.loadメソッドはJqueryで選択した要素に対して実行。URLで読み込んだ内容を選択した要素に挿入
+$("～").load(url)
+●コード　例
+<button id="btn1">ボタン1</button><br>
+<button id="btn2">ボタン2</button><br>
+<di v></di v><!--挿入先にする-->
+<script type="text/javascript">
+$(function() {
+// btn1 クリック時の処理
+$("#btn1").click(function() {
+$("di v").load("./message.html");
+});
+
+// btn2 クリック時の処理
+$("#btn2").click(function() {
+$("di v").load("./message.html di v:eq(2)");
+});
+});
+⇒「message.html」
+<di v>あいうえお</di v>
+<di v style="margin-left: 1em;">かきくけこ</di v>
+<di v style="margin-left: 2em;">さしすせそ</di v>
+<di v style="margin-left: 3em;">たちつてと</di v>
+
+・btn1 クリック時の処理
+
+
+
+「message.html」の中身が読みこまれて表示される
+※
+画面上
+⇒
+ボタン1
+ボタン2
+あいうえお
+かきくけこ
+さしすせそ
+たちつてと
+※di v要素の中に読み込んだ情報が入っている
+⇒
+<di v><di v>あいうえお</di v>
+<di v style="margin-left: 1em;">かきくけこ</di v>
+<di v style="margin-left: 2em;">さしすせそ</di v>
+<di v style="margin-left: 3em;">たちつてと</di v></di v>
+
+・btn2 クリック時の処理
+
+
+
+$("di v").load("./message.html di v:eq(2)");//半角スペースを空けてセレクタを指定。このように書くと読み込んだファイルの中からセレクタに一致した部分のみが取り出されて対象要素に挿入される
+■画面上
+⇒
+ボタン1
+ボタン2
+さしすせそ
+※di v要素の中に読み込んだ情報が入っている
+⇒
+<di v><di v style="margin-left: 2em;">さしすせそ</di v></di v>
+
+JQuery講座(ajaxで汎用的にデータを取得、deferred）
+・$.ajax()
+
+
+
+汎用的にデータを取得する。
+これまで出てきたajax系のメソッドはこのajax()のパラメタをあらかじめデフォルトで設定しておき、つかいやすくしたもの。
+そのためajax()はかなり細かな設定ができる。ただ非常に多くのパラメタがある。
+■書き方が2つある
+$.ajax(url[,settings])
+第2引数に設定を書く
+$.ajax([settings])
+第1引数に設定を書く
+
+settingsの設定は名前とパラメタを書くオブジェクト形式になる。
+APIドキュメント
+http://api.jquery.com/jQuery.ajax/
+⇒settingsに使うパラメタも記載している
+
+●コード例
+<button id="btn1">ボタン1</button><br>
+<button id="btn2">ボタン2</button>
+<script type="text/javascript">
+$(function() {
+var url = "http://api.flickr.com/services/feeds/"
++ "photos_public.gne?jsoncallback=?"
+var data = {tags: "cc0", tagmode: "any", format: "json"};//URLに送るパラメタ
+
+// 成功時のimg出力 成功したときに引数3つを受け取ることができる。1つ目は取得したデータ、2つ目はステータスの文字列、3つ目はjqXHRというオブジェクト
+var outputImg = function(data, status, jqXHR) {
+console.log(data);
+console.log(status);
+console.log("[done]", jqXHR, jqXHR.statusText);//成功したことを表すdone
+$.each(data.items, function(i, itm) {
+$("<img>").attr("src", itm.media.m).appendTo("body");
+});
+};
+
+// 失敗時の情報出力
+var outputFailInf = function(jqXHR, status, errorThrown) {
+console.log("[fail]", jqXHR, jqXHR.statusText);
+console.log(status);
+console.log(errorThrown);
+// errorThrownは"Not Found"や"Internal Server Error"などの文字列。何もなければ空
+};
+
+// btn1 クリック時の処理
+$("#btn1").click(function() {
+$.ajax(url, {//ajaxメソッドはこのように細かな設定ができる
+data: data,//URLに引き渡すCGIのパラメタ
+// dataType: "jsonp", // 必要　jsonpとして受け取りたいため。ここをわざとコメントアウトして処理を失敗させることもできる
+cache: false,
+timeout: 2000
+})
+.done(outputImg)//成功時の処理の関数を指定している
+.fail(outputFailInf);//失敗時の処理の関数を指定している
+});
+
+// btn2 クリック時の処理
+$("#btn2").click(function() {
+$.ajax({
+url: url,//URLを第一引数に書くのではなくsettingsに含めている。
+data: data,
+dataType: "jsonp", // 必要
+cache: false,
+timeout: 2000
+})
+.done(outputImg)
+.fail(outputFailInf);
+});
+});
+
+・btn1 クリック時の処理
+成功時
+
+
+
+画像をとってくる
+■コンソール
+{title: "Recent Uploads tagged cc0", link: "http://www.flickr.com/photos/tags/cc0/", description: "", modified: "2018-06-01T16:58:48Z", generator: "http://www.flickr.com", …}
+success
+[done] {readyState: 4, getResponseHeader: ?, getAllResponseHeaders: ?, setRequestHeader: ?, overrideMimeType: ?, …} load
+
+・btn1 クリック時の処理
+失敗時
+
+
+
+画像は取ってこれない
+■コンソール
+[fail] {readyState: 0, getResponseHeader: ?, getAllResponseHeaders: ?, setRequestHeader: ?, overrideMimeType: ?, …} error
+error
+
+・deferred-objectのAPI
+
+
+
+http://api.jquery.com/category/deferred-object
+
+・なぜdeferredが必要なのか
+
+
+
+Jqueryでは非同期の処理が多くコールバックを多用するため。
+メソッドチェーンで非同期の処理を行う
+
+・約束
+実行
+棄却
+
+
+
+deferredの機能を使う場合は
+var d = $.deferred() //deferredオブジェクトを作り変数に格納する。
+deferredは関数の中で使い、戻り値として
+d.promise();
+そうすることでpromiseオブジェクトを返すようにする。
+promiseは約束という意味。
+後で処理をすると約束して実際の処理の完了を待たずにメソッドチェーンで記述する
+(function(){
+var d = $.Deferred()
+return d.promise()
+})()
+.done(function(){
+})
+
+・resolveとdone
+
+
+
+■作成されたdeferredオブジェクトでresolveメソッドが実行された場合は、
+処理が正しく実行された、成功したということでpromiseの後に続くdoneメソッドがすべて
+実行される。
+⇒(function(){
+var d = $.Deferred()
+処理待ち(非同期処理)⇒d.resolve();
+return d.promise()
+})()
+.done(function(){
+})
+⇒非同期処理が行われてd.resolve()が実行されたタイミングでdoneの中のfunctionが
+実行されることになる。
+
+・rejectとfail
+
+
+
+■作成されたdeferredオブジェクトに対してrejectメソッドが実行された場合、
+その処理は棄却、失敗したとみなされpromiseに続くfailメソッドの中身がすべて
+実行される。
+⇒(function(){
+var d = $.Deferred()
+処理待ち(非同期処理)⇒d.reject();
+return d.promise()
+})()
+.done(function(){
+})
+.fail(function(){
+})
+⇒非同期処理が行われた後にrejectメソッドが実行された場合、リターンされた
+promiseの後に続くfailメソッドの中の関数が実行される。
+この場合、doneメソッドの中の関数は実行されない。
+※resolveが実行されたときはdoneだけが実行されてfailは実行されない
+
+・always
+
+
+
+resolveの場合もrejectの場合もどちらでも実行される
+■(function(){
+var d = $.Deferred()
+処理待ち(非同期処理)⇒d.reject();
+return d.promise()
+})()
+.done(function(){})
+.fail(function(){})
+.always(function(){})
+⇒rejectの場合はfailとalwaysの関数が実行される。
+※resolve場合はdoneとalwaysの関数が実行される。
+
+・コード例
+<button id="btn">ボタン</button><br>
+<script type="text/javascript">
+$(function() {
+// Deferred を利用した非同期の関数
+var fnc = function(type) {
+var d = $.Deferred();
+
+//非同期の処理を実現するためにsetTimeoutを使用。1秒後にfunctionの中の処理を実行するようにしている
+setTimeout(function() {
+console.log("#" + type);
+if (type == "resolve") d.resolve("o");
+if (type == "reject") d.reject("x");
+}, 1000);
+
+console.log("#promise");
+return d.promise();// promiseオブジェクトを作成
+};
+
+// btn クリック時の処理
+$("#btn").click(function() {
+// resolve 時に全ての done を処理
+// reject 時に全ての fail を処理
+// どちらでも、全ての always を処理
+fnc("reject") //setTimeoutの関数でresolveを実行するようになる
+.done( function(r) {console.log(r, "done1"); return "oo"})//return "oo"としてもこの後の関数に引き渡されることはない
+.fail( function(r) {console.log(r, "fail1")})
+.always(function(r) {console.log(r, "always1")})
+.done( function(r) {console.log(r, "done2")})
+.fail( function(r) {console.log(r, "fail2")})
+.always(function(r) {console.log(r, "always2")});
+});
+});
+
+・btn クリック時の処理
+コンソール
+
+
+
+#promise
+#resolve
+o done1
+o always1
+o done2
+o always2
+
+・fnc("reject")に変更してbtn クリック
+
+
+
+コンソール
+#promise
+#reject
+x fail1
+x always1
+x fail2
+x always2
+
+JQuery講座(直列処理、並列処理、JqueryでのUtilty）
+・直列処理
+
+
+
+■非同期の処理をthenメソッドを使って順番につなげる。
+thenメソッドはPromiseオブジェクトを返す
+このメソッドがdefferdを利用したメソッドチェーンの中で使われると
+doneやfail,alwaysの処理がいったんここで終了し、次のPromiseの処理が始まる。
+
+Promiseを戻す関数
+.then(function(){
+return Promiseを戻す関数
+})
+.then(function(){
+return Promiseを戻す関数
+})：
+⇒処理を直列につなぐことができる
+
+・コード　例
+<button id="btn">ボタン</button><br>
+<script type="text/javascript">
+$(function() {
+// Deferred を利用した非同期の関数
+var fnc = function(type) {
+var d = $.Deferred();
+
+setTimeout(function() {
+console.log("#" + type);
+if (type == "resolve") d.resolve("o");
+if (type == "reject") d.reject("x");
+}, 1000);
+
+console.log("#promise");
+return d.promise();
+};
+
+// btn クリック時の処理
+$("#btn").click(function() {
+fnc("resolve")
+.done( function(r) {console.log(r, "done1")})
+.fail( function(r) {console.log(r, "fail1")})
+.always(function(r) {console.log(r, "always1")})
+.then(//thenメソッドは引数の関数を複数とり、
+function(r) {console.log(r, "--done--"); return fnc("reject")},//resolveの場合の処理
+function(r) {console.log(r, "--fail--")}//rejectの場合の処理
+)
+.done( function(r) {console.log(r, "done2")})
+.fail( function(r) {console.log(r, "fail2")})
+.always(function(r) {console.log(r, "always2")})
+.then(
+function(r) {console.log(r, "--done--")},
+function(r) {console.log(r, "--fail--")}
+);
+});
+});
+
+・btn クリック時の処理
+
+
+
+■コンソール結果
+#promise
+#resolve
+o done1
+o always1
+o --done--
+#promise
+#reject
+x fail2
+x always2
+x --fail--
+
+・return fnc("reject")をコメントアウトしてbtn クリック
+実行コンソール
+
+
+
+#promise
+#resolve
+o done1
+o always1
+o --done--
+undefined "done2"
+undefined "always2"
+undefined "--done--"
+
+・並列処理
+
+
+
+
+■whenメソッドを使い、非同期処理を並列処理してその終了を待って関数を実行
+⇒
+P=Promiseを戻す関数
+$.when(P1,P2,P3)//Promiseを戻す関数を書くことで非同期処理がすべて終了した後に、doneメソッドに登録した関数を実行することができる
+.done(function(){
+})
+⇒ファイルを複数読み込むときは同時に複数読み込んだほうがいいのでこうした並列処理が非常に有効
+
+・コード　例
+<button id="btn1">ボタン1</button><br>
+<button id="btn2">ボタン2</button><br>
+<script type="text/javascript">
+$(function() {
+// Deferred を利用した非同期の関数
+var fnc = function(msec) {
+var d = $.Deferred();
+
+setTimeout(function() {
+console.log("#resolve" + msec);
+d.resolve("wait" + msec);//setTimeoutの後には必ずresolveし、その待機時間を関数の引数として得ている
+}, msec);
+
+console.log("#promise" + msec);
+return d.promise();
+};
+
+// btn1 クリック時の処理
+$("#btn1").click(function() {
+$.when(fnc(1000), fnc(2000), fnc(3000))//1秒後、2秒後、3秒後にresolveを実行することになる
+.done(function(r1, r2, r3) {//上記の引数の処理がすべて終わった時にdone。r1, r2, r3はresolveで設定している引数に対応している
+console.log(r1, r2, r3);
+console.log(arguments);//argumentsは配列形式
+})
+});
+
+// btn2 クリック時の処理
+$("#btn2").click(function() {
+var fncs = [fnc(1000), fnc(2000), fnc(3000)];// whenの引数を配列で作っている
+$.when.apply($, fncs)// applyメソッドはJavascriptにもともとあるメソッドでその直前の関数を第一引数をthisにして、第2引数の配列を複数の引数とみなして直前のメソッドを実行する
+.done(function() {//[fnc(1000), fnc(2000), fnc(3000)]がすべてresolveになったら実行される。※どれか1つでもrejectされるとfailが実行される
+console.log(arguments);
+})
+});
+});
+
+・btn1 クリック時の処理
+コンソール実行結果
+
+
+
+#promise1000
+#promise2000
+#promise3000
+#resolve1000
+#resolve2000
+#resolve3000
+wait1000 wait2000 wait3000
+Arguments(3)?["wait1000", "wait2000", "wait3000", callee: ?, Symbol(Symbol.iterator): ?]
+
+・btn2 クリック時の処理
+コンソール
+
+
+
+#promise1000
+#promise2000
+#promise3000
+#resolve1000
+#resolve2000
+#resolve3000
+Arguments(3)?["wait1000", "wait2000", "wait3000", callee: ?, Symbol(Symbol.iterator): ?]
+
+・Ajaxとdefferedを組み合わせた書き方
+
+
+
+Ajax系メソッド
+↓
+Promiseを実装したjqXHRを戻す
+そのためdoneやfailだけでなく、always,then,whenも利用することができる
+
+・コード例
+
+
+<button id="btn">ボタン</button><br>
+<script type="text/javascript">
+$(function() {
+var url = "http://api.flickr.com/services/feeds/"
++ "photos_public.gne?jsoncallback=?"
+var data1 = {tags: "cat", tagmode: "any", format: "json"};// APIに送るパラメタ
+var data2 = {tags: "dog", tagmode: "any", format: "json"};
+
+// btn クリック時の処理
+$("#btn").click(function() {
+$.when(
+$.getJSON(url, data1),
+$.getJSON(url, data2)
+)
+.done(function() {//2つのgetJSONが終了した際に実行される。こうすることで2つのURLに対して同時にアクセスして並列的にデータを取得することができる。
+$.each(arguments, function(i, arg) {//argumentsの値をひとつづつ取り出しargに格納し、arg[0].itemsに対してeachメソッドを実行してitmを取得してそのmedia.mを利用して画像のURLを取り出しJqueryで作成したimg要素のsrc属性にURLを設定し、appendTo("body")
+$.each(arg[0].items, function(i, itm) {
+$("<img>").attr("src", itm.media.m).appendTo("body");
+});
+});
+})
+});
+});
+
+・btn クリック時の処理
+
+
+
+catのタグのついた画像とdogのタグのついた画像が取得されている
+
+・JqueryでのUtiltyのAPIドキュメント
+
+
+
+http://api.jquery.com/category/utilities
+※オブジェクトのタイプを判定するものが多くある
+
+・$.extend()
+
+
+
+複数のオブジェクトをマージ(融合、結合)
+複数のオブジェクトをまとめて1つのオブジェクトにしてくれる
+
+・コード　例
+$(function() {
+var demo = 4;
+
+var o1 = {name: "Mike", age: 18};
+var o2 = {height: 175, weight: 65};
+var o3 = {like: ["cat", "dog"]};
+
+// o1にo2をマージ
+if (demo == 0) {
+$.extend(o1, o2);//第一引数のオブジェクトに第2引数以降のオブジェクトをマージする
+console.log("o1", o1);//heightとweightが追加されていることがわかる
+console.log("o2", o2);
+}
+
+// o1とo2をマージした新オブジェクトを作成
+if (demo == 1) {
+var oNew = $.extend({}, o1, o2);//
+console.log("oNew", oNew);
+console.log("o1", o1);
+console.log("o2", o2);
+}
+
+
+if (demo == 2) {
+var oNew = $.extend({}, o1, o3);
+o3.like[0] = "monkey";
+console.log("oNew", oNew);
+console.log("oNew.like", oNew.like);
+console.log("o3.like", o3.like);
+}
+
+// ディープコピー
+if (demo == 3) {
+var oNew = $.extend(true, {}, o1, o3);
+o3.like[0] = "monkey";
+console.log("oNew", oNew);
+console.log("oNew.like", oNew.like);
+console.log("o3.like", o3.like);
+}
+
+// 関数の引数のデフォルト値を作っている
+if (demo == 4) {
+var fnc = function(prms) {
+prms = $.extend(true, {name: "Mike", age: 18}, prms);
+console.log(prms);
+};
+fnc();
+fnc({name: "Bob"});
+}
+});
+
+・var demo = 0とする
+コンソール実行結果
+
+
+
+o1 {name: "Mike", age: 18, height: 175, weight: 65}
+o2 {height: 175, weight: 65}
+
+・var demo = 1とする
+コンソール実行結果
+
+
+
+oNew {name: "Mike", age: 18, height: 175, weight: 65}
+o1 {name: "Mike", age: 18}
+o2 {height: 175, weight: 65}
+
+・var demo = 2とする
+コンソール実行結果
+
+
+
+oNew {name: "Mike", age: 18, like: Array(2)}
+oNew.like (2)?["monkey", "dog"]
+o3.like (2)?["monkey", "dog"]
+※extendによるオブジェクトのマージはシャローコピーしかしてくれない。
+シャローコピーとはオブジェクトや配列の参照はコピーしてくれるがその中身は複製しないというもの。
+新しい空のオブジェクトに
+
+・var demo = 3とする
+コンソール実行結果
+
+
+
+oNew {name: "Mike", age: 18, like: Array(2)}
+oNew.like (2)?["cat", "dog"]
+o3.like (2)?["monkey", "dog"]
+※引数の先頭をtrueにするとデイープコピーになる。
+この場合は第2引数のオブジェクトに対して、第3引数のオブジェクト以降をマージされることになる
+
+・var demo = 4とする
+コンソール実行結果
+
+
+
+{name: "Mike", age: 18}
+{name: "Bob", age: 18}
+※{name: "Mike", age: 18}がデフォルトの値
+
+・シャローコピーとディープコピーの違い
+
+
+
+http://kurochan-note.hatenablog.jp/entry/20110316/1300267023
+https://urashita.com/archives/1200
+
+・配列やオブジェクトに対して使う3種類のオブジェクト
+
+
+
+■$.each()
+⇒$.each(配列,function() {}) //各要素に対してfunctionを実行する
+⇒$.each(配列風,function() {}) //配列風はargumentsが代表的な例。配列ではないけど配列のように扱えるオブジェクト
+■$.map()
+■$.grep()
+
+・コード例
+$(function() {
+var demo = 1;
+
+var arr = [1, 2, 3, 5, 7, 11, 13, 17, 19, 23];
+var obj = {name: "Mike", age: 18};
+
+// $.each()
+if (demo == 0) {
+$.each(arr, function(i, x) {
+console.log("[" + i + "]", x);
+});
+}
+
+// $.map()
+if (demo == 1) {
+var arr2 = $.map(arr, function(x, i) {
+return x - 1;
+});
+console.log(arr2);
+
+var arr3 = $.map(obj, function(val, key) {
+return key + "@" + val;
+});
+console.log(arr3);
+}
+
+// $.grep()
+if (demo == 2) {
+var arr2 = $.grep(arr, function(x, i) {
+return x % 10 == 1;
+});
+console.log(arr2);
+}
+});
+
+・var demo = 0とする
+コンソール実行結果
+
+
+
+[0] 1
+[1] 2
+[2] 3
+[3] 5
+[4] 7
+[5] 11
+[6] 13
+[7] 17
+[8] 19
+[9] 23
+
+・var demo = 1とする
+コンソール実行結果
+
+
+
+[0, 1, 2, 4, 6, 10, 12, 16, 18, 22]
+["name@Mike", "age@18"]
+※$.map()は配列を引数にとり、戻り値をもとに新しい配列を作成する
+$.map()で使用するfunctionは第一引数が要素の値、第2引数がindex(eachとは順番が逆なので注意)
+また$.map()はオブジェクトを引数にして配列を作ることもできる。
+functionの第一引数がオブジェクトのプロパティの値、第2引数がプロパティ名。
+
+・var demo = 2とする
+コンソール実行結果
+
+
+
+[1, 11]
+※grepは配列に対して実行し、第一引数が要素の値、第2引数がindex(eachとは順番が逆なので注意)
+trueのもののみの配列を変数に格納している
