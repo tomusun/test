@@ -1,0 +1,289 @@
+◯アニメーションを作る場合、CSSとJqueryどちらがいいか。
+
+
+
+■CSS3からアニメーションの機能が追加されている。(transition)
+CSS3でアニメーションすると軽くなる。Webブラウザが自分自身でJavaScriptを使わずにエフェクトを
+かけることができるので軽いがブラウザによって動く動かないがあるのでJqueryを使った方が広く使える。
+
+◯webデザインの設計をするときの軸
+
+
+
+できるだけ見やすく(設計)
+どれだけ伝わりやすく(動線)
+どのように見られたいか(印象)
+
+◯web作成担当流れ
+
+
+
+webディレクター(WEBサイト全体の方向性を決める。この会社はこうだからこういう風にした方がいいのではなどのアイデアマン)
+↓
+UXデザイナー(ディレクターの指示を元にユーザーの使いやすい動線を設計する。設計書を書く)
+↓
+WEBデザイナー(設計を元にデザインする。設計書をよりよく)
+↓
+フロントエンドエンジニア
+
+◯レスポンシブ対応コーディング前に設計しないと崩壊する。
+PC版、スマートフォン版
+
+◯display:block
+なぜたて並びになるのか
+
+
+
+その物体が置かれている横全体を自分の領域とするため実質縦並びとして表現される。
+■
+⇒見えている範囲だけでなく横幅全体もある。
+
+◯display:inline
+
+ 
+
+見えている範囲のみが領域とされるため、実質横並びとして表現される。
+■■
+
+◯display:none
+
+
+
+物体を消す。
+
+◯transition;
+
+
+
+要素をゆっくり表示したい時の速さの設定
+
+◯transform:rotate(-20deg)
+
+
+
+回転するときの指定
+例
+●
+<p>ボタン01</p>
+  <a href="" class="button01">botton01</a>
+  <p>ボタン02</p>
+  <a href="" class="button02">botton02</a>
+  <p>ボタン03</p>
+  <a href="" class="button03">botton03</a>
+⇒
+  a {
+    text-decoration: none;/* リンクのアンダーラインを消す */
+    box-sizing: border-box;/* 隙間の設定を使いやすく修正 */
+  }
+  .button01,.button02,.button03 {
+    display: block;/* aはinline属性で形の指定ができないのでblock属性に修正 */
+    width: 200px;
+    height: 50px;
+    border: solid 2px #333;
+    text-align: center;/* 文字を左右中央に配置 */
+    padding-top: 10px;
+    color: #333;
+  }
+  .button01:hover,.button02:hover,.button03:hover {/* 触れた時のアクション指定 */
+    background: #333;
+    color: #FFF;
+  }
+  .button03 {
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    -ms-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    transition: all 0.3s;
+  }
+  .button03:hover {
+    -moz-transform: rotate(-20deg);
+    -webkit-transform: rotate(-20deg);
+    -o-transform: rotate(-20deg);
+    -ms-transform: rotate(-20deg);
+    transform: rotate(-20deg);
+  }
+
+◯box-sizing border-box
+例
+
+
+
+■box-sizing border-box使わないとボックスの中でpadding10px指定するとその要素が10px分大きくなってしまう。それだとデザインが
+しずらい。 
+⇒例えば、縦100px、横100pxのボックスを作ったのにpadding10pxやると縦が120px、横が120pxになってしまうなど。
+padding10px使ったらボックスの中の隙間が変わるだけで外側の大きさを変わらないようにする。
+
+◯センター合わせにする際にtext-align: centerとmargin 0 auto
+の違い
+
+
+
+■text-align
+インライン属性にしか効かない。物の中でセンタリングする。
+文字をセンタリングする場合に使う。
+■margin 0 auto
+ブロック属性で指定できるものがmargin 0 auto(理屈：上下が0で左右がAUTO。物体の左右の隙間が自動になることにより隙間が一緒になる)
+ブロック属性にしてmargin 0 autoを使う。
+物をセンタリングする場合はmargin 0 autoを使う。
+※インライン属性だとセンタリングできないので注意
+
+◯ハンバーガーボタン
+
+
+
+■PCサイトのメニュー量が多い時な度に使う手法。一般的に右上のところにボタンを配置し、そこをクリックするとプルダウンでメニューが表示される。
+⇒ハンバーガーボタンはスマートフォンの概念が生まれてからできた実装方法。
+
+◯レスポンシブ対応
+
+
+
+■PCデザインとSPデザインをCSSのテクニックメインで実装を組み分けること
+⇒
+メディアクエリというCSSの記述方法でデザインを組み分ける。
+@media screen and (max-width:960px){
+ 指定
+}
+■レスポンシブ対応の準備に最も欠かせないのはviewport設定
+
+◯PC、タブレット、スマートフォンで切り分ける場合のpx数
+
+
+
+■いろんなメーカが出している分、横幅もいろんなものがある。
+iPhone、PC版のpx指定後、100pxごとにデザインを作ったりしてどの大きさでもデザインが崩れないようにしている。
+クライエントにより15種類の対応を要求されることもある。
+
+・レスポンシブ対応したメニューの作成
+PC版ハンバーガーボタン無し
+スマートフォン版ハンバーガーボタン有り(960px以下)
+
+
+
+<header id="header">
+		<di v class="header__bg">
+			<di v class="toggle">
+				<spa n></spa n>
+				<spa n></spa n>
+				<spa n></spa n>
+			</di v>
+		</di v>
+		<nav class="nav">
+			<ul>
+				<li><a href="">TOP</a></li>
+				<li><a href="">COMPANY</a></li>
+				<li><a href="">CONTACT</a></li>
+			</ul>
+		</nav>
+	</header>
+⇒
+html, body, ul, li, a, nav {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+/* 灰色 */
+  background: #555;
+}
+
+a {
+  text-decoration: none;
+}
+
+#header {
+  position: relative;
+}
+
+.header__bg {
+  position: inherit;
+/* 白色 */
+  background: #FFF;
+  height: 40px;
+  border-bottom: 1px solid #ccc;
+  padding-top: 10px;
+}
+
+.nav {
+  position: absolute;
+  top: 14px;
+  margin-left: 10px;
+}
+
+.nav li {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.nav a {
+/* 灰色 */
+  color: #777;
+  font-weight: bold;
+}
+
+.nav a:hover {
+  border-bottom: 1px solid #777;
+}
+
+@media screen and (max-width: 960px) {
+  .header__bg {
+    z-index: 999;
+  }
+  .nav {
+    float: left;
+    top: -500px;
+/* 黒色 */
+    background: #333;
+    width: 100%;
+    margin-left: 0;
+    padding: 20px;
+    -webkit-transition: .5s ease-in-out;
+    -moz-transition: .5s ease-in-out;
+    transition: .5s ease-in-out;
+  }
+  .nav li {
+    display: block;
+    text-align: center;
+    padding: 15px;
+    border-bottom: 1px solid #FFF;
+  }
+  .nav a {
+/* 白色 */
+    color: #FFF;
+  }
+  .toggle {
+    float: right;
+    margin-right: 10px;
+  }
+/* ハンバーガを作っているところ */
+  .toggle spa n {
+    display: block;
+    background: #333;
+    width: 30px;
+    height: 5px;
+    margin-bottom: 5px;
+  }
+  .open .nav {
+    transform: translateY(551px);
+  }
+}
+⇒
+(function() {
+  'use strict';
+  var $header = $('#header');
+
+  $('.toggle').click(function(){
+    $header.toggleClass('open');
+  });
+})();
+※プロパティの値に「inherit」を指定すると、親要素のスタイルを継承します。 子要素に親要素の値を明示的に継承させたい場合のみinheritを指定してください。
+※ハンバーガーボタン押したときに<header id="header class="open">になる
+※縦軸で551px下に出る。
+top:-500px;がほぼほぼなくなったうえでプラスアルファ下に出てくるという感じ。
+※A、B、Cなど新しく記述したものがどんどん上に重なっていくというのがHTMLの仕様
+z-indexを使わないと先に記述されているのがbackgroundの方なので上の方に新しい記述のメニューが回ってしまうのでかっこ悪い。
+z-indexを使うとメニューの下から回り込んで表示してくれる。
+※top:-500px;
+ー500上に持っていって見えない状態にしている
+※Jqueryは重いのでCSSで実装できるものCSSでやったほうがよい

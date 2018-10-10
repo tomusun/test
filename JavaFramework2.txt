@@ -1,0 +1,663 @@
+◯覚えておきたい用語
+Core Container
+
+
+
+Springの基本機能を担うフレームワークの総称
+1、Spring Core
+Springの中核を担うフレームワーク。これがないと基本的に動かない。
+2、Spring Beans
+SpringのDIコンテナの一つ
+アプリケーション全体を管理するフレームワーク
+クラス間でのDIを担当する。
+3、Spring Context
+Spring Beansの機能を拡張したDIコンテナ
+4、SpEL(Spring Expression Language)
+JSPなどの画面側でもDIをしてくれる機能。JSPのEL式を拡張している機能。
+
+◯Spring AOP
+
+
+
+AOPの機能を実現する機能。
+1、アドバイス
+2、ジョインポイント
+3、ポイントカット
+4、アスペクト
+例
+クラス
+　【処理A(ジョインポイント(実行する場所))】
+　・メソッド(処理)
+　【処理B(ジョインポイント(実行する場所))】
+←　ポイントカット(あるタイミングになったらAとBの処理を実行してねという実行条件)
+Spring AOP
+　・【処理A(アドバイス)】
+　・【処理B(アドバイス)】
+※上記全体をアスペクトと呼ぶ
+
+◯Spring DataAccess
+
+
+
+Springのデータアクセスを担うフレームワークの総称
+【Spring DataAccessを形成するフレームワーク】
+1、JDBCの処理をサポートするフレームワーク
+⇒我々が手で作りこまなければならない部分を共通化してくれる。
+2、Spring ORM
+ORM(Object-relational mapping) 処理をサポートするためのフレームワーク
+※データベースを扱うフレームワークであるHibernateやJPAと連携するためのフレームワーク
+
+◯Springは巨大なフレームワークの集合体
+フルスタックである理由
+
+
+
+いろんなところの部品を使用して間違った使われ方をされないように。手続きさえ身につけておけば、
+同じ処理でシステムが作れるというのが積み重なって巨大なフレームワーク。
+
+◯開発の準備は大変なのか
+
+
+
+開発ツール自体もSpringが提供してくれているのであまり意識してくれなくていい。
+■STSを使うことによってあまり意識してなくてよい
+■Spring Boot
+STSで開発するのをボタン1つでやってくれるさらに便利なもの。
+■Spring Roo
+開発ではなく開発作業全体を効率化する仕組み
+※これらを組み合わせることによってプログラマが作りこまなければいけないところは業務処理の部分、
+システムに特化した部分だけをつくればいいといったことになる。
+
+◯STS
+
+
+
+IDEの一種
+springの開発に必要な機能が詰まったIDE
+eclipseベースの統合開発環境
+
+◯STSで開発すると何が良いか
+
+
+
+①クラスの関連性を補足してくれる
+⇒
+Javaファイルと設定ファイルが連動
+例えばBeanクラスを作成 
+public class SampleBean {
+⇒
+DIの対象としたい場合
+設定で登録されているクラスはこのクラスと自動で補足してくれる
+<bean id="sample" class="sample.SampleBean">
+※設定ファイルを書き間違えた場合、自動的に赤で教えてくれる
+プログラムの不備を事前に教えてくれる
+②プロジェクトに必要なライブラリを導入してくれる
+Mavenと連携して必要なライブラリをインストール
+strutsであればjarファイルというライブラリを導入するにはあちこちサイトに行ってダウンロードしてくる。
+struts2では必要なものを抜き出してビルドパスを通す。
+Springの場合は自動的にやってくれる
+
+◯Maven
+
+
+
+プロジェクト管理やビルドを行ってくれるツール。
+Apacheソフトウェア財団で開発されているJavaプログラムのプロジェクト管理ツール。
+eclipseでプログラム作るときに最初に作るプロジェクトの管理をしてくれるもの。
+
+◯Mavenを使うと何がうれしいのか
+
+
+
+①プロジェクトに必要なライブラリが管理できる。
+②プロジェクトのビルドを自動化してくれる
+③プロジェクトの状況を可視化してくれる
+⇒テストの結果などを目に見える形で提供してくれる。
+
+今まで手作業でやってたこと、必要なライブラリをサイトからとってきて自分のeclipseを導入したりする手間や作ったシステムを納品する手作業を自動化に変えるもの。
+
+◯プロジェクトのビルドとは
+
+
+
+■プログラム　コンパイルパッケージング(コンパイルしたファイルなどをまとめる。テストで作ったプログラムなどを省いた状態)　デプロイ(サーバーに配置)　動作確認(テスト)　本番
+⇒Mavenは手続きを事前に登録しておくことで自動実行できる。MavenはSTSの中に同梱されていてプロジェクト、開発に必要なライブラリを自動でダウンロードしたり、設定ファイルもあらかじめ準備してくれる。
+
+◯Spring boot
+
+
+
+Spring開発をさらに簡単にする。
+複雑な設定ファイル不要で簡単システム構築
+■プロジェクト作成時にチェックボックスで必要なものを選ぶだけ。
+データベースやWeb、セキュリティなどの機能などをチェックつけれてチェックつけることで必要なものを勝手に作ってくれる。
+
+◯STSの入手
+
+
+
+①オフシャルサイトからダウンロード
+あるいは
+②eclipseのプラグイン(追加機能)としてインストール
+※すでにeclipseを導入している人はこっち
+「ヘルプ」⇒eclipseマーケットプレイスを押す⇒STSと検索
+競合などでエラーが起きてしまうこともあるが再起動すれば直る場合もある
+
+◯pom.xml
+
+
+
+Mavenの設定ファイルのこと。
+何をインストールするかといものを書いているだけ。これをMavenが読んでこのライブラリを取り込めばよいのだなとみてくれる。
+用途によってカスタマイズはしないといけない。
+
+◯Spring用のパースペクティブ(作業画面を表示)
+
+
+
+■パースペクティブ→その他→Springを選択。
+葉っぱのマークが出てくる
+⇒そこまでいくと環境構築として準備完了
+⇒パッケージエクスプローラで右クリックするとSpring～プロジェクトを選ぶことができる
+
+◯動作確認
+
+
+
+■パッケージエクスプローラで右クリックしてSpring LegacyProjectを選ぶ。出てきた画面でプロジェクト名を
+入力してテンプレートではSimple Project→Simple Spring Web Mavenを選ぶ。完了ボタンを押す。
+※テンプレートを使っているのであらかじめ必要なものをダウンロードしてくれた状態。
+■サンプルの配置前に作成したプロジェクトを右クリック⇒Maven→プロジェクトの更新を選択
+※これをやっておかないとTomcatに反映されない
+
+◯SpringFramework4でHello World!!」
+
+
+
+■配布してくれたプログラムファイルを使って既存のファイルを上書きする。
+■SampleBeanクラス
+public class SampleBean {
+
+	private String msg;
+
+	public void setMsg(String msg) {
+		this.msg = msg;
+	}
+
+	public String getMsg() {
+		return msg;
+	}
+}
+■SampleServletクラス
+/**
+ * Java入門 Spring動作確認クラス.
+ */
+public class SampleServlet extends HttpServlet {
+
+	private static final long serialVersionUID = 1L;
+
+	ApplicationContext context;	// DIコンテナ
+
+    public SampleServlet() {
+        super();
+    }
+
+    /**
+     * init（Servlet初期処理）メソッド.※サーブレットが呼び出されたときに最初に動くメソッド
+     */
+    @Override
+    public void init() throws ServletException {
+
+    	// 初期処理を実行
+    	super.init();
+    	// DIコンテナのインスタンスを取得
+    	context = new ClassPathXmlApplicationContext("/spring/application-config.xml");
+    }
+
+    /**
+     * GETメソッドでリクエストされた場合の処理.
+     */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		// コンテナからBeanクラスをDI ※Beanクラスを呼んでいる
+		SampleBean bean = (SampleBean)context.getBean("sample");
+		// Beanクラスの文字列を設定
+		bean.setMsg("Hello World!!");
+
+		// リクエストスコープに格納（JSP側ではEL式を使って取得）
+		request.setAttribute("bean", bean);
+
+		// JSP画面に移動
+		RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
+		rd.forward(request, response);
+	}
+}
+■/SampleSpring4/src/main/resources/spring/application-config.xml
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- Uncomment and add your base-package here:
+         <context:component-scan
+            base-package="org.springframework.samples.service"/>  -->
+
+            	<!-- DIするBeanクラスを登録 依存関係を判断してくれるので違う名前を書くとエラーが出る-->
+            <bean id="sample" class="sample.SampleBean" />
+
+</beans>
+■/SampleSpring4/src/main/webapp/index.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Java入門</title>
+	</head> 
+	<body>
+		<!-- ここはEL式（JSPの機能） -->
+		<p>${bean.msg}</p>
+	</body>
+</html>
+⇒
+サーバータグを見てTomcatが入っていない場合は右クリック⇒新規でTomcat8を入れる。
+入れたTomcat8に対して開始をして起動させ
+localhost:8080/SampleSpring4/SampleServlet
+でブラウザに入力して実行
+→画面に「Hello World!!」と出る
+※DIされたBeanクラスの値を表示している
+
+◯Controller
+Servlet
+↑DI
+●Model
+Bean
+●View
+JSP
+
+◯web.xml
+
+
+
+Tomcat側の設定
+
+◯application-config.xml
+
+
+
+Spring側の設定
+
+◯SpringでDIをする方法
+
+
+
+①設定ファイル(XMLファイル)を使用する
+※前回のサンプルグラムはこっち
+SampleBean bean = (SampleBean)context.getBean("sample");の
+contextはDIコンテナに当たる
+②アノテーションを使用する。
+より簡素にできる。
+■アノテーション
+目印をつけることのできる機能。
+フレームワーク側が自動で判断してくれる。
+@Autowired(DIの対象である変数である変数であることを表す)
+SampleBean bean;
+
+◯Springのアノテーション
+
+
+
+■＠Scope
+beanのスコープを示す
+■＠Component
+DIの対象となるクラスであることを示す
+■＠Service
+Componentと同じであるが業務処理クラスであることを示す
+■＠Respository
+Componentと同じであるがデータベースアクセス処理クラスであることを示す
+■＠Controller
+＠Componentと同じだがコントローラークラスであることを示す
+
+◯SpringのAOP
+AOPの概念でプログラムを作成するとどんなことができるか。
+
+
+
+共通の処理を実行する。
+それぞれのクラスに共通処理を実行させることができる。
+
+◯Spring AOPの基本機能
+
+
+
+■「AspectJ」
+AspectJとはAOP機能ライブラリ(現在はeclipseプロジェクトで開発をしている)
+Spring AOPはAspectJの機能を拡張している。
+
+◯SpringのAOPする方法
+
+
+
+①設定ファイル(XMLファイル)を使用する
+application-config.xmlの「beans」タグに登録する
+例
+<aop:config>
+ <aop:aspect id="aspect" ref="sample1">⇒アスペクトの定義
+   <aop:pointcut expression="execution(* sample.SampleBean.getMsg(..))" id="ap1"/>⇒ポイントカット(実行条件)
+   <aop:before method="outMsgBefore" pointcut-ref="ap1"/>⇒aop:beforeはジョインポイント(実行タイミング(どのタイミングでやるの))、method="outMsgBefore"はアドバイス(処理)
+ </aop:aspect>
+</aop:config>
+※1つのアドバイスを書くのにかれくらい書かないといけないので設定大変
+アノテーションの方が楽
+②アノテーションを使用する。
+例
+@After("execution(* sample.SampleBean.getMsg(..))")
+public void outMsgAfter(JoinPoint point){
+※@Afterがジョインポイント
+"execution(* sample.SampleBean.getMsg(..)がポイントカット。指定方法が複雑(覚えてしまえば柔軟な設定が可能)
+public void outMsgAfter(JoinPoint point){がアドバイス
+
+◯Springのアノテーション(AOP用)
+
+
+
+■@Aspect
+クラスをアスペクトとして定義
+■@Before
+メソッドの呼び出し前に実行
+■@After
+メソッドの呼び出し後に実行
+■@AfterReturning
+メソッドの戻り値が返る前に実行
+■@AfterThrowing
+例外が発生した直後に実行
+■@Around
+ポイントカットの前後で指定したタイミングで実行
+
+◯ポイントカットは条件がたくさん
+
+
+
+「*」＝修飾子・戻り値の条件
+「sample.」＝パッケージの条件。どのパッケージを対象にするのか
+「SampleBean.」＝クラスの条件
+「getMsg」＝どのメソッドを対象にするのか
+「(..)」＝引数の条件。どんな引数が入ったときに実行するのか
+※条件を書けば書くほどある特定のメソッドだけに使えるものになる(適用範囲は狭い)
+【狭い】
+execution(publc void sample.SampleBean.setMsg(String))
+⇒この定義のパッケージ・クラス・メソッドじゃないと適用されない
+【広い】
+execution(* *..*.*(..))
+⇒ワイルドカード(*)を使ってどの条件でも適用できるよ
+
+◯pom.xmlに
+<!-- Spring -->
+<spring-framework.version>4.0.7.RELEASE</spring-framework.version>
+と書くと好きなバージョンを設定できる。
+<!-- AOP -->
+		<org.aspectj-version>1.8.4</org.aspectj-version>
+		
+◯Mavenを使ってライブラリを更新
+
+
+
+pom.xmlで設定したものを環境に取り入れてくれる。
+作成したプロジェクトを右クリック⇒実行⇒Maven installを選択
+※そのあとにプロジェクトの更新も忘れないこと。
+
+◯サンプルプログラム実行(DIとAOP関連)
+
+
+
+localhost:8080/SampleSpring4_2/SampleServlet
+■サンプルプログラムで諸々の設定を書き換えるので
+作成したプロジェクトを右クリック⇒springツール⇒remove as Bean Configration
+を行う。こうすることで設定のところ最新化してくれる。
+そしてサーバータブに対し右クリックで新しく追加したプロジェクトに対して追加及び除去で入れる。(作成したプロジェクトをTomcatに登録する)
+●SampleServlet
+@Controller
+public class SampleServlet extends HttpServlet {
+
+	private static final long serialVersionUID = 1L;
+    
+	// AutowiredアノテーションによってインスタンスがDIされる
+	@Autowired
+	SampleBean bean;
+	@Autowired
+	SampleBean2 bean2;
+	
+	/**
+     * init（Servlet初期処理）メソッド.
+     */
+	@Override
+	public void init() throws ServletException {
+		
+		// 親クラスのinit（初期処理）を実行
+		super.init();
+		// DIコンテナが探すWebアプリケーションの対象を設定。DIの対象にするかしないかの設定。お作法
+		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+	}
+	
+	/**
+     * GETメソッドでリクエストされた場合の処理.
+     */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		
+		// Beanクラスの文字列を設定
+		bean.setMsg("Hello World!!");
+		// Bean2クラスのメソッドを実行
+		bean2.outMsg();
+		
+		// リクエストスコープに格納（JSP側ではEL式を使って取得）
+		request.setAttribute("bean", bean);
+
+		// JSP画面に移動
+		RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
+		rd.forward(request, response);
+	}
+}
+●SampleBean
+public class SampleBean {
+
+	private String msg;
+	
+	public void setMsg(String msg) {
+		System.out.println("□□□□□ setMsgメソッドを実行します. □□□□□");
+		this.msg = msg;
+	}
+	
+	public String getMsg() {
+		System.out.println("□□□□□ getMsgメソッドを実行します. □□□□□");
+		return msg;
+	}
+}
+●SampleBean2
+public class SampleBean2 {
+	
+	public void outMsg() {
+		System.out.println("●●●●● outMsgメソッドを実行します. ●●●●●");
+	}
+}
+●SampleAspect
+@Aspect
+@Component
+public class SampleAspect {
+	
+	@Before("execution(* sample.*.*(..))")
+	public void outMsgBefore(JoinPoint point) {
+		System.out.println("■■■■■" + point.toString() + "のBefore処理を実行します. ■■■■■");
+	}
+	
+	@After("execution(* sample.*.*(..))")
+	public void outMsgAfter(JoinPoint point) {
+		System.out.println("■■■■■" + point.toString() + "のAfter処理を実行します. ■■■■■");
+	}
+}
+●index.jsp
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Java入門</title>
+	</head> 
+	<body>
+		<!-- ここはEL式（JSPの機能） -->
+		<p>${bean.msg}</p>
+	</body>
+</html>
+●application-config.xml
+<beans xmlns～
+<!-- DIするBeanクラスを登録 -->
+<bean id="sample" class="sample.SampleBean" />
+<bean id="sample2" class="sample.SampleBean2" />
+
+<!-- AOPの設定 -->
+<!-- <aop:aspectj-autoproxy />
+<context:component-scan base-package="sample"/>
+</beans> -->
+●pom.xml
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.springframework.samples.service.service</groupId>
+  <artifactId>SampleSpring4_2</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>war</packaging>
+  
+    <properties>
+
+		<!-- Generic properties -->
+		<java.version>1.6</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		
+		<!-- Web -->
+		<jsp.version>2.2</jsp.version>
+		<jstl.version>1.2</jstl.version>
+		<servlet.version>2.5</servlet.version>
+
+		<!-- Spring -->
+		<spring-framework.version>4.0.7.RELEASE</spring-framework.version>
+
+		<!-- Hibernate / JPA -->
+		<hibernate.version>4.2.1.Final</hibernate.version>
+
+		<!-- Logging -->
+		<logback.version>1.0.13</logback.version>
+		<slf4j.version>1.7.5</slf4j.version>
+
+		<!-- Test -->
+		<junit.version>4.11</junit.version>
+		
+		<!-- AOP -->
+		<org.aspectj-version>1.8.4</org.aspectj-version>
+
+	</properties>
+	
+	<dependencies>
+	
+		<!-- Spring MVC -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring-framework.version}</version>
+		</dependency>
+		
+		<!-- Other Web dependencies -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>${jstl.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>${servlet.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>${jsp.version}</version>
+			<scope>provided</scope>
+		</dependency>
+	
+		<!-- Spring and Transactions -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${spring-framework.version}</version>
+		</dependency>
+
+		<!-- Logging with SLF4J & LogBack -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- Hibernate -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>${hibernate.version}</version>
+		</dependency>
+
+		
+		<!-- Test Artifacts -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring-framework.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- AOP -->
+		<dependency>	
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>${spring-framework.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+			<version>${org.aspectj-version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>${org.aspectj-version}</version>
+		</dependency>
+
+	</dependencies>	
+</project>
+
+◯実行結果
+
+
+
+コンソールに
+□□□□□ setMsgメソッドを実行します. □□□□□
+●●●●● outMsgメソッドを実行します. ●●●●●
+□□□□□ getMsgメソッドを実行します. □□□□□
+が表示され
+画面に
+Hello World!!
+が表示される

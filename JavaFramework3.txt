@@ -1,0 +1,669 @@
+・AOPの確認
+
+
+
+■サンプルプログラムの
+application-config.xml
+の
+<!-- AOPの設定 -->※自動的にアクセプトの対象のものを探してくれる
+<!-- 
+<aop:aspectj-autoproxy />
+<context:component-scan base-package="sample"/>※AOPの対象となるクラスのパッケージはどこから探すか。
+ -->
+ のコメントアウトを外す。
+■public void outMsgBefore(JoinPoint point) {は
+ 処理の実行前に行うもの。JoinPointをオブジェクトとして使用可能。フレームワーク側でJoinPointの引数を勝手に与えてくれる。
+ @After("execution(* sample.*.*(..))")
+	public void outMsgAfter(JoinPoint point) {
+メソッドの処理が終わった後に実行されるもの
+●Controller
+Servlet
+↑
+Aspect
+Before(メソッド実行前)
+Advice(メソッド実行前)
+After(メソッド実行後)
+※サーブレットのメソッドを実行する前後のタイミングで実行される。
+@Aspect
+@Component
+public class SampleAspect {
+⇒@Aspectをつけることでアスペクトの対象であるクラスであることを表す。
+スクロールバーにカーソルを充てると「3 Spring AOP marker at this line」が表示される。これが表示されていないとうまくいっていない可能性があるので注意
+●コンソール
+■■■■■execution(void sample.SampleBean.setMsg(String))のBefore処理を実行します. ■■■■■
+□□□□□ setMsgメソッドを実行します. □□□□□
+■■■■■execution(void sample.SampleBean.setMsg(String))のAfter処理を実行します. ■■■■■
+■■■■■execution(void sample.SampleBean2.outMsg())のBefore処理を実行します. ■■■■■
+●●●●● outMsgメソッドを実行します. ●●●●●
+■■■■■execution(void sample.SampleBean2.outMsg())のAfter処理を実行します. ■■■■■
+■■■■■execution(String sample.SampleBean.getMsg())のBefore処理を実行します. ■■■■■
+□□□□□ getMsgメソッドを実行します. □□□□□
+■■■■■execution(String sample.SampleBean.getMsg())のAfter処理を実行します. ■■■■■
+⇒共通の処理として実行してくれている
+メソッド側に何も手を加えずに処理を実行させることができる。
+
+・AOPは現場ではどのような処理に使われるのか
+
+
+
+基本的にログの出力処理や例外処理など。
+
+・Springのデータベースアクセス処理
+
+
+
+Spring Data Access
+
+・Javaからデータベースにアクセスする方法
+
+
+
+①JDBC APIを使用する方法
+⇒JDBCドライバを作って接続す
+データベースに接続するための処理をまとめたクラス(DAO)
+●イメージ
+処理クラス(データの一覧をとってくる)
+⇒
+DAO
+⇒
+ドライバマネージャ(java.sqlパッケージのクラスを呼んでいる)
+⇒
+JDBCドライバ
+⇒
+DB
+②ORM(Hibernate、JPAを駆使して使用する)を使用する方法
+簡単に言えば、データベースをJavaのオブジェクトとして扱う。操作を使うためのメソッドを使ってデータベース自体がオブジェクトして扱うことができる。
+●イメージ
+処理クラス
+⇒
+エンティティマネージャークラス
+⇒
+エンティティクラス(テーブルを1つのクラスとして見立てる(永続化コンテキスト))
+処理結果が同期される。
+
+・JDBC APIを使用するメリット・デメリット
+
+
+■メリット
+データベースの接続や操作に関する手続きがAPIとして提供されているため、通常のSQL操作と同じ感覚で使用できる。
+■デメリット
+SQL操作以外にも接続、解除、例外処理までを考慮したプログラムが必要なためコード量が多くなってしまう。
+
+・ORMを使用するメリット・デメリット
+
+
+
+■メリット
+データベース操作をJavaのAPIを通じて直接操作できる。
+SQLを使わずにメソッドを通じてデータベースの操作ができる。
+■デメリット
+SQL操作ではなくAPI操作となるため永続化コンテキストの理解と設計能力がないとリスクが高まってしまう。
+
+・SpringでJDBC API操作を簡単にする
+今回使用するのは「Spring JDBC」
+イメージ
+
+
+
+●イメージ
+処理クラス
+⇒
+Spring JDBC(
+JDBC Template(外部の設定ファイを読み込みJDBCドライバの処理を自動的に行ってくれる)→JDBCドライバ
+↓
+設定ファイル
+)
+※接続された状態をDIしてくれて処理クラスはオブジェクトをもらうことができる。我々は接続処理を意識せずにそのあとの処理を続けることができる。
+⇒
+データベース
+
+・pom.xml
+spring-jdbcの設定
+<!-- JDBC -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>4.2.4.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.38</version>
+		</dependency>
+
+・jdbc.properties
+
+
+
+データベースに接続するための情報が入っている。
+
+・EclipseからMySQLのテスト接続失敗した場合
+
+
+
+https://kurukuruz.hatenablog.jp/entry/2018/04/28/200000
+
+insert into sample.user(id, pass, name, age) values(
+'web02', 'pass', 'すく次郎', 8
+)
+
+・application-config.xml
+
+ <!-- JDBC設定ファイル -->
+  <context:property-placeholder location="classpath:./spring/jdbc.properties" />※読み込んでね
+  
+  <!-- DIするBeanクラスを登録 上記を読み込んで当て込んでいく-->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    		<property name="driverClassName" value="${jdbc.driverClassName}" />
+    		<property name="url" value="${jdbc.url}" />　※どのDBに接続するか
+    		<property name="username" value="${jdbc.username}" />
+    		<property name="password" value="${jdbc.password}" />
+    </bean>
+→
+/SampleSpring4_3/src/main/resources/spring/jdbc.propertiesに紐づいている
+例
+jdbc.driverClassName=org.gjt.mm.mysql.Driver
+jdbc.url=jdbc:mysql://localhost:3306/sample
+jdbc.username=root
+jdbc.password=password
+※下から3っつは自身の環境に合わせないとうまく接続できない
+jdbc.url=jdbc:mysql://localhost:3306/sampleのsampleは実際DBにつなげる名前
+37:00
+
+接続設定はJAVAプログラムで書く必要はない。接続設定はファイルを読み込んでフレームワーク側がやってくれるので記述のミスはなくなるメリットがある。
+
+・従来のJDBCアクセスの場合
+
+
+
+Class.forName("com.mysql.jdbc.Driver");
+con = DriverManager.getConection("jdbc:mysql://localhost:3306/sample","root","password");
+→
+// DAOクラスをインスタンス化
+dao = new LoginDao();
+rs = dao.selectUser(id,pass);
+→
+if(con!=null){
+ con.close;
+}
+if(ps!=null){
+ ps.close;
+}
+~
+
+・Spring JDBCによるアクセスの場合
+
+
+
+接続設定などが定型化されている。設定を入れるだけで接続の処理ができてしまう。
+    <!-- JDBC設定ファイル -->
+    <context:property-placeholder location="classpath:./spring/jdbc.properties" />
+
+    <!-- DIするBeanクラスを登録 -->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    		<property name="driverClassName" value="${jdbc.driverClassName}" />
+    		<property name="url" value="${jdbc.url}" />
+    		<property name="username" value="${jdbc.username}" />
+    		<property name="password" value="${jdbc.password}" />
+    </bean>
+    
+    <bean id="spjdbc" class="org.springframework.jdbc.core.JdbcTemplate">
+    		<constructor-arg ref="dataSource"/>
+    </bean>
+
+    <bean id="sample" class="sample.SampleBean" />
+※今まで書いていた接続の部分、接続を解除する部分は気にしなくて済む
+今までとは違い、簡素な作りで実行できる
+
+
+●SampleBean
+public class SampleBean {
+
+	private String msg;
+	
+	public void setMsg(String msg) {
+		System.out.println("□□□□□ setMsgメソッドを実行します. □□□□□");
+		this.msg = msg;
+	}
+	
+	public String getMsg() {
+		System.out.println("□□□□□ getMsgメソッドを実行します. □□□□□");
+		return msg;
+	}
+}
+●SampleServlet
+@Controller
+public class SampleServlet extends HttpServlet {
+
+	private static final long serialVersionUID = 1L;
+
+	// AutowiredアノテーションによってインスタンスがDIされる
+	@Autowired
+	SampleBean bean;
+	@Autowired
+	JdbcTemplate data;
+
+	/**
+     * init（Servlet初期処理）メソッド.
+     */
+	@Override
+	public void init() throws ServletException {
+
+		// 親クラスのinit（初期処理）を実行
+		super.init();
+		// DIコンテナが探すWebアプリケーションの対象を設定
+		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+	}
+
+	/**
+     * GETメソッドでリクエストされた場合の処理.
+     */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		// JDBCテンプレートには既にDBとの接続情報がDIされている
+		// INSERT文を実行
+//		data.update("insert into user (id, pass, name, age) values (?, ?, ?, ?)",
+//					new Object[]{ "web06", "password", "すく", "10" });
+
+		// SELECT文の処理結果をリストで取得	 DB処理はこれだけ
+		List<Map<String, Object>> list = data.queryForList("select * from user");
+
+		// リストの内容を順番に処理
+		StringBuffer buff = new StringBuffer("DBから取得した値は「");
+
+		for(Map<String, Object> map : list) {
+			// DBの検索結果を文字列に追加 1行1行を取得している
+			buff.append(map.get("name"));
+			buff.append(",");
+		}
+
+		// 少しだけ文字列を修正
+		int index = buff.lastIndexOf(",");
+		buff.replace(index, index+1, "」です.");
+
+		// Beanクラスに文字列を設定
+		bean.setMsg(buff.toString());
+
+		// リクエストスコープに格納（JSP側ではEL式を使って取得）
+		request.setAttribute("bean", bean);
+
+		// JSP画面に移動
+		RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
+		rd.forward(request, response);
+	}
+●application-config.xml
+?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns=～
+    <!-- JDBC設定ファイル -->
+    <context:property-placeholder location="classpath:./spring/jdbc.properties" />
+
+    <!-- DIするBeanクラスを登録 -->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    		<property name="driverClassName" value="${jdbc.driverClassName}" />
+    		<property name="url" value="${jdbc.url}" />
+    		<property name="username" value="${jdbc.username}" />
+    		<property name="password" value="${jdbc.password}" />
+    </bean>
+    
+    <bean id="spjdbc" class="org.springframework.jdbc.core.JdbcTemplate">
+    		<constructor-arg ref="dataSource"/>
+    </bean>
+
+    <bean id="sample" class="sample.SampleBean" />
+
+</beans>
+●jdbc.properties
+jdbc.driverClassName=org.gjt.mm.mysql.Driver
+jdbc.url=jdbc:mysql://localhost:3306/sample
+jdbc.username=root
+jdbc.password=～
+●index.jsp
+<html>
+	<head>
+		<title>Java入門</title>
+	</head> 
+	<body>
+		<!-- ここはEL式（JSPの機能） -->
+		<p>${bean.msg}</p>
+	</body>
+</html>
+●pom.xml
+<!-- JDBC -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>4.2.4.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.38</version>
+		</dependency>
+
+・eclipseにDBViewerプラグインを追加します。
+
+
+
+■eclipseを起動し、「ヘルプ」→「Eclipse マーケットプレイス」を選択して
+）「検索」ボックスに「DBViewer」と入力し、つぎのプラグインが検索されることを確認し、「インストール」ボタンをクリックします。
+■DBViewerプラグインを使用するには、「ウィンドウ」→「ビューの表示」から、「DBViewer プラグイン」を選択します。
+ダウンロードしたJDBCドライバを事前に「プロジェクト・エクスプローラー」のつぎの場所に配置します。
+■「DBツリー・ビュー」の「DBViewerPlugin」を右クリックし、「登録」を選択します。
+■「データベース定義名」には任意の名前を設定します。
+「データベース定義名」設定後、「ファイルの追加」ボタンをクリックします。
+配置したJDBCドライバの場所を指定し、「次へ」ボタンをクリックします。
+JDBC Driverから「com.mysql.jdbc.Driver」を選択します。
+■接続するデータベースの設定を行います。
+JDBCタイプ
+Type4
+接続文字列
+jdbc:mysql://localhost:3306/
+接続ユーザ
+root
+接続パスワード
+MySQL構築時に設定したパスワード
+接続スキーマ
+（空白
+■「DBViewer」のデータベース定義を右クリックし、「接続」を選択します。
+■サンプルのデータベースを作成します。「SQL実行」ビューを開き、つぎのコマンドを入力します。
+create database sample
+■「sample」というデータベースが作成されていることを確認します。
+表示されない場合は、一旦接続を解除して再度接続を行ってみてください。
+
+・MVCモデルを採用するメリット
+
+
+
+■MVCモデルはあくまで設計思想なので必ず守ったほうがいいというわけではない。
+①システム構成が明確になる
+→画面を表示するのはjspなどファイルを見ればわかる。パッケージの構成や配置もわかりやすくなる。
+システムの保守がしやすくなる
+②作業分担が明確になる
+→Webデザイナー、プロラマの役割分担が明確になる。
+VIEWの部分はWebデザイナー、それ以外はSE
+
+・Spring MVC
+
+
+
+■MVCモデルをさらにフレームワーク化
+クライアント側
+→
+DispatcherServlet(リクエストしたときにcontrollerの処理を任せる)
+→
+Controller
+ ＠Controller
+→
+Service
+ ＠Service(業務処理を行う部分)
+→
+JSP
+ 
+・Model
+
+
+
+(データ受け渡し用、業務処理を行ったデータを基にコントローラからセットされる、それをJSP側が参照することによってレスポンス)
+
+・Spring MVCメリット
+
+
+
+①MVCの役割が明確に。
+②Controllerの処理も簡単に。
+DIやAOPなどを使用することによりプログラムの量を少なくしつつも、Controllerの役割
+③RESTfulなページの作成も簡単に
+
+・MVCの役割が明確に。
+
+
+
+■アノテーションで役割を宣言するだけでMVCが簡単に作れる。
+⇒
+コントローラクラスの場合は「＠Controller」をつけるだけでコントローラ扱い
+例
+＠Controller
+public class Sample{ // POJO
+ @RequestMapping(value="/", method=RequestMethod.GET) //どのURLの場合に処理を実行するかの宣言
+ public String hello(Locale locale,Model model) //基本はStringの戻り値
+  model.addAttribute("msg",Hello);
+  return "hello"; //戻り値で指定した名称の画面がレスポンスされる
+ ※Modelクラスはフレームワーク側でセットしてくれる。画面に表示したいデータをセットするだけでVIEWの方に簡単に連携できる。
+
+・RESTfulとは
+
+
+
+■Webアプリケーションをどのように処理をするかを明確にする思想。
+⇒重要なのは「URI」と「HTTPメソッド(GETなど)」。組み合わせをちゃんと考えるのがRESTの考え方
+URLなどのアドレスと情報が紐づいて設計されていること。
+このURLでGETメソッドを使ったら必ずデータを取得するための処理を作るといった感じ
+例
+https://schoo.jp/class/3082
+※一目で特定の授業ページであることがわかる。3082は授業ID
+※授業のページにアクセスすることが確実に処理結果として表示できる
+※~.htmlなどURLにプログラム言語を特定するキーワードや拡張子が存在しないこと
+■RESTとは
+HTTPメソッドの役割も明確に
+⇒
+GETメソッド＝情報の閲覧(取得)
+POSTメソッド＝情報の新規作成
+PUTメソッド＝情報の更新
+DELETEメソッド＝情報の削除
+※こういった決まりごと(対象の情報が明確でありかつHTTPメソッドの役割に従う)によって処理を行うものをRESTfulと呼んでいる。
+
+◯Springのツールの提供(STS)
+Maven本番環境に乗せるためのビルドを自動化にやってくれる。
+SpringMVCなどpom.xmlに書くだけで自動的にインストールしてくれる。これを使うことによって開発で使うライブラリのバージョンが違うことによってうまく動かない時などを統一化してくれたり、ネット上で必要なライブラリを探してきて探す手間を省くことができる
+
+・Spring MVCでRESTfulなページの作成も簡単に
+
+
+
+@RequestMapping(value = "/",method = RequestMethod.GET
+⇒valueでURLを指定。methodでHTTPメソッドを指定。
+
+・Spring MVCのProject作成
+
+
+
+■新しいプロジェクト作成時、テンプレートはSpring MVC Projectを選択
+⇒ダウンロードするか聞かれるのでOK
+⇒プロジェクト設定画面でパッケージを書いてくれと出るので「jp.co.sample」と入れる。※パッケージ名は3階層にしないといけないので注意
+sampleと書いた部分がSpring MVCとしてURLで使う部分なので覚えておくこと。
+⇒
+●HomeController.javaが出来上がる
+@Controller
+public class HomeController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
+	
+	/**
+	 * Simply selects the home view to render by returning its name.
+	 */
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public String home(Locale locale, Model model) {
+		logger.info("Welcome home! The client locale is {}.", locale);
+		
+		Date date = new Date();
+		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
+		
+		String formattedDate = dateFormat.format(date);
+		
+		model.addAttribute("serverTime", formattedDate );
+		
+		return "home";
+	}
+	
+}
+●home.jsp
+<html>
+<head>
+	<title>Home</title>
+</head>
+<body>
+<h1>
+	Hello world!  
+</h1>
+
+<P>  The time on the server is ${serverTime}. </P>
+</body>
+</html>
+■次にTomcatのサーバーおよび除去で新しく作ったプロジェクトを追加する。
+追加した後は開始。
+
+http://localhost:8080/sample/で実行
+⇒
+「 Hello world!
+
+The time on the server is 2018/07/06 21:44:47 GMT+09:00. 
+と表示される」
+
+・Spring MVCのプロジェクトを作成後、プロジェクトに対して、右クリック、「Maven Install」を行うと下記のようなエラーがでます。
+「Exception in thread "main" java.lang.UnsupportedClassVersionError: org/apache/maven/cli/MavenCli : Unsupported major.minor version 51.0」
+どう修正すればエラーは改善できますでしょうか。
+あとプロジェクトの中のJREシステムライブラリが「JAVASE-1.6」と表記されていることや
+コンソールに「(省略)\pleiades\java\6\bin」と表記されているところも気になります。
+
+
+
+Spring MVCのプロジェクト作成時、デフォルトでは一昔前のバージョン(1.6)が指定されているので、2016 年 8 月 20 日時点の最新バージョンに修正する。
+■Java バージョンの修正
+ 新規プロジェクトで使用される Java バージョンにワークスペースのデフォルト (ここでは 1.8) が設定されてない！
+JRE システム・ライブラリー
+ [spring-test] -> [JRE システム・ライブラリー] のコンテキストメニューから [プロパティ] をクリック
+"ワークスペースのデフォルト JRE (Java SE 8 [1.8.0_20])" を選択して [OK] をクリック
+■プロジェクト・ファセット
+    [spring-test] のコンテキストメニューから [プロパティ] をクリック
+    [プロジェクト・ファセット] の Java バージョンを "1.8" に変更して [OK] をクリック
+■Maven
+    [spring-test] -> pom.xml を開く
+    properties > java-version を 1.8 に変更
+    build > plugins の artifactID: maven-compiler-plugin の configuration を以下のように修正
+        修正前)
+            source: 1.6
+            target: 1.6
+        修正後)
+            source: ${java-version}
+            target: ${java-version}
+※
+修正前（修正箇所抜粋）
+	<properties>
+		<java-version>1.6</java-version>
+		<org.springframework-version>3.1.1.RELEASE</org.springframework-version>
+		<org.aspectj-version>1.6.10</org.aspectj-version>
+		<org.slf4j-version>1.6.6</org.slf4j-version>
+	</properties>
+修正後（修正箇所抜粋）
+
+	<properties>
+		<java-version>1.8</java-version>
+		<org.springframework-version>4.3.2.RELEASE</org.springframework-version>
+		<org.aspectj-version>1.8.9</org.aspectj-version>
+		<org.slf4j-version>1.7.21</org.slf4j-version>
+	</properties>
+※参考URL
+http://www.shookuro.com/entry/2016/08/20/132543
+https://qiita.com/haru/items/a27cf6c6d92f8fb70e8f
+
+・「Java プロジェクト・ファセットのバージョンと一致しません」エラーの解決方法
+
+
+
+http://www.ksakae1216.com/entry/2017/07/03/063000
+
+・サンプルプログラムの動作確認
+
+
+
+@Controllerと書くことでコントローラクラス扱いで継承せずPOJOで書くことができる。
+2つのリンクが表示され、クリックすることでモデルに応じた値を新しい画面に表示
+●HomeController
+@Controller
+public class HomeController {
+
+	@Autowired
+	SampleService service;
+
+	/**
+	 * http://localhost:8080/sample/userでリクエストされた場合の処理
+	 * @param	model	Modelクラス
+	 * @return	home画面を示す文字列
+	 */
+	@RequestMapping(value = "/user", method = RequestMethod.GET)
+	public String home(Model model) {
+
+		// ユーザ名 第2引数が画面に表示されるもの
+		model.addAttribute("user1", "schoo");
+		model.addAttribute("user2", "web");
+
+		// home.jspに移動
+		return "home";
+	}
+
+	/** {id}とすることで動的に対応。@PathVariable("id")は{id}の値を引数に変換できる。
+	 * 指定されたIDでリクエストされた場合の処理
+	 * @param	model	Modelクラス
+	 * @param 	id		home画面で指定されたID（@PathVariableアノテーションで取得）
+	 * @return	result画面を示す文字列
+	 */
+	@RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
+	public String getUserData(Model model, @PathVariable("id") String id) {
+
+		// Serviceクラスで処理
+		service.setModelData(id, model);
+
+		// result.jspに移動
+		return "result";
+	}
+●home.jsp
+<html>
+<head>
+	<title>Java入門</title>
+</head>
+<body>
+	<p>リンクをクリック！</p>
+	<p><a href="./user/${user1}">${user1}</a></p>
+	<p><a href="./user/${user2}">${user2}</a></p>
+</body>
+</html>
+●SampleService
+@Service
+public class SampleService {
+
+	/**
+	 * Modelクラスに指定されたIDのユーザ情報をセットします.
+	 * @param id	ID
+	 * @param model	Modelクラス
+	 */
+	public void setModelData(String id, Model model) {
+		
+		System.out.println("クリックされたユーザ:" + id);
+		
+		if ("schoo".equals(id)) {
+			
+			model.addAttribute("id", id);
+			model.addAttribute("name", "すく太郎");
+			model.addAttribute("age" , 10);
+			
+		} else if ("web".equals(id)) {
+			
+			model.addAttribute("id", id);
+			model.addAttribute("name", "うぇぶ太郎");
+			model.addAttribute("age" , 35);
+		}
+	}
+}
+●result.jsp
+<html>
+<head>
+	<title>Java入門</title>
+</head>
+<body>
+	<p>クリックしたユーザの情報</p>
+	<p>ID：${id}</p>
+	<p>名前：${name}</p>
+	<p>年齢：${age}</p>
+</body>
+</html>

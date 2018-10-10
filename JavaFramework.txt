@@ -1,0 +1,545 @@
+◯フレームワーク
+
+
+
+
+■同じ処理でも個人差が出てしまう。Aさん10行、Bさん20行。
+差が出ることによるリスク（
+バグ
+保守性の低下(メンテしにくい)
+作業時間の増加）
+上記を解決するにはプログラムの書き方を共通化することが大事。
+※フレームワークを使えばそれがすべて解決するわけではない
+プログラムの共通化をリスクを減らし、作業効率化する。
+共通化された部品や設計思想をフレームワークと呼ぶことが多い。
+共通化された手続を行うことで面倒な処理をやってくれる部品。
+決められた手続きに合わせると動く。手続きとは異なる方法では動かない。
+プログラムを制御してくれる部品。
+A機能から呼べるB機能、C機能、D機能があったとして、A機能はフレームワークに任せて、開発者は呼び出された先の実装をしてくれればよい。
+
+◯ライブラリとフレームワークの違い
+
+
+
+■ライブラリ
+特定機能を部品化しているもの
+■フレームワーク
+その枠組みでアプリケーションを作成する。ライブラリやツール、規約の集合体。
+
+◯フレームワークの種類(一部)
+
+
+
+■webアプリケーションフレームワーク
+webアプリケーションを構築するために必要な機能を提供する。
+プログラムは共通部分以外の開発に注力することができる。
+■データベース(ORマッピング)フレームワーク
+データベースのアクセスや操作に関する処理がプログラム化されていて提供される
+■テストフレームワーク
+テストの実行に関する処理が提供され、設定するだけで実行から結果の確認まで行うことができる。
+
+◯webアプリケーションフレームワークのイメージ
+
+
+
+MVCのCとMが共通化されることが多い
+
+◯フレームワークがなくても基本の言語のみで同じことはできるのか。
+
+
+
+できるがいろんなリスクもある。
+
+◯フレームワーク選定時に気を付ける点
+
+
+
+■チーム内で使用するフレームワークをどれだけ理解しているか。
+チーム内ではspringしか使えない人ばかりなのに他のフレームワークを使おうとするのは乱暴
+
+◯JAVAEEの誕生
+
+
+
+■1999年。(JSPやサーブレットが公開)
+JAVAEEだけだと使いずらいということがあったのでいろんなフレームが生み出された。
+メジャーなフレームワークの相互に作用しながら良いところを吸収しつつ、JAVAEE自体も成長してきてバージョンアップしている。
+(例：springの良いところをJAVAEEにも取り入れられている)
+
+◯JCP
+
+
+
+■(Java community process)
+Java技術の標準化(プログラムのルールづくり)をする団体。
+■JavaフレームワークによってJavaも洗練されている。
+2001年Struts公開
+2003年JSF公開(JSFはJAVAEEの機能の中に含まれている仕様)
+2004年springFramework公開(DIやAOPといった新しい機能を提供している)
+
+◯フルスタックフレームワーク
+
+
+
+■JAVAEE、Struts、seaser、springFrameworkは一般的にフルスタックフレームワークと呼ばれることがある。
+■フルスタックフレームワーク
+アプリケーションを開発するためにあると便利な機能が一通り提供されているものをフルスタックと呼ぶことが多い
+
+◯フルスタックでどこまでカバーできるのか
+
+
+
+■フルスタックに明確な定義はないがwebアプリケーションの場合は、「3層」をカバーできていればよいと考えられている。
+3層
+⇒プレゼンテーション層
+「画面」
+JSP、サーブレット
+Struts(プレゼンテーション層にアプローチしているもの)
+springWebなど
+⇒ビジネスロジック層(アプリケーション層)
+「裏側で行われる処理」
+自分たちが書くプログラム
+⇒データアクセス層
+「データを取り扱う部分」
+springDataなど
+※3層すべてをカバーしているのがspring Coreという機能.
+橋渡しをしてくれる。カバーしてくれることによってそれ以外の必要な機能を書けば1つのwebアプリケーションができてしまう。
+いろんなところをカバーしてくれるのがフルスタック。
+
+◯Struts
+
+
+
+JavaWebアプリ構築の一時代を築いたフレームワーク。リリース当初から人気で長年webアプリケーション構築を支えてきたフレームワーク。
+MVCモデルの概念で開発ができるフレームワーク
+MVCモデルでwebアプリケーションが簡単に作れるという成功実績があるので普及。
+■controllerはStruts側で任さられる。
+■Model
+⇒Actionクラス
+ActionFormを使って実装される
+■View
+特化したタグが使用できる
+
+◯世の中には「Struts」ベースのフレームワークが存在する。
+
+
+
+■TERASOLUNA
+NTTデータ社が公開しているStrutsベースフレームワーク
+■SAStruts
+Seaserの一部分
+■ほかにもいろんな企業がStrutsをベースにフレームワークを開発している。世に公開されていないものも多い。
+
+◯Spring Framework
+
+
+
+次期JAVAフレームワークのスタンダードとなる可能性の呼び声が高い。
+フルスタックと呼ぶにふさわしいモジュール群。
+いろんな機能が準備されている。
+
+◯Seaser2
+
+
+
+メイドインジャパンのフレームワーク
+文献が日本語のものが多い。
+コンセプト自体、Springよりも簡素な設定でシステムを組める。
+しかし、2016年にサポート終了。
+フルスタック。
+機能が豊富。
+■プレゼンテーション層
+Mayee
+SAStruts
+Teedaなど
+■データアクセス層
+S2 Dao
+S2 Hibernate
+など
+
+◯JAVA EE
+
+
+
+元祖JAVAフレームワーク
+標準化団体が定めているので安定
+■プレゼンテーション層
+JSP
+Servlet
+JSON
+JSFなど
+■ビジネスロジック層
+Managed Beans、EJBなど
+■データアクセス層
+JPA、JMSなど
+※プレゼンテーション層とビジネスロジック層を橋渡しするものとしてCDIなどが使われる
+
+◯フレームワークのサポートが切れるとは具体的にどういう意味か。
+
+
+
+セキュリティの脆弱性が修正されないということ。
+
+◯一度導入したフレームワークは置き換えられるのか
+
+
+
+可能。
+Strutsみたいな脆弱性があるものは置き換える必要があったりする。
+特別な理由がない限り使い続けるのがベター。
+システムは5年、10年のタイミングでリプレイスがおかなわれることがあるのでそのタイミングでフレームワークを置きかえたりする。
+
+◯Struts1によるMVCモデル
+基本的な考え方
+
+
+
+■controller
+ActionServlet(技術者の人はあまり気にしなくていい。フレームワーク側がやってくれる)、RequestProcessor(技術者の人はあまり気にしなくていい)
+という機能が準備されている
+■Model
+ActionForm
+Action
+■View
+JSP
+■ActionMapping(技術者の人はあまり気にしなくていい)
+ActionForward(技術者の人はあまり気にしなくていい)
+※開発者は
+ActionForm(画面に表示するデータを保持する)
+Action
+JSPの実装に注力していればよい
+
+◯Struts2
+
+
+
+Struts1の弱点(ほかのフレームワークにあってStruts1にない部分)を補う形で2007年に登場。
+かなり仕組みが変わっている。MVCの考え方は同じ。
+■■Struts1は
+■処理ごとにActionクラスを作成
+Actionクラスの振り分け先としてStruts-config.xmlに記載(設定をプログラムに依存しなくてよくなった)
+■開発は便利だがメンテナンスをするのが難しかった。
+Struts-config.xmlの管理が面倒。
+Actionクラスの設定が複雑になればなるほどStruts-config.xmlが膨大になる
+上記をStruts2は補っている。
+
+◯Struts2の最大の特徴
+
+
+
+「設定より規約」となった
+■ZeroConfigration(設定いらずである程度は実現できてしまう)
+⇒原則、設定ファイル不要でシンプルな開発が可能に。設定は0ではなくシンプルになっている。
+
+■controller
+DispatcherFilter(フレームワークの部分なので気にしなくてよい)
+■Model
+Action
+⇒ActionクラスがActionFormの役割を兼任。POJO(普通のJAVAプログラム)での記載が可能に。
+■View
+JSP
+※開発者はActionクラスとJSPを作ればよい。
+
+◯Struts1で作る「Hello world」
+
+
+
+1、ActionFormクラスの作成
+2、Actionクラスの作成
+3、JSPの作成
+4、web.xmlの作成
+⇒Tomcatの設定ファイル
+5、Struts-config.xmlの作成
+
+◯ActionFormクラスの作成
+
+
+
+■public class HelloActionForm extends ActionForm{//必ずActionFormを継承
+ private static final long serialVersionUID = 1L;
+ private String msg;
+
+ public String getMsg(){
+  return msg;
+ }
+ public void setMsg(String msg){
+  this.msg = msg;
+ }
+}
+※BEANクラスに相当
+
+◯Actionクラスの作成
+
+
+
+コントローラから呼ばれるクラス
+■public class HelloAction extends Action{ //Actionクラスの継承
+//mappingはどこのクラスがどういうURLと紐づいているかの情報。formは受け渡しのデータ
+  public ActionForward execute(ActionMapping mapping, ActionForm form,
+                               HttpServletRequest request, HttpServletResponse response)
+    throws Exception{
+    HelloActionForm helloAction = (HelloActionForm)form;
+    helloAction.setMsg("Hellow World!!");
+    
+    request.setAttribute("hello",helloForm);
+    
+    return mapping.findForword("index");//次の画面に移動させる
+  }
+}
+
+◯JSPの作成
+
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"%>
+<jsp:useBean id="hello" scope="request" class="schoo_struts1.sample.HellowActionForm"/>
+<!DOCTYPE html>
+<head>
+  <title>Register</title>
+</head>
+<body>
+  <%= hello.getMsg() %>
+</body>
+</html>
+
+◯web.xml
+
+
+
+■どういったパスにどういったクラスを紐づけるか
+例えば、TomcatにStrutsのServletを登録
+  <servlet>
+    <servlet-name>Action</servlet-name>
+    <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+    <init-param>
+      <param-name>config</param-name>
+      <param-value>/WEB-INF/struts-config.xml</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>action</servlet-name>
+    <url-pattern>*.do</url-pattern>
+  </servlet-mapping>
+
+◯Struts-config.xmlの作成
+
+
+
+StrutsのActionクラスを登録する。
+<form-beans>
+ <form-bean name="HelloActionForm" type="schoo_struts1.sample.HellowActionForm"/>
+</form-beans>
+
+<action-mappings>//ここがネック。膨大になってくる。
+//どのURLでアクセスしたらどのクラスを実行するか書いている。
+ <action path="/sample/HelloAction" type="schoo_struts1.sample.HellowAction" name="HelloActionForm" scope="request">
+   <forward name="index" path="/index.jsp"/>
+ </action> 
+<action-mappings>
+
+◯Struts2で作る「Hello world」
+どれだけシンプルに作れるか
+
+
+
+1、Actionクラスの作成
+2、JSPの作成
+3、web.xmlの作成
+4、Struts.xmlの作成
+
+◯Actionクラスの作成
+
+
+
+Actionクラスは何も継承してないPOJOで作成できる。規則に従って書いてくれればフレームワーク側が勝手に判断してくれ処理を動かしてくれるのが特徴。クラス名にActionがついてくれればActionと認識してくれる。
+■public class indexAction{
+private String msg;
+
+ public String getMsg(){
+  return msg;
+ }
+ public void setMsg(String msg){
+  this.msg = msg;
+ }
+ 
+ public String execute() throws Exception {//フレームワーク側から呼び出される。
+ 
+ setMsg("Hellow World!!")
+ return "success";
+ }
+}
+
+◯JSPの作成
+
+
+
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<!DOCTYPE html>
+<head>
+  <title>Java入門</title>
+</head>
+<body>
+  <s:property value="msg"/>//Actionクラスのsetterを呼ぶ記述。カスタムタグを使って名前を合わせてあげれば自動的に取りにいってくれる。
+</body>
+</html>
+
+◯web.xml
+
+
+
+基本的にフレームワークのクラスを呼ぶという記載で終わる
+■Struts1と同様に呼び出すクラス(フィルタ)を登録するだけ
+<filter>
+    <filter-name>struts2</filter-name>
+    <filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
+    <init-param>
+      <param-name>actionPackages</param-name>
+      <param-value>struts2.sample</param-value>
+    </init-param>
+</filter>
+<filter-mapping>
+  <filter-name>struts2</filter-name>
+  <url-pattern>/*</url-pattern>
+</filter-mapping> 
+
+◯struts.xml
+
+
+
+■基本的に何も書かなくていいくらい
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+    <constant name="struts.convention.result.path" value="/">
+</struts>
+
+◯これまでのJAVA
+MVC
+
+
+
+■controller
+⇒Servlet
+■Model
+⇒Bean
+■View
+⇒JSP
+
+◯Struts２の場合
+
+
+
+■controller
+⇒XML
+■Model
+⇒Action
+■View
+⇒JSP
+
+◯これから主流になるフレームワーク
+
+
+
+SpringとJAVAEE
+Spring自体強力なフレームワーク
+
+◯springFramework
+
+
+
+DIやAOPの概念を導入したフルスタックフレームワーク。
+機能別に共通部品(モジュール)を使用することができるため、webアプリケーション以外の構築も可能なフレームワーク。
+
+◯springFrameworkとstruts2はどう違うのか
+
+
+
+例えばwebアプリケーション構築の場合、
+■カバーできる範囲が違う。
+⇒struts2はプレゼンテーション層にstruts2を使用し、ビジネスロジック層は独自処理でやるかほかのフレームワーク、データアクセス層も独自処理でやるかほかのフレームワークを使用する形
+⇒springの場合
+プレゼンテーション層はspringWeb、ビジネスロジック層は独自処理、データ層はSpring Data、それぞれの橋渡しとしてSpring Core
+※ビジネスロジック層(システムごとに作りこまないといけない部分）
+
+◯springFrameworkの起源
+
+
+
+起源は2002年
+■論文にJAVAEEの使い方間違う人が多すぎる。当時JAVAEEは部分的な機能が提供されているだけであったので設計書や開発者によって書き方が全然違うことになってしまっていた。間違った使い方はシステム障害のリスクが高まる。
+使えるためのフレームワークが覚えるのにコストがかかりすぎる。
+冷え切った冬を越して春を迎えようということでSpringという名前。
+16年くらい歴史のあるフレームワーク。
+Pivotalという会社がSpringを開発。
+
+◯springFrameworkの公開時からの目玉機能
+
+
+
+■依存性を排除する仕組み
+■オブジェクト指向を補足する仕組み
+■仕様の差異を補足する仕組み
+
+◯依存性を排除する仕組み
+
+
+
+制御の部分をフレームワーク側に任せる。(IoCコンテナ)
+IoCコンテナまたはDIコンテナと呼ばれるメイン機能
+※依存性の注入(変数だけ書いておいてインスタンス化のプログラムを書かずにフレームワーク側が入れてくれてセットしてくれる)をしてくれる仕組み(Struts2からある仕組み)
+
+◯オブジェクト指向を補足する仕組み
+
+
+
+AOP
+■springがAOPを採用したのは「Javaプログラム(特に業務処理部分)はフレームワークに依存せずにPOJOであるべき」という考え方から。フレームワークの機能が変わってもメインであるお客の業務の部分(会社ごとに異なる作りこむ処理)はフレームワークによって影響してはいけないのでは。そこでAOPというものが生まれてきた。
+アスペクト指向プログラミング
+「横断的関心事」
+⇒簡単に言えば共通処理を一括して請け負ってくれる存在
+各クラスで共通で動かしたい処理を別のところから呼び込むという仕組み
+例
+public class SampleA{
+ public void doxxx(){
+ ～
+public class SampleB{
+ public String getZZZZ(){
+ ～
+
+※「～」に
+「Common com = new Common();
+   com.method("xxxxx")」
+   
+◯POJOのメリット
+
+
+
+1、プログラム内での依存を排除
+2、特定商品(Tomcatなど)への依存(ベンダーロックイン)を排除
+
+◯ベンダーロックイン
+
+
+
+■特定ベンダー（メーカー）の独自技術に大きく依存した製品、サービス、システム等を採用した際に、他ベンダーの提供する同種の製品、サービス、システム等への乗り換えが困難になる現象のこと。
+■ある製品の独々の処理、仕組みを取り込まないといけない
+別の製品に切り替えるのが難しい。その製品に頼らざるをえない状態をベンダーロックイン。ベンダーロックインだと保守が難しくなる。精通した人がいないと対応できなくなってしまう。
+
+◯仕様の差異を補足する仕組み
+springは特にデータベース連携は強力
+
+
+
+■処理クラス(データベースにアクセス)⇒DAO(データベースの処理をしてくれる専用のクラス）⇒JDBCドライバ⇒DB
+処理クラス⇒データベース専用のフレームワーク(Hibernate)⇒JDBCドライバ⇒DB
+※それぞれ処理クラスの次にSpringDataAccessを導入することで差異を吸収することができる。処理クラスから見れば同じ手続きをすればいいということになる。システムのメイン部分に影響を与えない。
+
+◯Spring Framework4
+
+
+
+4系(2013～)
+クラウドサービス、ビッグデータとの連携強化
+SpringBootによる開発スピード向上

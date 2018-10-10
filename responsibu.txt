@@ -1,0 +1,574 @@
+・ワイヤーフレーム
+
+
+
+webページのレイアウトを定める設計図のことです。
+ webサイトの制作現場で聞かないことがない、といえる単語であり、サイト制作において決して欠かせない要素です。
+
+注文住宅会社サイト_html5
+
+・article
+
+
+
+1つのページができるくらいの独立性を持ったもの。
+タイトルもついていて内容が整っているもの
+
+・section
+
+
+
+1塊の小さな記事に使う。
+
+・aside
+
+
+
+注釈や補足で使うもの
+
+・レスポンシブWebデザインに必要な基本技術
+
+
+
+①メディアクエリ(レスポンシブWebデザインの最も基本的な技術)
+画面サイズに応じて、ページのレイアウトを変化させる
+⇒ページを見るデバイスの画面や解像度、それからデバイスの画面が横向きか縦向きかによってページのレイアウトを切り替える
+CSS3の技術
+②フルードグリッド
+画面サイズに応じて、ページ内の要素の大きさを変化させ、グリッドに合わせて配置する。
+③フルードイメージ
+画面サイズに応じて、イメージ画像の大きさを変化させる
+
+・メディアクエリの原理
+
+
+
+ひとつのCSSスタイルシートの中に
+スマートフォン用、
+タブレット用、
+PC用
+3種類のスタイルシートを用意しておき、
+メディアクエリが画面サイズを感知して、最適なCSSを適用する
+
+・メディアクエリの構文
+
+
+
+■@media メディアの種類 and(条件) {}
+⇒
+例：スマートフォン(画面サイズ480px以上)の場合
+@media screen and(min-width:480px){}
+⇒
+例：タブレット(画面サイズ768px以上)の場合
+@media screen and(min-width:768px){}
+⇒
+例：PC(画面サイズ1024px以上)の場合
+@media screen and(min-width:1024px){}
+
+・野鳥紹介のサンプルウエブページ
+横幅に応じて改行の位置も変化している
+メディアクエリの技術を使ってデバイスごとにレイアウトを変化させたりしている。
+こういうページを作る際に意識することは
+
+
+
+先にスマートフォン用のレイアウトをイメージし、スマートフォン用のCSSを完成させてから次にタブレット用、PC用と対応すること。
+※デバイスによってデザインは違うが使っている要素は同じ。
+デバイスによって3種類のhtmlコードを用意する必要はない
+asideの中にsectionが2つ入っている
+
+タブレット用で画像を縦配置でなく横配置にしている。
+横幅は広くなって改行位置が変わっている。
+PC用では画像が左側で縦配置。右側に記事が入るようにしている。
+
+・<meta name="viewport" content="width=device-width">
+
+
+
+■レスポンシブ対応するときの1種のおまじないとして考えればよい。
+viewportはスマートフォン用の狭い画面表示でページのどの部分を表示させるかという指定。
+⇒例えば、iPhoneのモバイルSafariでは横幅が980pxなので通常のPCの画面を縮小してそのまま配置すると
+文字は極端に小さくなってしまう。このためレイアウトを変更しないで1ページをそのままのレイアウトで
+みせるためにはページの1部分を表示させて見えない部分はスクロールさせる方法を使うがこの時
+どの部分を表示させるかをviewportだと考える。
+
+・ブラウザのデフォルトCSSでは代表的なものとして
+
+
+
+■h1要素ではmarginとpaddingに最初から10pxほど程度の値が設定されている。
+これまではスタイルシートで0にしていたが最初にクリアにするスタイルシート(reset.CSS)を使用。
+そうすることでmarginやpaddingが出てくる度に0にしなくてもよくなる。
+
+・font-size: 0.9em;
+
+
+
+1emが標準のフォントサイズ。0.9はその90%のフォントのサイズ。
+0.9em;は相対値としての指定
+※相対値の設定は画面に対し試しながら値を決めていってよい
+
+・nav ul li {
+  display: block;
+
+
+
+⇒スマートフォンだけの設定。
+縦に並ぶ。
+
+・背景緑色で画像を持つsectionのところ
+各デバイスで共通で
+height: 130px;としている
+
+
+
+デバイスが変わってもこれは変わらない
+中の画像は
+text-align: center;
+で中央に来るようにしている。
+
+上記のように共通部分とスマートフォンのデザインをした後にタブレットとPCのデザイン設定
+
+・タブレットとPCはnavは同じ。タブレットの場合は画像横並び。記事は下に来る。
+横並びにする
+@media only screen and (min-width: 481px) {
+～
+nav ul li {
+  float:left;
+
+写真の横並び
+.photo_menu1 {
+   width: 45%;//写真の大きさ。スマホで80%で指定していたものを45%
+   float: left;
+ }
+ .photo_menu2 {
+   width: 45%;
+   float: right;
+ }
+※2つ合わして90%なので間に10%の余白ができる。
+
+・nav ul li {
+border-bottom: 1px solid #fff;としていたのを
+@media only screen and (min-width: 481px) {
+～
+nav ul li {
+～
+border-bottom: none;
+で不要にしている
+
+・PCは画像が縦配置
+記事は写真の右側
+
+・スマートフォンとタブレット用のデザイン記述後のPC版スタイル
+注意点
+
+
+
+■スマートフォンとタブレット用とで変わったところをPC版スタイルで記載すること。
+タブレットで生きる部分は書かなくてよい。
+書き直すのは
+asideの部分とarticleの部分
+⇒
+/*  PC向けのスタイル：769px～960px */
+@media only screen and (min-width: 769px) {
+ article {
+   width: 65%;//メインの65%であることに注意。親要素の65%。全体の65%でないことに注意。
+   float: right;
+ }
+ aside.photo_menu {
+   width: 30%;
+   float: left;
+ }
+※5%分が間に空きとして出る。
+
+タブレット対応でfloatをかけているのでPC版で縦並びにするために
+ .photo_menu1,
+ .photo_menu2 {
+   width: 95%;//30%の中の95%
+   float: none;
+ }
+
+・floatによるレイアウト崩れ
+
+
+
+問題が起きている箇所の親要素にcfをつけ足すことで解決
+
+
+・フルードグリッド
+
+
+
+画面サイズに応じて要素ボックス、間隔、文字の大きさなどを変化させる技術
+
+・Section3の
+sample01.html　※固定値のpxで指定したサンプル
+⇒ディスプレイの幅をPCからタブレットのサイズにしてみると
+
+
+
+■要素のボックスがそのままなので右が切れてしまう。これはボックスの間隔のサイズがPCの固定値で設定されているためにこのように大きさは
+変化せずに右側に表示できない部分が出来てしまう。
+これを相対値で幅を指定することで解消される。
+フルードグリッドはpxで指定していた幅を相対値の%やemで指定するというのが基本の技術.
+ただデザインの初めの段階から%やemで要素やフォントのサイズpaddingやmarginなどまで指定するのは頭の
+中でイメージがしにくくて実際に数値を出すのも面倒な計算を伴うので、数値はpxなどの絶対値で指定して
+おいてあとで相対値に直すのが普通。
+
+・aside > section
+
+
+
+asideの中のセクション
+
+・要素のプロパティ値を%指定にする計算式
+
+
+
+■プロパティの%値＝固定値÷親要素の固定値×100
+例
+mainタグを基準に考えると親要素はcontainer
+containerは親要素のbodyの要素の幅を引き継いている(1024)
+850(main {width: 850px;)÷1024×100 = 83.0078125
+⇒
+main {width: 83%;}に切り替える
+
+・Fluid Gridの例
+
+
+
+画面の幅を変えると幅が可変になる。高さも同様。これがFluid Grid。%などに変えていくだけ。
+レスポンシブWebデザインはFluid Gridとメディアクエリを使って様々なサイズのスマートフォンやタブレット
+に対応してデザインする。
+●Fluid Gridの例
+⇒
+/* clearfix */
+.cf { zoom: 1; }
+.cf:before, .cf:after { content: ""; display: table; }
+.cf:after { clear: both; }
+
+
+body {
+    width: 100%; /* 1024pxから変更 */
+    background-color: #fff;
+}
+main {
+    width: 83%;/* 850pxから変更 */
+    margin: 0 auto;
+    line-height: 1.3em;
+}
+header {
+    height: 30px;
+    text-align: center;
+    color: #fff;
+    background-color: #3fc;
+    margin-bottom: 20px;
+    padding-top: 10px;
+}
+section {
+    margin-bottom: 20px;
+}
+aside > section {
+    height:130px;
+    background-color: #0ff;
+    padding-top: 15px;
+    text-align:center;
+}
+article > section {
+    padding-bottom: 1em;
+    border-bottom: 1px solid #ccc;
+}
+footer {
+    width: 100%;/* 1024pxから変更 */
+    color: #fff;
+    text-align: center;
+    background-color: #000;
+}
+⇒
+<di v id="container">
+    <header>
+        <h1>メジロとモズ</h1>
+    </header>
+    <main>
+        <aside class="menu">
+            <section class="menu1"><h2>街でメジロが見られる場所</h2></section>
+            <section class="menu1"><h2>街でモズが見られる場所</h2></section>
+        </aside>
+        <article class="contents">
+            <section class="news"><h3>2016年2月25日</h3>
+                <p>　幕張海浜公園Aブロックの梅林でメジロが十数羽見られました。満開の梅の花の蜜を食べに来ていました。メジロは留鳥ですが、夏の間は山に戻り冬になって寒くなると街にやってきます。この梅林のメジロたちもこのあと桜の蜜を吸って桜が散るころから山に帰っていき、また冬まで見られなくなります。</p>
+            </section>
+            <section class="news"><h3>2015年5月15日　オナガ</h3>
+                <p>　昨日の夕方、部屋の窓から見える隣の棟の屋上に見慣れない鳥がやってきました。逆光なので最初は色がよく分からず、大きさから中庭の樹林に巣を作っている「ヒヨドリ」かなと思っていましたが、しっぽがやたら長く、鳴き声もヒヨドリのような高い声ではなく、もっと低い声でギーギーと鳴いていました。</p>
+                <p>　オナガはこの近くでは海浜幕張公園ではよく見ましたが、最近は街の中でも街路樹が大きくなり住みやすくなったのかもしれません。小さな群れで行動することが多いので、そのうち何羽も一度に見られるかもしれません。</p>
+            </section>
+        </article>
+    </main>
+    <footer>copyright tek-cell 2016</footer>
+</di v>
+
+・フルードイメージ
+
+
+
+配置した画像を可変にしてページ内に配置する。
+右に切れることなく、画面を小さくしたら画像が小さくなり、画面を大きくしたら画像が大きくなることで
+見やすくなる。
+画像のimgタグにmax-width:100%と記述するだけ
+■フルードイメージのプロパティ
+img {
+ max-width:100%;
+}
+⇒スタイルシートに上記の設定を加える
+幅に応じて画像が自由に縮小したり拡大してくれる。
+
+・figureタグ
+
+
+
+
+html5から出てきた新しいタグ。画像などを入れる要素。この中にimgを入れる
+<main>
+  <figure>
+    <img src="images/mejiro.jpg">
+  </figure>
+</main>
+
+・max-width: 550px;
+
+
+
+これ以上の大きさにはならない
+
+・
+body {
+  width: 100%;
+  background-color: #fff;
+}
+#container {
+    max-width: 550px;
+    width: 53.71%;
+⇒1024pxに対する550pxの%の値。これでこのbodyの幅(100%)に応じてcontainerが53.71%で表示される。
+550px以下の値で可変になる。
+
+・.comment {
+  margin-bottom: 20px;
+    line-height: 1.3em;
+}
+⇒行間を広げるように1.3emとしている
+
+●imgタグ版
+/* clearfix */
+.cf { zoom: 1; }
+.cf:before, .cf:after { content: ""; display: table; }
+.cf:after { clear: both; }
+body {
+  width: 100%;
+  background-color: #fff;
+}
+#container {
+    max-width: 550px;
+    width: 53.71%;
+    margin: 0 auto;
+}
+header {
+  height: 25px;
+  text-align: center;
+  color: #fff;
+  background-color: #3fc;
+  margin-bottom: 20px;
+  padding-top: 10px;
+}
+figure {
+    margin-bottom: 20px;
+}
+img {
+  max-width: 100%;
+  height: auto;
+}
+.comment {
+  margin-bottom: 20px;
+    line-height: 1.3em;
+}
+⇒
+<body>
+  <di v id="container">
+    <header>
+      <h1>メジロ</h1>
+    </header>
+    <main>
+      <figure>
+        <img src="images/mejiro.jpg">
+      </figure>
+      <section class="comment">
+        <h3>メジロは留鳥？</h3>
+        <p>　幕張海浜公園Aブロックの梅林でメジロが十数羽見られました。満開の梅の花の蜜を食べに来ていました。メジロは留鳥ですが、夏の間は山に戻り冬になって寒くなると街にやってきます。この梅林のメジロたちもこのあと桜の蜜を吸って桜が散るころから山に帰っていき、また冬まで見られなくなります。</p>
+      </section>
+    </main>
+  </di v>
+
+・画像を背景として読み込む場合のフルードイメージ
+例
+
+
+
+#background-image {
+ background-size:cover;
+}
+
+メディアをフルードイメージにする場合
+embed,object {
+ max-width: 100%;
+}
+⇒
+figure {
+    width: 100%;// 550pxから変更
+    height: 0;// 367pxから変更。
+    padding-bottom: 66.72%;
+    background-size: cover;
+    background-image: url("images/mejiro.jpg");
+    margin-bottom: 20px;
+}
+⇒
+<main>
+    <figure></figure>
+    <section class="comment">
+※高さは何らかの固定値を指定しないと画像が表示されない。
+padding-bottom: 367px;として下に下げる。これだとフルードイメージならない。
+padding-bottom: 66.72%;とする。
+
+・CSS3は前のバージョンと比べてメディアクエリ以外にも大幅に進化した技術がたくさんある。
+
+
+
+角丸のボックスを作ったり、ドロップシャドウをPhotoshopなどの他のアプリケーションの画像を使わずに
+直接Webページの中に作ることができる技術。メディアクエリとは関係ないが知っておかなければならない技術
+
+・ドロップシャドウ
+
+
+
+■box-shadow: 値1(距離) 値2(距離) 値3(距離) 値4(距離) 値5(カラー)
+値1(距離):シャドウの水平方向の距離
+値2(距離):シャドウの垂直方向の距離
+値3(距離):シャドウのぼかしの距離
+値4(距離):シャドウの広がりの距離
+値5(カラー):色の値(カラーには透明も設定できる)
+ 
+https://saruwakakun.com/html-css/basic/box-shadow
+
+・
+.sample01   {
+    box-shadow: 10px 10px;//右に10px。下に10px。
+    width: 500px;
+    height: 30px;
+    padding:　10px;
+    border: 1px solid #000;
+    text-align: center
+⇒
+<p class="sample01">box-shadow
+</p>
+※box-shadow: -10px 10px;
+とすると左に10px移動する
+
+・box-shadow: 10px 10px 10px 5px rgba(0,0,255,0.4) inset;
+insetとやると
+
+
+
+影が内側にできる
+
+・テキストのドロップシャドウ
+
+
+
+.sample01   {
+    box-shadow: 10px 10px 10px 5px rgba(0,0,255,0.4);
+　　text-shadow: 2px 2px 2px
+～
+⇒
+水平垂直が2pxで距離が2px
+
+・角丸長方形の基本
+
+
+
+■今まではPhotoshopなどを使って画像を作り、それを背景に読み込ませるなどして作っていたがこれからは
+CSSの指定だけでできる。
+border-radius: 値ax 値bx 値cx 値dx / 値ay 値by 値cy 値dy
+値ax(距離):左上角丸の水平半径
+値bx(距離):右上角丸の水平半径
+値cx(距離):右下角丸の水平半径
+値dx(距離):左下角丸の水平半径
+値ay(距離):左上角丸の垂直半径
+値by(距離):右上角丸の垂直半径
+値cy(距離):右下角丸の垂直半径
+値dy(距離):左下角丸の垂直半径
+例
+sample02 {
+  width: 500px;
+  height: 70px;
+padding-top: 20px;
+    text-align: center;
+  background-color: aqua;
+  border: 1px solid #00f;
+border-radius: 50px 30px 40px 30px / 30px 40px 40px 20px;
+⇒
+<p class="sample02">border-radius
+</p>
+※border-top-left-radius:20px;
+border-top-right-radius:30px;
+border-bottom-left-radius:30px;
+といった形で個別に分けてプロパティを書く方法
+もある
+
+・CSS3ではカラーのグラデーションの設定ができるようになった。
+
+
+
+■線形のgradient
+linear-gradient(開始位置と角度，開始色，途中色，終了色);
+例
+linear-gradient(-90deg,#fff,#000)
+関数なのでこういう書き方
+-90degはマイナス90度の方向
+白から黒へのグラデーションがかかる。
+途中色はいれなくてもいい
+例2
+.sample02 {
+  width: 500px;
+  height: 120px;
+  padding-top: 20px;
+  text-align: center;
+  background: linear-gradient(#fff, #000);
+  border: 1px solid #000;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 30px;
+  border-bottom-left-radius: 30px;
+}
+⇒
+<p class="sample02">border-radius</p>
+※開始色として#fffを指定して終了色で#000。
+上から下に向かって白から黒へ。
+degを指定しないと中間からになる
+⇒
+background: linear-gradient(to right, #fff, #000);
+左から右へ白から黒に変わる
+⇒左下から右上へ45度の角度でグラデーション
+background: linear-gradient(45deg, #fff, #000);
+-45degとすると右下から左上に向かってグラデーション
+
+background: linear-gradient(-45deg, #f00, #fff, #00f);
+赤から始まって白に行って青になる
+⇒
+途中色の位置を調整
+background: linear-gradient(-45deg, #f00, #fff 70%, #00f);
+これを使えば複雑な模様をCSS3のグラデーションで実現できる。
+
+・円形のグラデーション
+
+
+
+background: radial-gradient(#f00, #fff 70%, #00f);
+⇒中心が赤で青へのグラデーション
+
