@@ -1,0 +1,611 @@
+・グラデーションを設定するCSSはかなり複雑なので
+ネットから「CSS Gradient Generator」(グラデーションを作ることができるサービス)を使ってそれで生成されるコードをコピー
+して貼り付けるだけで大丈夫
+例
+Presetの中から左から4番目をクリックして左下のアイコンをクリックし、カーソルを下げて
+真っ白の状態にする。それから右下のアイコンをダブルクリックして「EFEFEF」を入力
+CSSボタンをクリックしてコピーして、自分のCSSファイルに張り付け
+
+・news_listの実装について
+
+
+
+news_listの中の右端の右向きの矢印を先に考えつつCSSを書いた方がよい
+右端の右向きの矢印はaタグに対して画像として記載する
+.news_list a {
+ display: block;
+ padding: 10px 15px 10px 15px;//左右の余白を入れて操作性の向上
+ text-decoration: none;
+ color: #2a2929;
+ background: url(images/icon_right02.png) no-repeat;
+ background-size: 6px 12px;
+}
+.news_list .thumb {
+ float: left;
+ margin-right: 9px;
+}
+.news_list .thumb img {
+ width: 58px;
+}
+⇒
+<article class="news_list cf">
+  <a href="#" class="cf">
+    <p class="thumb">
+      <img src="images/thumb.png">
+    </p>
+    <p class="date">2015/12/12</p>
+    <h1>「ウェブデザイナー専攻科」クラスの受講者を募集しています！</h1>
+  </a>
+※こうすると画像よりも左上に表示されていることが分かる。
+アイコンの位置の調整として
+右側に表示させたかったら左側から90何パーセントずらすという指定をしないといけないので
+background: url(images/icon_right02.png) no-repeat 96% center;
+※垂直方向にしたいのでcenter
+※画像にはfloatをかけているが文章に関してはfloatをかけていない理由
+横幅プラス画像の横幅が100%にならないといけないのでレイアウトがすごく難しいから
+
+・スマホのデザインが終わった後はChromeの検証を使ってiPhone5などがうまく表示されるか確認する
+
+・レスポンシブデザインのメリット
+
+
+
+■HTMLが一つですむ⇒更新(メンテナンス)が楽
+⇒少し前のスマートフォン制作はパソコン版のサイトとは別のスマートフォンサイトとして
+独立をしたページで細かくスマートフォンサイトをデザインした後にそれようのページを
+マークアップして同じURLにアクセスしてユーザーが使っているのがスマートフォンサイト
+なのかスマートフォンなのかというのをサーバーサイドで判別をしてからパソコン版サイト
+を表示させるのかスマートフォンサイトを表示させるのかといったものを振り分けるという
+やり方だった。しかし、様々なスマートフォンサイトが誕生することで様々な大きさの画面サイズ
+が誕生し、全てのデバイスに対応させるということが不可能に近くなってきた。
+そこでレスポンシブデザインを導入することでCSS1つで管理することができ、1つのHTMLで
+スマートフォン対応することができる
+■URLが一つになる⇒SEOに有利
+■HTML5とCSS3が使える
+■CMSや独自のシステムを使っていても、簡単に導入することができる
+
+・レスポンシブデザインのデメリット
+
+
+
+HTMLソースが１つというのが逆にデメリット
+パソコンサイトとスマートフォンサイトでは利用シーンが全く異なる。
+パソコンサイトはWi-Fi等を利用して画面の大きいものでパソコンに向かって利用することが
+ほとんどだがスマートフォンはWi-Fiではない強くない回線の中で小さい画面を歩きながら
+見たり、何かしながら閲覧することがほとんど。
+そのため、コンテンツやデザインそのものを大きく変えないといけない場合がある。
+その場合、HTMLソースが同じでCSSだけでデザインをコントールすることが不可能な
+場合もある。
+■設計を慎重に行う必要がある
+それが可能な場合であっても0からそれぞれのサイトを制作するのよりも複雑で制作に
+時間がかかる場合もある。
+
+・
+1つのソースで済むということは制作工数の軽減にはなるが多くのデバイスに対応させるといった
+ことを考慮した設計やデザインを行わなければならないのでそれまでの制作がすごく大変で
+慎重に行う必要がある。
+■ページ読み込み速度の問題
+また1つのHTMLファイルを使用するので見えない部分に
+必要のない要素が読み込まれてしまい、ページの読み込みが遅くなる可能性。
+パソコン版で表示したいコンテンツとモバイルだけで表示したいコンテンツがある場合、
+CSSのdisplay:noneなどで表示非表示を切り替えたりするがdisplay:noneは一度読み込んだ
+後、CSSで非表示するということなので必要のない要素も読み込まれてしまう。
+
+・レスポンシブwebデザインのレイアウト
+レイアウトの種類
+
+
+
+制作するサイトに応じて切り替える必要あり。
+(1)リキッドレイアウト
+⇒画面サイズに応じて要素が伸びちじみするレイアウトの手法
+例
+https://www.un-t.com/
+の丸の4つの要素がブラウザのサイズに応じて少しずつちじまる
+これを4つ並びから2つ並べるというCSSに切り替える時にレスポンシブwebデザインのメディアクエリ
+を使っている
+(2)フレキシブルレイアウト
+⇒リキッドレイアウトと同じく画面サイズに応じて要素の横幅が柔軟に伸びちじみするが
+フレキシブルレイアウトは最大値と最小値も指定するので大きいサイズの画面は周りに余白が生まれる。
+ブラウザを小さくしてもレイアウトは変わらないが横幅よりも小さくなった時に伸縮しうるような
+レイアウトになる
+http://greenlabel-group.com/
+https://www.kose.co.jp/jp/ja/index.html
+
+キャリコネ
+https://careerconnection.jp/review/704401/
+
+・メディアクエリの書き方
+
+
+
+メディアクエリというCSSで使えば横幅のサイズに応じてCSSを個別で指定することができレスポンシブ
+webデザインには欠かせないCSSのプロパティ。
+
+・横幅が1000px以内になったときに黄色の背景から赤色に変わるようにする
+
+
+
+di v#test {
+    background-color: yellow;
+}
+
+@media screen and (max-width: 1000px) {
+    di v#test {
+        background-color: red;
+    }
+}
+⇒
+<di v id="test">ここにコンテンツを入力します</di v>
+■メディアクエリのかけている方が強くかかる。横幅が小さければ小さいほど上書きされるのが特徴ｌｆｐ
+■screenはディスプレイだったら何でもメディアクエリを適用させますという意味
+最大で横幅が1000pxまでという意味(1000px以下)。一番サイズの小さい横幅から1000pxまでの横幅にかけたい
+CSSを指定すするすることができる。
+「min-width: 1000px」は少なくとも横幅が1000px以上あるとき(1000px以上)のCSSを適用
+■切り替わるポイントのところをブレイクポイントと呼ぶ
+
+・フレキシブルレイアウト実践
+ボックスのみ
+
+
+
+* {
+ margin: 0;
+ padding: 0;
+}
+
+di v#wrapper {
+ width: 1000px;
+ height: auto;
+ margin: 0 auto;
+}
+
+header {
+ width: auto;
+ height: 50px;
+ background-color: red;
+}
+
+di v#mainimage {
+ height: 200px;
+ background-color: green;
+ margin: 20px 0;
+}
+
+di v#left {
+ float: left;
+ width: 680px;
+ height: 400px;
+ background-color: yellow;
+}
+
+di v#right {
+ float: right;
+ width: 300px;
+ height: 400px;
+ background-color: pink
+}
+
+.clear {
+ clear: both;
+}
+
+footer {
+ height: 80px;
+ background-color: gray;
+ margin-top: 20px;
+}
+
+@media screen and (max-width: 1000px) {
+ di v#wrapper {
+     width: auto;/* 画面を縮めても改行されてはみ出ることはなくなる */
+     padding: 0 30px;/* スマホサイトは左右に余白を空けた方がいいので。画面を縮めても余白の大きさは変わらない */
+ }
+ di v#left {
+     width: 49%;
+     margin-right: 2%;/* 左コンテンツと右コンテンツの間に余白 */
+ }
+ di v#right {
+     width: 49%;
+ }
+}
+
+@media screen and (max-width: 640px) {
+ di v#left {
+     float: none;
+     width: auto;
+     margin-right: 0;
+ }
+ di v#right {
+     float: none;
+     width: auto;
+ }
+}
+⇒
+<di v id="wrapper">
+ <header>ヘッダー</header>
+
+ <di v id="mainimage">メイン画像</di v>
+
+ <di v id="left">左コンテンツ</di v>
+ <di v id="right">右コンテンツ</di v>
+
+ <di v class="clear"></di v>
+
+ <footer>フッター</footer>
+</di v>
+
+@media screen and (max-width: 1000px) {
+～
+di v#left {
+ width: 50%;
+ margin-right: 20px;/* 左コンテンツと右コンテンツの間に余白 */
+}
+di v#right {
+ width: 50%;
+}
+⇒レイアウトが崩れてしまう
+
+
+
+■対処：
+パソコン版横幅1000px
+50%で500px
+計算方法：500÷1000×100=500
+計算方法：20÷1000×100=2
+50%と50%、2%だと横幅が102%になってしまうので
+⇒
+di v#left {
+ width: 49%;
+ margin-right: 2%;/* 左コンテンツと右コンテンツの間に余白 */
+}
+di v#right {
+ width: 49%;
+}
+にすればきれいなレイアウトになる
+
+・レスポンシブWebサイトは横幅をpxで指定すると伸縮性のないボックスになってしまうので%
+で指定するのが基本
+計算
+
+
+%化したい横幅 ÷ Webサイトの横幅 × 100 = 横幅の指定に入れる
+
+・さらに横幅が小さくなった時(640px以下)に左コンテンツと右コンテンツを縦に並べる
+
+
+
+スマホサイトの時
+@media screen and (max-width: 640px) {
+ di v#left {
+     float: none;
+ }
+ di v#right {
+     float: none;
+ }
+}
+⇒floatを解除すると縦に並ぶが先ほど指定した49%とmargin-right: 2%が残ってしまうので
+さらに上書きする形で横幅とマージンを消す
+⇒
+@media screen and (max-width: 640px) {
+ di v#left {
+     float: none;
+     width: auto;
+     margin-right: 0;
+ }
+ di v#right {
+     float: none;
+     width: auto;
+ }
+}
+⇒きれいに縦に表示
+メディアクエリのブレイクポイントをたくさん入れることで最初は中央寄せのパソコンのレイアウトから画面幅を小さくすることレイアウトの表示を変えることができる
+
+★病院パソコンサイトからレスポンシブ対応
+・<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
+
+
+拡大させないように指定している
+
+・ヘッダーが横幅が960pxに対し小さくなった時に画面サイズに合わせて変化する%指定
+横幅は常に100%するけれども最大で960px以上にはならないような設定
+
+
+
+header {
+ width: 100%;
+ max-width: 960px;
+に変更
+画面を小さくするとナビゲーションの部分が改行されてしまう。
+ここはJqueryを使ってハンバーガーボタンを使ってクリックすると開くボタンに変える
+
+・メイン画面の修正
+
+
+
+#mainimage {
+ width: 960px;
+ height: 300px;
+ margin: 0 auto;
+}
+#mainimage img {
+ width: 980px; 
+}
+から
+#mainimage {
+ width: 100%;
+ max-width: 960px;
+ height: 300px;
+ margin: 0 auto;
+}
+#mainimage img {
+ width: 100%; //親の要素の名一杯に変更。親の大きさに合わせて可変
+}
+このままだと高さ300pxの中で画像が拡大縮小されるので縮小したときにものすごく余白があいてしまう。
+パソコン版の時は300pxにしたいけど横幅960以下になった時は高さの値を変更したい。
+メディアクエリを使わないといけない
+⇒
+height: 300pxを高さ180に変更する
+⇒
+@media screen and (max-width:960px){
+ #mainimage {
+  height: 180px;
+  overflow: hidden;// 画像がはみ出てしまっているのを解消。ボックスからはみ出た部分を非表示にする
+ }
+}
+
+・画像自体をどこまで縮小させるかの指定
+今までのままだとさらに画面サイズを小さくしたきに画像の下に余白が空いてしまう
+横幅が600pxになった時にその横幅の大きさを保つCSSを書く
+#mainimage img {
+ width: 100%;
+ min-width: 600px;
+}
+これで余白が空くことはない
+
+・ネストクリニックの強みの部分
+
+
+・横幅100%になっているのに固定幅になっている
+
+
+#container {
+ width: 960px;
+ margin: 0 auto;
+ box-sizing: border-box;
+ padding: 0 15px;
+}
+#about {
+ width: 100%;
+ margin-top: 45px;
+ text-align: center;
+}
+横幅100%になっているのに固定幅になっているのはaboutを包んでいるcontainerに対して
+960pxと指定があるから
+⇒
+#about {
+ width: 100%;
+ margin-top: 45px;
+ text-align: center;
+}
+#container {
+ width: 100%;
+ max-width: 960px;
+ margin: 0 auto;
+ box-sizing: border-box;
+ padding: 0 15px;
+}
+⇒aboutの部分がずっと中央にそろっている形になる
+
+・一覧の部分の固定幅を%指定に変更
+service {
+ width: 960px;
+ margin: 45px auto;
+}
+#service li {
+ float: left;
+ margin-right: 15px;
+ width: 310px;
+}
+#service li img {
+ width: 310px;
+}
+<di v id="service">
+  <ul class="cf">
+    <li>
+      <a href="#">
+        <p class="thumb"><img src="images/test.jpg" /></p>
+        <p class="title">小児科</p>
+        <p class="text">小児科に関する説明文をここに入れます。小児科に関する説明文をここに入れます。</p>
+      </a>
+    </li>
+    <li>
+
+
+
+■
+#service {
+ width: 100%;//960px;から変更
+ margin: 45px auto;
+}
+⇒100%になったのでfloatが改行されるような形になってしまった。
+リストタグの幅が固定幅になっている
+#service li {
+ float: left;
+ margin-right: 15px;
+ width: 310px;
+⇒
+%を使って修正
+⇒
+#service li {
+ float: left;
+ margin-right: 1.5625%;
+  /* 15px / 全体の横幅(960) * 100 = 1.562~*/
+ width: 32.291666666667%;
+ /* 310px / 全体の横幅(960) * 100 = 32.291~*/
+}
+※画像が固定の幅になっているがレイアウト崩れはなくなる。
+画像の幅をリストタグの中で収まるように変更
+#service li img {
+ width: 100%;
+}
+※画面の幅を小さくしても横並びで見えるようにはなっている
+iPhoneだと小さすぎて見えなくなってしまうので画像が縦に並ぶように書き換える
+@media screen and (max-width: 460px) {
+ #service li {
+  width: 100%;
+  margin-right: 0;//100%になるとmargin-right: 1.5625%はいらないので
+  margin-bottom: 30px;
+  float: none;
+ }
+}
+
+・2つカラムのpxを変更
+newsとsidebarの部分
+
+
+
+#news {
+ float: right;
+ width: 650px;
+}
+から
+#news {
+ float: right;
+ width: 67.708333333333%;// 650÷960*100
+}
+
+#sidebar {
+ width: 280px;
+ float: left;
+}
+から
+#sidebar {
+ width: 29.166666666667%;// 280÷960*100
+ float: left;
+}
+
+#content-bottom {
+ width: 960px;
+ margin: 0 auto;
+}
+から
+#content-bottom {
+ width: 100%;
+ margin: 0 auto;
+}
+※なぜ100%で大丈夫かというと全体を包むcontainerというボックスの960という指定があるから。
+これでレイアウト崩れはないがこれから2カラムを縦に並べる
+⇒
+@media screen and (max-width: 460px) {
+ #news, #sidebar {
+  float: none;
+  width: 100%;
+ }
+ #news {
+  margin-bottom: 30px;
+ }
+}
+
+・floatが解除されていない
+@media screen and (max-width: 460px) {
+ #footer-logo, #footer-nav {
+  float: none;
+  width: 100%;
+ }
+ #footer-logo {
+  text-align: center;
+ }
+ #footer-nav li {
+  float: none;
+  margin-left: 0;
+  text-align: center;
+ }
+}
+  #footer-nav li {
+   float: left;
+   margin-left: 15px;
+  }
+
+
+
+
+メディアクエリのCSSは上に書いているCSSに上書きをする特性があるのでメディアクエリは
+一番下に書かないといけない
+
+・お知らせやサイドバーが横幅名一杯に広がっている
+左右に少しだけ余白を空けたほうがスマートフォンの場合は良い。
+aboutからfooterの上までを包むボックスがcontainer
+だが
+#container {
+ width: 100%;
+ max-width: 960px;
+といったように100%を指定してしまっているのでこれに余白を指定してしまうと
+100%プラス余白分の幅になってしまい横にスクロールできてしまうレイアウトになってしまう
+なのでpaddingとborderを要素の幅に含めないbox-sizing: border-boxを指定
+⇒
+#container {
+ width: 100%;
+ max-width: 960px;
+ margin: 0 auto;
+ box-sizing: border-box;
+ padding: 0 15px;
+}
+
+・ハンバーガーボタン
+
+
+
+レスポンシブメニューを作成できるjQueryプラグイン｢MeanMenu｣
+http://tasudesign.com/web-desing/mean-menu/
+⇒ダウンロードしたファイルを読み込む
+<link rel="stylesheet" href="css/meanmenu.css" />
+⇒
+サイトのJavaスクリプトをコピー
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="js/jquery.meanmenu.js"></script>
+<script>
+$(document).ready(function() {
+$('nav').meanmenu({
+  
+});
+});
+</script>
+⇒
+上記の対応により
+画面を小さくするとメニューのアイコン(ハンバーガーボタン)が出てきて、
+クリックすると開くようになる
+。
+このままだと画面をかなり小さくしないとメニューが表示されないので
+960px以下になった時というオプションを追加する
+サイトの
+$('nav').meanmenu({
+ meanMenuClose: "x", // クローズボタン
+ meanMenuCloseSize: "18px", // クローズボタンのフォントサイズ
+ meanMenuOpen: "<spa n /><spa n /><spa n />", // 通常ボタン
+ meanRevealPosition: "right", // 表示位置
+ meanRevealColour: "", // 背景色
+ meanScreenWidth: "480", // 表示させるウィンドウサイズ(ブレイクポイント)
+});
+のmeanScreenWidthの部分を追加すると横幅を指定することができるのでこの部分をコピーして
+960に変更する
+⇒
+<script>
+$(document).ready(function() {
+$('nav').meanmenu({
+meanScreenWidth: "960", // 表示させるウィンドウサイズ(ブレイクポイント)  
+});
+});
+</script>
+※960pxの時にナビゲーションのメニューが消えてアイコン(ハンバーガーボタン)が表示される
+
+・スクールサイトレスポンシブ対応
+解説
+
+
+■入会するボタンの箇所
+position: absoluteの指定を解除して下に並ぶような形にしないといけない
+⇒
+position: staticという通常に戻すCSSを上書きして追加し、display:blockを
+かけて横幅の指定やmariginの指定がかけるように調整している
