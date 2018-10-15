@@ -1,0 +1,431 @@
+リーダブルコード
+○読みやすさの基本定理
+
+
+
+他の人がコードを理解するのにかかる時間を最短なコードが良いコード。
+理解するというのは、読んでバグを指摘できるレベルの理解。
+
+○2000行のクラスの方が5000行のクラスよりも理解するまでにかかる時間は短いはず。
+しかし
+
+
+
+■でも短ければいいというわけではない。
+このような1行のコードは
+assert((!(bucket = FindBucket())) || !(bucket->IsOccupied());
+このような2行のコードは理解するよりも時間がかかることが多い。
+ bucket = FindBucket(key); 
+ if(bucket != NULL) assert(!bucket->IsOccupied()); 
+⇒コードは短くした方がいい。だけど、「理解するまでにかかる時間」を短くする方が大切だ。
+
+○名前をつけるときには、それが変数であっても、関数であっても、クラスであっても、同じ原則を当てはめることができる。名前は
+
+
+
+■短いコメントだと思えばいい。短くてもいい名前をつければ、それだけ多くの情報を伝えることができる。
+
+○情報詰め込んだ名前の付け方
+
+
+
+■■明確な単語を選ぶ
+⇒「名前に情報を詰め込む」には、明確な単語を選ばなければならない。「空虚」な単語は避けるべきだ。
+例えば、「get」はあまり明確な単語ではない。
+例
+def GetPage(url);
+⇒「get」という単語からは何も伝わってこない。このメソッドはページをどこから取ってくるのであろう?ローカルキャッシュから?データベースから?インターネットから?インターネットからとってくるのであれば、FetchPage()やDownloadPage()の方が明確だ。
+⇒シソーラス(類語辞典)を使って調べる。英語は豊かな言語だから、選べる単語はたくさんあるはず。
+例
+start
+代替案
+lanch,create,begin,open
+■■tmpやretvalなどの汎用的な名前は避ける
+tmp,retval,fooのような名前を付けるのは「名前のことなんて考えていません」と言っているようなものだ。このような「空虚な名前」を付けるのではなく、エンティティの値や目的をあわわした名前を選ぶ。
+var euclidean_norm = functiion (v) {
+  var retval = 0.0;
+  for (var i = 0; i < v.length; i += 1 ) 
+  {retval += v[i] * v[i];}
+return Math.sqrt(retval);}; 
+[m:459]retvalにはこれは「戻り値」です以外の情報はない(戻り値なのは当たり前だ) 
+ いい名前というのは、変数の目的や値を表すもの。ここでvの2乗の合計を表しているのだからsum_squaresという名前がいいだろう。こうしておけば、変数の目的を事前に伝えることができるし、バグの発見にも役立つ。
+ たとえばループの処理を間違えて以下のように書いたとする。
+ retval += v[i];
+ 変数名がsum_squaresだったら、バグを見つけやすい。
+ sum_squares += v[i]; //合計する「square（2乗）がない。バグだ」
+⇒retvalという名前には情報がない。変数の値を表すような名前を使う。
+●tmp
+if(right < left){
+ tmp = right;
+ right = left;
+ left = tmp;
+}
+このような場合はtmpで問題ない。この変数の目的は、情報の一時的な保管だ。tmpという名前で「この変数にはほかに役割がない」という明確な意味を伝えている。つまり、他の関数に渡されたり、何度も書き換えたりしないということ。
+
+○イテレータが複数あるときには、
+
+
+
+■インデックスにもっと明確な名前をつけるといい。i・j・ｋではなく、説明的な名前(club_i,members_i,users_i)にする。あるいはもっと簡潔なもの(ci,mi,ui)でもよい。こうすればバグが目立ちやすくなる。
+ if(clubs[ci].members[ui] == users[mi]) //バグだ！最初の文字が間違っている。
+　インデックスの最初の文字は、配列の名前の最初の文字と同じになるのが正しい。
+　if(clubs[ci].members[mi] == users[ui]) // OK。最初の文字が同じだ。
+■少しでも時間を使っていい名前を考える習慣をつけるようにすれば、すぐに「命名力」の高まりが感じられるようになる。
+
+○名前につけた情報は変数を見るたびに入ってくる。
+
+
+
+
+だから、もし絶対に知らせなきゃいけない大切な情報があれば、「単語」を変数名に追加すればよい。
+例えば、16進数の文字列を持つ変数
+String id //例 "af84ef845cd8"
+⇒IDのフォーマットが大切なら、名前をhex_idにするといい。
+
+○値の単位(変数名に追加する情報単位)
+
+
+
+■時間やバイト数のように計測できるものであれば、変数名に単位を入れるといい。
+例えば、ウエブページの読み込み時間を計測するJavaScriptのコード
+⇒
+var start = (new Date()).getTime(); //ページの上部
+・・・
+var elapsed = (new Date()).getTime() -start; //ページの下部
+document.writeln("読み込み時間:" + elapsed + " 秒");
+このコードは間違っていないように見える。でも、これはうまく動かない。
+getTime()が秒ではなく、、ミリ秒を返すからだ。
+変数名に_msを追加すれば明確になる。
+⇒
+var start_ms = (new Date()).getTime(); //ページの上部
+・・・
+var elapsed_ms = (new Date()).getTime() -start; //ページの下部
+document.writeln("読み込み時間:" + elapsed_ms / 1000 + " 秒");
+※elapseは経過する
+■他の例
+size⇒size_mb
+
+○その他の重要な属性を追加する。
+例
+
+
+
+●状況
+htmlの文字コードをUTF-8に変えた。
+変数名；html
+改善後：html_utf8
+●状況
+入力されたdataをURLエンコードした。
+変数名；data
+改善後：data_urlenc
+※すべての変数名に_utf8などの属性を追加しろということではない。変数の意味を間違えてしまったときにバグになりそうなところだけ使うことが大切。
+
+○名前の長さを決める
+
+
+
+■いい名前を選ぶときには「長い名前を避ける」という暗黙的な制約がある。以下のような識別子はだれもが嫌がるだろう。
+newNavigationControllerWrappingViewControllerForDataSourceOfClass
+長い名前はおぼえにくいし、画面を大きく占領してしまう。折り返しが必要になれば、コード行が無駄に増えてしまう。
+■スコープが小さければ短い名前でもいい。
+長期休暇より短期でどこかへ行くときの方が荷物は少ないはずだ。それと同じで識別子の「スコープ」(その名前が「見える」コードの行数)が小さければ、多くの情報を詰め込む必要はない。すべての情報(変数の型、初期値、破棄方法など)が見えるので、変数の名前は短くていい。
+if(debug){
+ map<string,int> m;
+ LookUpNamesNumbers(&m);
+ Print(m);
+}
+⇒mという変数名にはあまり情報が含まれていない。でも、問題ない。コードを理解するのに必要な情報がすぐそばにあるからだ。
+mがクラスのメンバ変数やグローバル変数ならどうだろう。以下のようなコードを目にするかもしれない
+LookUpNamesNumbers(&m);
+ Print(m);
+このコードは読みにくい。mの型や目的がよく分からないからだ。
+識別子のスコープが大きければ、名前に十分な情報を詰め込んで明確にする必要がある。
+■頭文字と省略形
+■プログラマは頭文字や省略形を使って名前を短くすることがある。例えば、クラス名をBackEndManagerではなくてBEManagerにしたりする。
+⇒プロジェクト固有の省略形をダメ。新しくプロジェクトに参加した人は、暗号みたいに見えて怖いと思うだろう。しばらくすると、それを書いた人ですら暗号みたいで怖いと思うようになる。
+プログラマはdocumentの代わりにdocを使う。それなら新しいチームメイトも理解できるので問題ない。
+
+○エンティティごとに異なるフォーマットを使っている形
+
+
+
+■アンダースコア・ダッシュ・大文字を使って、名前に情報を詰め込むことができる。
+例えば、Google社のオープンソースプロジェクトで使っているC＋＋のフォーマット規約
+static const int kMaxOpenFiles = 100;
+
+class LogReader{
+ public:
+  void OpenFile(string local_file);
+  
+ private:
+  int offset_;
+  DISALLOW_COPY_AND_ASSIGN(LogReader);
+}
+■エンティティごとに異なるフォーマットを使っている形
+このフォーマットはよく使われている。クラス名はキャメルケースで、変数名はlower_separated(小文字をアンダースコアで区切ったもの)
+でも、その他の規約にはびっくりするかもしれない。
+例えば、定数はCONSTANT_NAMEではなくkConstantNameになっている。MACRO_NAMEのような＃defineマクロと簡単に区別できるからだ。
+クラスのメンバ変数は、一見普通のように見えるが、offset_のように最後の文字がアンダースコアになっている。普通の変数と区別できるので便利だ。
+
+○その他のフォーマット規約
+Javascript
+
+
+
+『JavaScript: The Good Parts』
+■JQueryのライブラリ関数($だけの巻数)を呼び出したときには、変数名の頭に$をつけるというものがある。
+例
+var $all_images = $("img"); //$all_imagesはJQueryのオブジェクト
+var height = 250; // heightは違う。
+こうすれば、$all_imagesがJQueryのオブジェクトと分かる。
+■HTMLとCSSで有力な規約
+idの区切りにはアンダースコアを、classの区切り文字にはハイフンを使う規約が有力。
+<di v id="middle_column" class="main-content">・・・
+
+○限界値を含めるときは
+名前
+
+
+
+■minとmaxを使う。
+ショッピングカートには商品が10点までしか入らなかったとする。
+CART_TOO_BIG_LIMIT = 10;
+⇒これでは「未満(限界値を含まない)」なのか「以下(限界値を含む)」なのかが分からない。
+この場合はMAX_ITEMS_IN_CART = 10;とするべき。
+
+○ブール値の名前
+
+
+
+■ブール値の変数名は、頭にis,has,can,shouldなどをつけてわかり易くすることが多い
+例えば、SpaceLeft()という名前は数値を返すように聞こえる。ブール値を返したいのであればhasSpaceLeft()という名前にした方がいい。
+
+○
+CheckFullName("doug Adams","Mr.Doglas Adams",""); 
+CheckFullName("Jake Brown","Mr. Jake Brown III",""); 
+CheckFullName("No such Guy","","no match found"); 
+CheckFullName("John","","more than one result"); 
+わかりにくい。
+
+
+
+■縦の線をまっすぐにする
+CheckFullName("doug Adams"  ,"Mr.Doglas Adams"     ,""); 
+CheckFullName("Jake Brown"  ,"Mr. Jake Brown III"  ,""); 
+CheckFullName("No such Guy" ,""                    ,"no match found"); 
+CheckFullName("John"        ,""                    ,"more than one result"); 
+■#Alignment前
+details = request.POST.get('details')
+location = request.POST.get('location')
+phone = equest.POST.get('phone')
+email = request.POST.get('email')
+url = request.POST.get('url')
+[m:459] 
+#Alignment後
+details  = request.POST.get('details')
+location = request.POST.get('location')
+phone    = equest.POST.get('phone')
+email    = request.POST.get('email')
+url      = request.POST.get('url')
+本でも紹介されてましたが、変数名のスペルミスなんかはすぐわかります。
+
+リーダブルコード2
+○コメントを読むとその分だけ
+
+
+
+■コードを読む時間がなくなる。コメントは画面を占領してしまいます。言い換えれば、コメントにはそれだけの価値を持たせるべき。
+
+○価値の無いコメント
+
+
+
+■コードからすぐに分かることをコメントに書かない
+    関数名が変だとか変数名が変だとか修正可能なものを補うコメント
+例
+// コンストラクタ
+Account();
+
+// profitに新しい値を設定する
+void SetProfit(double profit)
+
+○コードの欠陥にコメントをつける
+
+
+
+■記法:典型的な意味 
+TODO:あとで手をつける
+FIXME:既知の不具合があるコード
+HACK:あまり綺麗じゃない解決策  
+XXX:危険!大きな問題がある
+例
+// TODO:もっと高速なアルゴリズムを使う
+■大切なのは、これからコードをどうしたいのかを自由やにコメントに書くことだ。そういうコメントを書くことで、コードの品質や状態を知らせたり、さらに改善の方向を示したりできる。
+■TODO
+例
+ // TODO メソッド名が変
+■FIXME
+例
+ // FIXME ダウンロードに失敗した場合の制御できているのか
+ // FIXME もうちょっと効率のよい検索方法がほしい
+
+○グルーコード
+
+
+
+これはビジネスロジックとデータベースをつなぐグルーコードです。アプリケーションから直接使ってはいけませんを。
+■Wikipediaから引用すると、グルーコードとは、コンピュータプログラミングにおいてプログラムの要求仕様の実現には一切寄与しないが、もともと互換性がない部分同士を結合するためだけに働くコードである。・・・
+ようはC言語で記述されたコートを別の言語、例えばjavaやluaから利用したいときに、橋渡しをするコードのことをさすようです。
+
+○関数の動作を正確に記述する
+ファイルの行数を数える関数
+// このファイルに含まれる行数を返す。
+ int CountLines(string filename){・・・}
+
+
+
+■あまり正確なコメントではない。「行」には様々な意味があるからだ。
+●""(空のファイル)は、0行なのか1行なのか
+●"hello"は0行なのか1行なのか。
+●"hello＼n"は一行なのか二行なのか。
+●"hello＼n world"は一行なのか二行なのな
+●"hello＼n＼r" cruel＼n world＼r"は、二行なのか三行なのか四行なのか。
+[m:459]最も単純な実装は、改行文字("＼n ")を数えるものだ
+この実装に適したコメントがこれだ。
+//  このファイルに含まれる改行文字("＼n ")を数える。
+ int CountLines(string filename){・・・}
+※伝わる情報は格段に増えている。改行文字がない場合は、0を返すことが分かる。またキャレッジリターン(＼r)が無視されることもわかる。
+
+○if/else文のブロックは、並び順を自由に変えることができる。
+例えば、
+if(a == b){
+ // 第1のケース
+}else{
+ // 第2のケース
+}
+以下のように書くのと同じだ。
+if(a != b){
+ // 第2のケース
+}else{
+ // 第1のケース
+}
+この並び順には優劣がある。
+
+
+
+●条件は否定形よりも肯定形を使う。例えば、if(!debug)ではなく、if(debug)を使う。
+●単純な条件は先に書く。ifとelseが同じ画面に表示されるので見やすい。
+●関心を引く条件や目立つ条件を先に書く。
+※状況によっては判断基準は変わってくることに注意。
+
+○三項演算子
+
+
+
+■三項演算子が読みやすくて簡潔な例
+time_str += (hour >= 12) ? "pm" ; "am";
+三項演算子を使わないと以下のようになる。
+if(hour >= 12){
+ time_str += "pm";
+}else{
+ time_str += "am";
+}
+長くて冗長な感じがする。この場合は、三項演算子の方が読みやすい。
+でも以下の式だと読みにくい。
+return exponet >= ? mantissa * (1 << exponent) : mantissa / (1 << -exponent);
+これは、単純な2つの値から1つを選ぶようなものではない。
+■カギとなる考え
+行数を短くするよりも、他の人が理解するのにかかる時間を短くする。
+下手に省略せずにきちんとif/else文を使えば、コードがより自然になる。
+if(exponent >= 0){
+ return mantissa * (1 << exponent);
+}else{
+ mantissa / (1 << -exponent);
+}
+※基本的にはif/elseを使う。三項演算子はそれによって簡潔になるときにだけ使う
+
+○比較(while(bytes_expected > bytes_received))を書くときには、
+
+
+
+変化する値を左に、より安定した値を右に配置する。
+(while(bytes_received > bytes_expected))
+
+○説明変数
+
+
+
+式の意味を説明してくれる
+巨大な式を分割する一番簡単な方法は、
+「説明変数」を導入することである。
+利点
+●巨大な式を分割できる。
+●簡潔な名前で式を説明することで、コードを文書化できる。
+●コードの主要な「概念」を読み手が認識しやすくなる。
+例
+if line.split(';').strip() == "root":
+ ・・・
+ 説明変数を使えば、以下のようになる。
+ ⇒
+ username = line.split(':')[0].strip()
+ if username == "root":
+ 
+○要約変数
+
+
+
+式を説明する必要がない場合でも、式を代入しておくと便利。大きなコードの塊を小さな名前に置き換えて、管理や把握を簡単にする変数のことをようやく変数と呼ぶ。
+例
+if(request.user.id == document.owner_id){
+ // ユーザーはこの文書を編集できる。
+}
+・・・
+if(request.user.id != document.owner_id){
+ // 文書は読み取り専用
+}
+⇒
+request.user.id == document.owner_idはそれほど大きな式ではない。でも、変数が5つも入っているから、考えるのに時間が少しかかる。
+final boolean user_owners_docment = (request.user.id == document.owner_id);
+if(user_owners_docment){
+ // ユーザーはこの文書を編集できる。
+}
+・・・
+if(!user_owners_docment){
+  // 文書は読み取り専用
+}
+上記により少しは考えやすくなった。
+
+○巨大な文を分割する
+var update_highlight = function (message_num) {
+  if ($("#vote_value" + message_num).html() === "Up") {
+    $("#thumbs_up" + message_num).addClass("highlighted");
+    $("#thumbs_down" + message_num).removeClass("highlighted");
+  } else if ($("#vote_value" + message_num).html() === "Down") {
+    $("#thumbs_up" + message_num).removeClass("highlighted");
+    $("#thumbs_down" + message_num).addClass("highlighted");
+  } else {
+    $("#thumbs_up" + message_num).removeClass("highighted");
+    $("#thumbs_down" + message_num).removeClass("highlighted");
+  }
+};
+
+
+
+■要約変数値として関数の最上部に抽出すればよい。
+■var update_highlight = function (message_num) {
+  var thumbs_up = $("#thumbs_up" + message_num);
+  var thumbs_down = $("#thumbs_down" + message_num);
+  var vote_value = $("#vote_value" + message_num).html();
+  var hi = "highlighted";
+  if (vote_value === "Up") { 
+    thumbs_up.addClass(hi);
+    thumbs_down.removeClass(hi);
+  } else if (vote_value === "Down") { 
+     thumbs_up.removeClass(hi);
+    thumbs_down.addClass(hi);
+  } else { 
+    thumbs_up.removeClass(hi); 
+     thumbs_down.removeClass(hi);
+  }
+};
+⇒タイプミスを減らす、情報が縮まりコードが読みやすくなる、クラス名を変更することになれば、一か所を変更すればよい。

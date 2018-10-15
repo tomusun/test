@@ -1,0 +1,638 @@
+リーダブルコード3
+○変数を適当に使うとプログラムが理解しにくくなる
+
+
+
+1、変数が多いと変数を追跡するのが難しくなる。
+2、変数のスコープが大きいとスコープを把握する時間が長くなる。
+3、変数が頻繁に変更されると現在の値を把握するのが難しくなる。
+
+○変数を削除する。
+
+
+
+■コードが読みやすくない変数を削除する。
+こうした変数を削除すれば、コードは簡潔で理解しやすいものになる。
+例
+役に立たない一時変数
+（例）now = datetime.datetime.now()
+　root_message.last_view_time = no
+・複雑な式を分割していない
+・より明確になっていない。datetime.datetime.now()のままでも十分に明確だ。
+・一度しか使っていないので、重複コードの削除になっていない。
+
+○中間結果を削除する
+
+
+
+■中間結果を保持する変数を使うのではなく、結果をそのまま使う
+// 中間結果を保持する変数を使用
+int indexToRemove = -1;
+for (int i = 0; i < array.length; i++) {
+    if (array[i] == valueToRemove) {
+        indexToRemove = i;
+        break;
+    }
+}
+if (indexToRemove >= 0) {
+    array.splice(indexToRemove, 1);
+}
+⇒
+// 結果をそのまま使った方が簡単
+for (int i = 0; i < array.length; i++) {
+    if (array[i] == valueToRemove) {
+        array.splice(i, 1);
+        return;
+    }
+}
+
+○変数のスコープを縮める
+
+
+
+■アクセスはできるだけ制限して、変数のことが「見えてしまう」コードを減らすのがいいとされている。それは一度に考えなければならない変数を減らせるから。
+変数のことが見えるコード行数をできるだけ減らす
+[m:459]よく言われるのは「グローバル変数は使うな」．どこでどのように使われている追跡することが難しくなる
+スコープのレベル(モジュール、クラス、関数、ブロックスコープなど)
+クラスのメンバ変数もミニグローバルになっているとも言える
+メゾットが沢山ある中で数個のメゾット内でしか使われないメンバ変数 => 関数内でローカル変数として用意する等して対応
+■変数の宣言はその変数を使用する関数の直前の方が良い(関数の先頭で全部を宣言されると頭の中で変数を切り替え難い)
+メンバ変数はクラスのなかで「ミニグローバル」になっていると言える
+ローカル変数に格下げするか、メソッドをstaticにすることでメンバ変数と関係ないことを示せる
+大きなクラスを小さなクラスに分割することも有用な方法
+ンバ変数も極力避ける
+
+class LargeClass {
+   string str_;
+
+   void Method1() {
+     str_ = ...;
+     Method2();
+   }
+
+   void Method2() {
+     // str_変数を使うコード 
+   }
+メンバ変数→ローカル変数に変更する
+
+class LargeClass {
+
+   void Method1() {
+     string str_ = ...;
+     Method2(str_);
+   }
+
+   void Method2(String str_) {
+     // str_変数を使うコード 
+   }
+クラスのメンバ変数へのアクセスを減らす方法としてメソッドをできるだけstaticにするという手法もある
+
+○if文のスコープ
+スコープ制限前)
+PaymentInfo *info = database.ReadPaymentInfo();
+if(info){
+    ...
+}
+// (初見の人)「if文の外側で定義しているからまた後の方で使われるのかな？」
+スコープ制限後)
+
+
+
+
+■if(PaymentInfo *info = database.ReadPaymentInfo() ){
+    ...
+}
+// (初見の人)「infoのスコープはこのif文だけか、なるほど」
+こうしておけば、infoをわすれることができる
+
+○JavaScriptでプライベート変数を作る
+JSでグローバル変数を使ってしまってるコード
+submitted = false;
+var submit_form = function(form_name) {
+   if (submitted) {
+      return;//二重投稿禁止
+   }
+   submitted = true;
+}
+
+
+
+■submittedのようなグローバル変数は、コードを読む人を不安にさせる。
+submittedを使っているのはsubmit_form()関数だけのように見えるけれど、本当にそうなのはわからない。
+他のファイルからグローバル変数submittedを使っている可能性だってある。
+[m:459]この問題を回避するには
+クロージャーを使用してプライベート変数に変更
+var submit_form = (function () {
+   var submitted = false;
+
+   return function (form_name) {
+      if (submitted) {
+         return;
+      }
+      submitted = true;
+   };
+}());
+⇒最終行に注目。外側の無名関数がすぐに実行されて、内側の関数を返している。
+これには、内側の関数だけがアクセスできる「プライベート」スコープを作る効果がある。
+これで読み手は「submitedはいつ使われるの?」と気になったり、同じ名前のグローバル変数と衝突しないかと不安になったりすることはない。
+
+○JavaScriptのグローバルスコープ
+<script>
+ var f = function () {
+    // 変数iにはvarがない！！！！
+    for(i=0; i < 10; += 1);
+ };
+
+ f();
+</script>
+
+
+
+■この場合変数iは他のJSファイルからアクセスできてしまう。JavaScriptのベストプラクティスは「変数を定義するときには常にvarキーワードをつける。」だ。
+<script>
+ alert(i); // '10'が表示される。
+</script>
+
+○定義の位置を下げる
+もともとC言語では変数を関数やブロックの先頭で定義する必要があった（C99とC++にこの制限はない）
+
+
+
+■変数を定義する箇所が早すぎるとその事を覚えておきながらコードを書いたり読んだりしないといけなるなるので基本的には変数は使う直前に定義したほうがよい。
+def ViewFilteredReplies(original_id):
+    filtered_replies = []
+    root_message = Messages.objects.get(original_id) 
+    all_replies = Messages.objects.select(root_id=original_id)
+    root_message.view_count += 1
+    root_message.last_view_time = datetime.datetime.now()
+    root_message.save()
+
+    for reply in all_replies:
+        if reply.spam_votes <= MAX_SPAM_VOTES:
+            filtered_replies.append(reply)
+
+    return filtered_replies
+このコードの問題点は、常に3つの変数のことを切り替えて考えなければならないことだ。
+最初からすべての変数を知る必要はないのだから、変数の定義は変数を使う直前に移動すればよい。
+⇒
+def ViewFilteredReplies(original_id):
+    root_message = Messages.objects.get(original_id)
+    root_message.view_count += 1
+    root_message.last_view_time = datetime.datetime.now()
+    root_message.save()
+
+    all_replies = Messages.objects.select(root_id=original_id) 
+    filtered_replies = []
+    for reply in all_replies:
+        if reply.spam_votes <= MAX_SPAM_VOTES:
+            filtered_replies.append(reply)
+
+    return filtered_replies
+※all_repliesは必要ないので以下のように削除できると思ったかもしれないが、
+    for reply in Messages.objects.select(root_id=original_id) :
+しかし、この場合はall_repliesが優れた説明変数になっているのでそのままにしておいてよい。
+
+○変数がもっと理解しにくいのは、
+
+
+
+■変数が絶えず変更され続けること。値を追跡する難易度が格段に上がってしまう。
+[m:459]この問題と戦うために、変数は一度だけ書き込む。
+「永続的に変更されない」変数は扱いやすい。変数を一度だけ書き込む手法が使えないとしても、変数の変更箇所はできるだけ少なくした方がよい。
+できれば1度だけ書き込み、永久に変更されない変数が使いやすい。
+    static const int NUM_THREADS = 10; 
+この変数に対して多くのことを考える必要はない。 では、どうすれば1度だけ書き込むように構成するのか？ 少しずつ何度もコードを改良する。 いっぺんに変数の動きを減らすのは難しい。
+まず、パッと見で不要な変数を削除する（どうでもいいbool型の変数とか）
+次に、whileやfor文中で何度も変更されている変数に着目する。 for文中でさらにif文がネストされていて、 書き換えて判定→書き換えて判定→書き換えて判定... といったものを繰り返しているのであれば、while(true)やfor(var i = 0;true;i++)などで ループ内の文章を減らすことで可読性が向上する。
+
+○アンチパターン
+var setFirstEmptyInput = function (new_value) {
+    var found = false;
+    var i = 1;
+    var elem = document.getElementById('input' + i);
+    while (elem !== null) {
+        if (elem.value === '') {
+            found = true;
+            break;
+        }
+        i++;
+        elem = document.getElementById('input' + i);
+    }
+    if (found) elem.value = new_value;
+    return elem;
+};
+■修正例
+
+
+
+var setFirstEmptyInput = function (new_value) { 
+   for (var i = 1; true; i++ ) {
+      var elem = document.getElementById(' input' +  i); 
+      if (elem === null) 
+         return null; // Search Failed. No empty input found. 
+       if (elem.value === '') { 
+          elem.value = new_value; 
+          return elem; 
+       }
+   } 
+};
+
+リーダブルコード4
+○無関係の下位問題を抽出する
+目的：プロジェクト固有のコードから汎用コードを分離する 
+メリット：
+
+
+
+■汎用問題から切り離された境界線上の明確な業務固有の問題に集中できる
+[m:459]汎用コードは素晴らしい、プロジェクトから完全に切り離されているからだ。このようなコードは開発もテストも楽だ。すべてのコードがこうなればいいのに！
+このライブラリや言語にXYZの関数がればなぁと思ったらその関数を自分でかけばよい、それが汎用コードになる。
+
+○メソッドの抽出
+巨大な関数の中から、汎用的な処理を見つけ出しメソッド化していく
+var findClosestLocation = function(lat, lng, array) {
+    var closest;
+    var closest_dist = Number.MAX_VALUE;
+    for (var i = 0; i < array.length; i += 1) {
+        // 2つの地点をラジアンに変換する
+        var lat_rad = radians(lat);
+        var lng_rad = radians(lng);
+        var lat2_rad = radians(array[i].latitute);
+        var lng2_rad = radians(array[i].longitude);
+        
+        // 「球面三角法の第二余弦定理」の公式を使う
+        var dist = Math.acos(Math.sin(lat_rad) * Math.sin(lat2_rad) +
+                             Math.cos(lat_rad) * Math.cos(lat2_rad) *
+                             Math.cos(lat2_rad - lng_rad));
+        if(dist < closest_dist) {
+            closest = array[i];
+            closest_dist = dist;
+        }
+    }
+    return closest;
+};
+
+
+
+■コード量が多いので、「2つの地点の球面距離を算出する」部分をメソッドにしてみる。
+var spherical_distance = function (lat1, lng1, lat2, lng2) {
+    // 2つの地点をラジアンに変換する
+    var lat_rad = radians(lat);
+    var lng_rad = radians(lng);
+    var lat2_rad = radians(array[i].latitute);
+    var lng2_rad = radians(array[i].longitude);
+
+    // 「球面三角法の第二余弦定理」の公式を使う
+    return Math.acos(Math.sin(lat_rad) * Math.sin(lat2_rad) +
+                         Math.cos(lat_rad) * Math.cos(lat2_rad) *
+                         Math.cos(lat2_rad - lng_rad));
+
+};
+
+var findClosestLocation = function(lat, lng, array) {
+    var closest;
+    var closest_dist = Number.MAX_VALUE;
+    for (var i = 0; i < array.length; i += 1) {
+        var dist = spherical_distance(lat, lng, array[i].latitute, array[i].longitude);
+        if(dist < closest_dist) {
+            closest = array[i];
+            closest_dist = dist;
+        }
+    }
+    return closest;
+};
+※spherical_distance()は個別に再利用できる関数だ。spherical_distance()は将来的に再利用可能な関数だ。
+関数にできる部分はさっくり関数にしたほうがよい。
+メリットは、
+読みやすい
+高レベルの目標に集中できる
+個別にテストしやすい
+などがある。
+このようにプロジェクトから完全に切り離された汎用コードをたくさん作ることで、
+開発もテストも理解も楽になる
+■ラッパーを用意して汚いインターフェイスを覆い隠すのもよい。
+ほとんどのコードは汎用化できる。一般的な問題を解決するライブラリやヘルパー関数を作っていけば、
+プログラムに固有の小さな核だけが残る。
+この技法が役に立つのは、プロジェクトの他の部分から切り離された、境界線の明確な小さな問題に集中できるから
+である。こうした下位問題に対する解決策は、より緻密で正確なものになる
+
+○その他の汎用コード
+ajax_post({
+  url: 'http://exmaple.com/submit',
+  data: data,
+  on_success: function (response_data){
+    var str = "{\n";
+    for (var key in response_data){
+      str += " " + key + " = " + response_data[key] + "\n";
+    }
+    alert(str + "}");
+});
+このコードの高レベルの目標は「サーバをAjaxで呼び出してレスポンスを処理する」である。しかしこのコードの大部分は「ディクショナリを綺麗に印字する。」という「無関係の下位問題」を解決しようとしている。
+このコードを抽出して、
+
+
+
+■format_pretty(obj)のような関数にする。
+var format_pretty = function(obj){
+  var str = "{\n";
+  for (var key in obj){
+    str += " " + key + " = " + obj[key] + "\n";
+  }
+  return str + "}";
+};
+下位問題を抽出し関数化すると、「コードが独立していれば、format_pretty()の改善が楽になる」という恩恵もある。
+
+○以下は、format_pretty(obj)が処理できないケース
+
+
+
+●objにはオブジェクトを期待している。普通の文字列やunderdifinedだと例外が発生する。
+●objには単純な型を期待している。ネストしたオブジェクトだとobject Objectのように表示されるのでプリティといえない
+format_prettyが独立した関数になっていなければ、これらを改善するのは大変。でも、関数になっていれば、こうした機能は簡単に追加できる。
+■改善したコードは以下。
+var format_pretty = function(obj,indent){
+ // null・undefined・文字列・非オブジェクトを処理する。
+ if(obj == null) return null;
+ if(obj == undefined) return "underdifined";
+ if(typeof obj == "string") return '""' ; obj + '""';
+ if(typeof obj !== "object") return String(obj);
+ 
+ if(indent == undefined) indent = "";
+ 
+ // (非null)オブジェクトを処理する。
+ var str = "{\n";
+  for (var key in obj){
+    str += indent + "  " + key + " = ";
+    str += format_pretty(obj[key],indent + "  " + "\n";
+  }
+  return str + indent + "}";
+};
+汎用コードには、簡単に共有できるように特別なディレクトリ(例：util/)を用意する。
+
+○ラッパー関数
+
+
+
+■ラップの言葉が示す通り、ある関数やオブジェクトを「包み込む」関数を指します。
+以下に例を示します。
+ある、利用するのが難しい関数Aがあるとき、これを「包み込む」A'というラップ関数を用意したとします。
+A'は内部でAを呼び出していますが、Aを呼び出す際に必要な各種手続きをユーザの代わりに自動で行うようにします。
+こうすると、A'は、Aほど汎用的には使えませんが、利用が簡単な関数となります。
+■a-bを計算してくれる２つの関数があるとします。
+int hikizan1(int a, int b){return a-b;}
+float hikizan2(float b, float a){return a-b;}
+どちらも似ているのですが、引数の順番が違うので、hikizan2をhikizan1と同じように使うと、答えがa-bでなくb-aになってしまいます。注意して使う必要があり、何かと不便です。
+そこで、hikizan2を呼ぶ関数
+float hikizan3(float a, float b){
+　　return hikizan2(b,a);
+}
+を作りました。
+hikizan2を使う代わりにhikizan3を使えば、hikizan1と同じ使い方で正しくa-bを計算できるようになります。
+この例は引数の順番を変えていますが、それに限らず、何らかの理由により関数の使い方を変えたい場合に作るのがラップ関数です。
+ラップ関数を呼んだ場合、実際にはもとの関数が呼ばれますので、元の関数を包んだ（ラップした）ラップ関数と呼ばれます。
+
+○やりすぎ
+小さな関数作りすぎ
+
+
+
+■小さな関数を作りすぎても逆に見にくくなってしまう。あちこちに飛び回る実行パスを追いかけることになるから。
+「無関係の下位問題を積極的に見つけ抽出する」ことは目的だが、やりすぎて見にくくなってしまうのには注意が必要。
+
+前にコードは1つずつタスクを行うようにしなければならない
+以下は(たとえば)ボタンをクリックすると、スコアが更新される
+投票用のウィジェットのプログラムである。
+ユーザは賛成(up)と反対(down)の2種類のボタンがあり、
+アップで1点、ダウンで-1点とする。
+var vote_changed = function (old_vote, new_vote) {
+    var score = get_score();
+
+    if(new_vote !== old_vote) {
+        if(new_vote === 'Up') {
+            score += (old_vote === 'Down' ? 2 : 1);
+        } else if (new_vote === 'Down') {
+            score -= (old_vote === 'Up' ? 2 : 1);
+        } else if (new_vote === '') {
+            score += (old_vote === 'Up' ? -1 : 1);
+        }
+    }
+
+    set_score(score);
+};
+このコードだと、タイポやバグがあっても一目見ただけでは分からない。
+もっと言うと、このコードは、関数内で2つのタスクを行っている。
+
+
+
+■
+・old_vote と new_vote を数値にパース
+・scoreを更新
+2つのタスクを別々に解決すれば、読みやすいコードになる。
+var vote_value = function (vote) {
+    if(vote === 'Up') {
+        return +1;
+    }
+    if(vote === 'Down') {
+        return -1;
+    }
+    return 0;
+};
+var vote_changed = function (old_vote, new_vote) {
+    var score = get_score();
+    score -= vote_value(old_vote); // 古い値を削除
+    score += vote_value(new_vote); // 新しい値を削除
+
+    set_score(score);
+};
+読みにくいコードがあれば、そこで行われているタスクを全て列挙する。
+そこに別の関数(クラス)に分割できるタスクがあるなら関数などに分ける。
+
+○first_half = town || city || state || "なんでもない場所";
+second_half = county || "地球";
+
+
+
+a || b || cは最初に「真」と評価できる値（ここでは定義された空ではない文字列）を取り出すもの。
+
+○webクローリング
+
+
+
+クローリングとは、ロボット型検索エンジンにおいて、プログラムがインターネット上のリンクを辿ってWebサイトを巡回し、Webページ上の情報を複製・保存することである。 クローリングを行うためのプログラムは特に「クローラ」あるいは「スパイダー」と呼ばれている。
+
+○身近なライブラリに親しむ
+
+
+
+■プログラマというのは、既存のライブラリで問題を解決できることを知らないことが多い。あるいは、ライブラリで可能なことを忘れていることが多い。
+「ライブラリを熟知して、実際に活用することが大切」
+たまには標準ライブラリの全ての関数・モジュール・型の名前を15分かけて読んでみよう！
+標準ライブラリとはAPIや組み込みモジュールのことだ。
+ライブラリを全部覚えろという言っているわけではない。どんなことができそうか感じ取るだけでよい。そうすれば、新しいコードを書いているときに「これはAPIでみたような」と思い出すことができる。
+
+○ライブラリの再利用はなぜいいことなのか
+
+ 
+
+■統計ではあるが、平均的なソフトウェアエンジニアが一日に書く出荷用のコードは10行なのだそうだ。
+嘘だと思えるが、大切なのは"出荷用"という言葉だ。成熟したライブラリコードの裏側には、膨大な設計・デバッグ・修正・文書・最適化・テスト・が存在する。このダーウィンの進化を生き延びてきたコードには価値があるからだ
+
+○webサーバが頻繁に4xxや5xxのHTTPのレスポンスコードを返していたら何が問題であるという兆候だ。
+
+
+
+(4xxはクライアントのエラー、5xxはサーバーのエラー)だ。webサーバのアクセスログをパースして、どのURLでエラーが発生しているか調べたい。
+
+○プログラマが学ぶべき大切な技法というのは、
+
+
+
+■コードを書かないことを知ることなのかもしれない。自分で書いたコードであれば、すべての行をテストして保守しなければならない。
+ライブラリの再利用や機能を削除することで、時間を節約したり、コードを簡潔に維持したりできる。
+最も読みやすいコードは何も書かれていないコードだ！
+まとめ
+・不必要な機能をプロダクトから削除する。過剰な機能はもたせない。
+・最も簡単に問題を解決できるような要求を与える。
+・定期的にすべてのAPIを読んで、標準ライブラリに慣れ親しんでおく
+
+○ヘルパー関数
+
+
+
+■一般的には（主機能を実現する）主関数から呼び出される補助関数のことだと思います。
+■特定の処理、特定の関数だけから使う作業用の関数、他の処理からは使われないもの、というニュアンス
+
+○たとえばこのようなテストコードがあったとする。
+void Test1() {
+  vector<ScoredDocument> docs;
+  docs.resize(5);
+  docs[0].url = "http://example.com";
+  docs[0].score = -5.0;
+  docs[1].url = "http://example.com";
+  docs[1].score = 1;
+  docs[2].url = "http://example.com";
+  docs[2].score = 4;
+  docs[3].url = "http://example.com";
+  docs[3].score = -99998.7;
+  docs[4].url = "http://example.com";
+  docs[4].score = 3.0;
+
+  SortAndFilterDocs(&docs);
+
+  assert(docs.size() == 3);
+  assert(docs[0].score == 4);
+  assert(docs[1].score == 3.0);
+  assert(docs[2].score == 1);
+}
+このコードには8つの問題があるという
+
+
+
+■大切ではない詳細はユーザから隠し、大切な詳細は目立つようにする
+ここではvectorというテストの本質ではない設定が
+一番目立ってしまっている。(「vector<ScoredDocument> docs」の設定が一番目立っている) 
+なぜならvectorとかurl score docs[] とかはC++の
+オブジェクトを設定する詳細であって、テストの本質じゃない。
+[m:459]そのためには、詳細を隠蔽するヘルパー関数を作成してみる。
+void AddScoredDoc(vector<ScoredDocument>& docs, double score) {
+  ScoredDocument sd;
+  sd.score = score;
+  sd.url = "http://example.com";
+  docs.push_back(sd);
+}
+こんなふうにして、詳細を隠蔽してしまえば、テストコードも見やすくなるでせう。
+void Test1() {
+  vector<ScoredDocument> docs;
+  AddScoreDocs(docs, -5.0);
+  AddScoreDocs(docs, 1);
+  ..
+}
+
+○最小のテストを作る
+
+
+
+■テストは簡潔にするべきである。
+テストの本質は「こういう状況と入力から、こういう振舞いと出力を期待するレベルまで要約することである
+そしてテストは1行でまとめられることが多い。
+CheckScoresBeforeAfter("-5, 1, 4, -99998.7, 3", "4, 3, 1");
+コードを簡潔に読みやすくするだけだなく、テストステートメントを短くすることで、テストケースの追加が簡単になる。
+
+○テストの機能に名前をつける
+
+
+
+■テストの関数名はTest1となっているが、これだと何のテストをしているのか分からない。
+テストの内容を表した名前をつけるべきである。テストコードを読む人が、以下のことを
+すぐに理解できるものがいい。
+    テストするクラス
+    テストする関数
+    テストする状況やバグ
+■void Test_SortAndFilterDocs_BasicSorting() {
+  ...
+}
+など。
+長くて変な名前にならないかと怖がることはない。他のコードから呼び出されるものではないので、長くなっても構わない。テスト関数の名前は関数だと思えばよい。ほとんどのテスティングフレームワークでは、テストが失敗したらその関数の名前が印字されるようになっている。だから、名前は説明的な方が役に立つ。
+テストの書き方について、冒頭のサンプルのどこがだめだったのかというと、
+
+○上記のコードの8つの問題
+
+
+
+1.このテストにはどうでもいいことがたくさん書かれている
+2.テストが簡単に追加できない
+3.失敗メッセージが役に立たない
+4.一度にすべてのことをテストしようとしている
+5.テストの入力値が単純ではない。
+6.テストの入力値が不完全(0がない)
+7.極端な入力値を使ってテストしていない(空のベクタ、巨大なベクタなど)
+8.Test1という意味のない名前を使っている。
+[m:459]テストに優しい設計をすれば、振舞いごとにうまく分割されていて、自然にコードが
+構成されていく。テストしやすいように設計するようになる。
+
+○疎結合
+
+
+
+■家電製品を使うとします。
+たぶん、家の中にコンセントがありますよね。そこに家電製品を指せば、家電製品が使えます。
+ここで、自分で家電製品の構造などを分かっている必要が無いということに着目してください。とにかくコンセントを挿せば、家電製品は使えるという認識が私たちにあります。
+実はこれが疎結合です。
+実際は、家のコンセント内部はいろいろな経路を通って最終的には電力会社から供給されている電気を使えるように配線されているはずで、家電製品はその種類、メーカーによって様々な構造をしています。
+[m:459]しかし、とにかくコンセントを結合部として両者を関連させてしまえば、両者は上手く動作するわけです。
+そして、両者はコンセントを結合部として関連できるように設計、開発されており、コンセントさえあれば、その内部構造を意識しなくてもよいようになっています。
+上記のように、それぞれのことを深く知っていなくても、便利に物事が進むようなイメージが疎結合と認識して頂ければそこまで間違っていないでしょう。 
+「疎」とは「密」の逆を表す言葉です。「集まっている」のではなく「離れている」状態をイメージして下さい。
+「結合」にはいろいろな意味がありますが、この場合は「両者の関連」であると考えれば良いと思います。
+つまり「疎結合」とは両者間の物事の関連が薄く、できるだけ両者間が離れているということです。
+「依存」とは「他のものによりかかり、それによって成り立つこと」です。恋人同士の関係などを想像して頂ければ分かり易いかと思いますが、例えば束縛が強いカップルは依存度が高く（密結合）、男女それぞれの自由度が高いカップルは依存度が低いことになります。（疎結合）
+もうお分かりかと思いますが、「疎結合」とは「依存度が低い」ということと同義です。
+見るのでは上記家電製品の例で言えば、コンセント内部と家電製品は、コンセントを通じてのみ関連しており、それぞれは独立しているという意味で疎結合であるという事ができ、同時に両者間の依存度も低いことになります。取り外しも容易ですしね。 
+
+○密結合についても考えてみましょう。
+
+
+
+
+■「この家電製品は使うために赤のコードをコンセントの右側に入れて接着剤で固定し青のコードと黄色のコードを絡めたうえでコンセントの左側に入れる」と言われたら困りませんか。これはその家電製品の使い方がその独自の内部構造に依存してしまっていることになります。
+しかも実際にそれを実施したとして、接着剤を使ってしまうとコンセントとの結合は文字通り密になり、切り離せなくなります。そうすると、その作業をしてしまったコンセントはその家電製品専用になってしまいますね。切り離すこともできると思いますが、面倒です。
+結構不便ですよね。でも車やエレベーターなど、専門家しか中身を確認しないような機械は、まだまだ内部構造としては上記のような感じで専門技術者が配線などを行っていると思います。専門家以外の人が車内の全ての配線を外そうものなら、その内部構造が分かりませんから、再度配線をしなおすことは難しいです。
+これが密結合のイメージです。 
+
+○プログラムをクラスやメソッドに分割するというのは、疎結合にしたほうがテストしやすいからである。プログラムが密結合していて、クラス間でメソッド呼び出しがたくさん行われていて、メソッド呼び出しに多くの引数が必要だったらどうだろう。プログラムが理解しにくいだけでなく、テストコードも汚くて読み書きしにくいものになっているはずだ。
+
+○テストコードも読みやすさが大切だ。
+
+
+
+■テストが読みやすければ、テストが書きやすくなり、みんながテストを追加しやすくなる。また、本物のコードをテストしやすく設計するば、コードの設計が全体的に改善できる。
+
+○テストを改善する点のまとめ
+
+
+
+●テストのトップレベルはできるだけ簡潔にする。入出力のテストはコード一行で記述できるとよい。
+●テストが失敗したらバグの発見や修正がしやすいようなエラーメッセージを表示する。
+●テストに最も有効な単純な入力値を使う。
+丸テスト関数に説明的な名前を付けて、何をテストしているのかを明らかにする。Test1()ではなく、Test_<関数名>_<状況>のような名前にする。
+特に、新しいテストの追加や修正を簡単にすることが大切だ。
