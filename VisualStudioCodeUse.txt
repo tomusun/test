@@ -1,0 +1,8 @@
+●エディアの分割
+View->Editor layout->Split～
+
+●コードの整形
+Shift + alt + f
+
+●VS Code の便利なショートカットキー
+https://qiita.com/12345/items/64f4372fbca041e949d0
