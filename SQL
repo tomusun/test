@@ -1,0 +1,114 @@
+便利SQL
+・insert文にselect文 埋め込んでサブクエリを投げる
+
+
+
+例:
+insert into 家計簿(費目,メモ)
+select
+ 費目,メモ
+From
+家計簿
+※selectで取得できたものをまるごと登録できる。
+
+○SELECT * FROM 家計簿
+union
+SELECT * FROM 家計簿
+where 費目 = 'aaa'
+
+
+
+⇒
+1個目のSELECTでとってこれたデータのみ表示
+
+○SELECT * FROM 家計簿
+where 費目 = 'aaa'
+union
+SELECT * FROM 家計簿
+
+
+
+2個目のSELECTでとってこれたデータのみ表示
+
+○SELECT * FROM 家計簿
+where 入金額 ！= 0
+NULLのものも対象になるのか
+
+
+
+⇒ならない。とってこれない。
+
+○select * From 家計簿
+where 出勤額 < 6000
+テーブルの中には出勤額がnullのものが存在
+   
+
+
+[m:459]とってこれない
+
+○重複行のまとめ方はGROUP BY？DISTINCT？
+
+
+
+https://qiita.com/tori076/items/ef7ac4301f9c20491bae
+■結論から言ってしまうとどちらの関数も重複行をまとめるという目的で使われるため、どちらが良いと言うことはないらしい。
+[m:459]DISTINCTは実行した結果のテーブルから、重複している行を削除した結果を出す。
+[m:459]GROUP BY は実行した結果をグループ化して更に集計する際に用いる。
+つまり
+単に重複を除いた結果をそのまま出すだけの場合はDISTINCT句
+まとめた結果に対して何らかの処理を加える必要がある場合はGROUP BY句ということになる。
+
+○請求方法マスターに同じお客があるかどうか確認
+SQL
+
+
+
+select
+ Custcode
+from
+ 請求方法マスター
+group by
+ Custcode
+HAVING
+  COUNT(Custcode) > 1
+※キーはお客様コードと開始年月
+
+・1テーブルに対して特定の項目(費目)が同一かつ、別の項目(メモ)が異なるデータがあるものを把握できるSQL
+
+
+select 費目
+from 家計簿
+group by 費目
+having count(distinct メモ) > 1
+
+・EXISTS句
+
+
+
+
+存在検査ともいわれ，副問合せによって返されたレコードが一つでもあれば真，一つもなければ偽を返します
+●例1
+select 費目
+from
+家計簿
+WHERE EXISTS (
+    SELECT 費目
+    FROM 家計簿
+    WHERE 費目='食費'
+)
+実行結果
+⇒全件取得
+●例2
+select 費目
+from
+家計簿
+WHERE EXISTS (
+    SELECT 費目
+    FROM 家計簿
+    WHERE 費目='aiu'
+)
+実行結果
+0件取得
+※エラーは出ない
+
+
